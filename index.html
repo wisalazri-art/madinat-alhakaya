@@ -1439,7 +1439,7 @@ renderer.domElement.addEventListener('pointerup',e=>{
 
 
 // ================= وضع اللعب: ادخل بشخصيتك =================
-const USERS={'95ql':['الوليد','صاحب المدينة 👑'],'ayoub.ba16':['أيوب'],'jijou':['jijou'],'moh_2008_amed':['محمد فلوس'],'bsngse':['حسين وعباس','جندي في حُماة الحكايا ⚔️','حسين'],'ako__10f':['حسين وعباس','جندي في حُماة الحكايا ⚔️','عباس'],
+const USERS={'95ql':['الوليد','صاحب المدينة 👑'],'ayoub.ba16':['أيوب'],'jijou':['jijou'],'moh_2008_amed':['محمد فلوس','أمين بيت المال 💰','محمد فلوس'],'bsngse':['حسين وعباس','جندي في حُماة الحكايا ⚔️','حسين'],'ako__10f':['حسين وعباس','جندي في حُماة الحكايا ⚔️','عباس'],
  'abw24085':['أحمد'],'med_abderrahman.314':['عبدالرحمن'],'koussay_bsf':['قصي'],'57691l':['شعيل'],'abdulqader_bek':['قدوري','صاحب مطعم قدوري 🍽️'],'nhwdgzh':['عمار'],'hamamm_sha_1':['الشهم','إمام الجامع الكبير 🕌','همام'],
  'a________bh511':['إبراهيم'],'_10_mustafath_9_9':['_10_mustafath_9_9'],'_2465885642':['خطاب','قائد المدفعية 💣'],'ne___el0':['نضال','جندي في حُماة الحكايا ⚔️'],'abdelalim12027':['عبدالعليم','قائد حُماة الحكايا 👑'],
  '5t_r39a__':['علي','جندي في حُماة الحكايا ⚔️'],'alligator.92267767':['فهد','جندي في حُماة الحكايا ⚔️'],'husi_351':['husi_351','جندي في حُماة الحكايا ⚔️'],'rmhlyllwsh':['rmhlyllwsh','جندي في حُماة الحكايا ⚔️'],
@@ -1455,10 +1455,21 @@ const NPCS=[
  {id:'commander',name:'القائد عبدالعليم 👑',pos:[-74,0,-19],user:'abdelalim12027',lines:n=>[`انتباه! 🫡 أهلًا يا ${n}`,'هذا معسكر حُماة الحكايا… ١٣ جندي وقنّاص وقائد مدفعية.','تبغى تنضم؟ اكتب «أنا جندي» في التعليقات ⚔️']},
  {id:'sniper',name:'القنّاص عبد القادر 🎯',pos:[-70,0,-32.5],user:'abdouu_tr_03',lines:n=>[`(من فوق البرج) شششش… لا ترفع صوتك يا ${n} 🎯`,'أراقب الأفق… لو شفت العدو أطلق الإنذار.','قوسي ما يخطي 🏹']},
  {id:'gunner',name:'قائد المدفعية خطاب 💣',pos:[0,0,52.5],user:'_2465885642',lines:n=>[`(من فوق البوابة) هلا يا ${n}! 💣`,'المدافع جاهزة… أي عدو يقرب من القنطرة نرحّب فيه بطريقتنا 😄','لا تقرب من البارود 🔥']},
- {id:'muhtasib',name:'المحتسب بلال ⚖️',pos:[-16.9,0,-5],user:'bileljl2008',lines:n=>[`أهلًا يا ${n}، أنا محتسب السوق ⚖️`,'أراقب الموازين والأسعار… ما أحد يغش في سوق الحكايا!','جرّبت فول أبو أيوب؟ أنا فتّشته… طعمه ممتاز 😋']},
+ {id:'muhtasib',name:'المحتسب بلال ⚖️',pos:[-16.9,0,-5],user:'bileljl2008',lines:n=>[`أهلًا يا ${n}، أنا محتسب السوق ⚖️`,'فتّشت السوق كامل… وحطّيت ختم «مُفتَّش» على المحلات النظيفة ✅','أراقب الموازين والأسعار… ما أحد يغش في سوق الحكايا!','جرّبت فول أبو أيوب؟ أنا فتّشته… طعمه ممتاز 😋']},
  {id:'butcher',name:'الجزار ياسر 🥩',pos:[-24.2,0,-2.6],user:'yasser__ben4',lines:n=>[`حيّاك يا ${n}! 🔪`,'عندي لحم غزال طازج… صيد اليوم 🦌','وقدوري ياخذ لحمه مني، قل له يطبخ لك 🍽️']},
  {id:'foul',name:'فول أبو أيوب 🫘',pos:[-29.5,0,1.6],user:'ahmad6642691',lines:n=>[`صباح الخير يا ${n}! ☀️`,'فول حار من القدر… بالكمّون والليمون 🫘','الفطور على حسابي اليوم 😄']},
+ {id:'treasurer',name:'أمين بيت المال محمد فلوس 💰',pos:[0,0,0],user:'moh_2008_amed',lines:n=>[`أهلًا يا ${n}! عدّ معي… ألف، ألفين… 💰`,'أنا أمين بيت المال، خزنة الحكايا بيدي ومفتاحها عندي 🗝️','في الأندلس كان الدينار القرطبي الذهبي يتعامل فيه التجّار من بغداد لين أوروبا ✨']},
  {id:'resto',name:'مطعم قدوري 🍽️',pos:[-6,0,-11],enter:'restaurant',user:'abdulqader_bek',lines:n=>[`تفضّل يا ${n}، المطعم مفتوح 🍽️`,'أول مطعم في مدينة الحكايا!','ادخل واختار طاولتك 😋']}];
+;{const ti=names.indexOf('محمد فلوس');const tn=NPCS.find(n=>n.id==='treasurer');if(ti>=0&&houses[ti]){const d=houseDoor(ti);const hp=houses[ti].grp.position;const sx=(d.x-hp.x),sz=(d.z-hp.z),L=Math.hypot(sx,sz)||1;tn.pos=[d.x+sz/L*1.6,0,d.z-sx/L*1.6];
+  const g=new THREE.Group();const gold=M(0xd4a640,{metalness:.8,roughness:.3}),wood=M(0x5a3a22);const a=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=true;g.add(o);return o};
+  // صندوق الذهب
+  a(new THREE.BoxGeometry(.9,.55,.6),wood,0,.28,0);a(new THREE.BoxGeometry(.94,.08,.64),gold,0,.56,0);for(let i=0;i<7;i++)a(new THREE.CylinderGeometry(.09,.09,.03,10),gold,(Math.random()-.5)*.6,.62+i*.012,(Math.random()-.5)*.35);
+  // أمين المال
+  const ch=makeChar(0x1f5a3a);ch.g.visible=true;ch.g.position.set(.9,0,0);g.add(ch.g);ch.arms[1].rotation.x=-1.1;const coin=a(new THREE.CylinderGeometry(.08,.08,.02,12),gold,1.25,1.05,.45);coin.rotation.x=Math.PI/2;window.__coin=coin;
+  g.position.set(tn.pos[0],0,tn.pos[2]);g.rotation.y=Math.atan2(sx,sz);scene.add(g);
+  const el=document.createElement('div');el.className='lb';el.innerHTML='<b>💰 بيت المال</b><i>الأمين محمد فلوس</i>';$('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(tn.pos[0],2.9,tn.pos[2])})}
+ // أختام المحتسب على محلات السوق
+ [[-26,-2.75],[-30,2.75]].forEach(([x,z])=>{const el=document.createElement('div');el.className='lb';el.innerHTML='<i>✅ مُفتَّش من المحتسب</i>';$('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(x,4.4,z)})})}
 const game={on:false,user:null,p:new THREE.Vector3(),yaw:0,pitch:.32,dist:8,fp:false,fly:false,vx:0,vy:0,vz:0,onG:true,jumpQ:false,lastSpace:0,upBtn:false,downBtn:false,runBtn:false,chatOpen:false,keys:{},jx:0,jy:0,obs:[],near:null,last:0,talk:null,step:0};
 {const st=document.createElement('style');st.textContent=`
 #gStart{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,rgba(30,40,60,.75),rgba(8,10,16,.94));font-family:'Amiri',serif}
@@ -1692,7 +1703,7 @@ function loop(t){
  updateAttack(t/1000);updateCannons(t/1000);updatePeace(t/1000);swingKings(t/1000);
  if(inside&&PAL.on)updatePalace(t/1000);
  if(inside)for(const q of inPeople){q.head.rotation.y=Math.sin(t/1000*.6+q.ph)*.5}
- updateSky();
+ updateSky();if(window.__coin)window.__coin.position.y=1.05+Math.abs(Math.sin(t/260))*.5;
  renderer.render(inside?inScene:scene,camera);
  const W=innerWidth,H=innerHeight;
  for(const h of houses){if(!h.vis)continue;
