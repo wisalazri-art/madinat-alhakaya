@@ -102,6 +102,8 @@ names=names.map(s=>s.trim()).filter(Boolean);
 try{if(!localStorage.getItem('hakaya-added-v23')){NEW_NAMES.forEach(n=>{if(!names.includes(n))names.push(n)});localStorage.setItem('hakaya-names-v7',names.join('\n'));localStorage.setItem('hakaya-added-v23','1')}}catch(e){NEW_NAMES.forEach(n=>{if(!names.includes(n))names.push(n)})}
 {const RI=names.indexOf('مطعم قدوري');if(RI!==25){if(RI>=0)names.splice(RI,1);if(names.length>25)names.splice(25,0,'مطعم قدوري')}}
 names=names.slice(0,100);
+// بيوت بمكان محدد (طلبات «جنب فلان»): هيثم مقابل دار أيوب وجيجو عبر الشارع
+{const FIXED={'هيثم':76};for(const[n,i]of Object.entries(FIXED)){const k=names.indexOf(n);if(k>=0&&k!==i)names.splice(k,1);if(names.length<=i)names[i]=n;else if(names[i]!==n)names.splice(i,0,n)}names=names.slice(0,100)}
 $('names').value=names.join('\n');
 $('dist').innerHTML=DISTRICTS.map((d,i)=>`<span><s style="background:${d.color}"></s>${d.name} ${AR(i*25+1)}–${AR(i*25+25)}</span>`).join('');
 
@@ -1085,7 +1087,7 @@ function refresh(){
   h.el.firstChild.textContent=n?'دار '+n:AR(h.i+1);
   h.el.lastChild.textContent=n?DISTRICTS[h.d].job+' · '+AR(h.i+1):'';
   h.vis=!!(n||showNums);if(h.i===25)h.vis=false;h.el.style.display=h.vis?'block':'none';});
- $('count').textContent=AR(names.length)+' من ١٠٠ بيت محجوز';
+ $('count').textContent=AR(names.filter(Boolean).length)+' من ١٠٠ بيت محجوز';
 }
 applyTime();
 
@@ -1460,7 +1462,7 @@ renderer.domElement.addEventListener('pointerup',e=>{
 
 
 // ================= وضع اللعب: ادخل بشخصيتك =================
-const USERS={'95ql':['الوليد','صاحب المدينة 👑'],'ayoub.ba16':['أيوب','صاحب دكان السلاح ⚔️'],'jijou':['jijou','صاحب دكان السلاح ⚔️'],'moh_2008_amed':['محمد فلوس','أمين بيت المال 💰','محمد فلوس'],'bsngse':['حسين وعباس','جندي في حُماة الحكايا ⚔️','حسين'],'ako__10f':['حسين وعباس','جندي في حُماة الحكايا ⚔️','عباس'],
+const USERS={'95ql':['الوليد','صاحب المدينة 👑'],'ayoub.ba16':['أيوب','صاحب دكان السلاح ⚔️'],'jijou':['jijou','صاحب دكان السلاح ⚔️'],'haythem_41_':['هيثم','جار أيوب وجيجو 🏠'],'moh_2008_amed':['محمد فلوس','أمين بيت المال 💰','محمد فلوس'],'bsngse':['حسين وعباس','جندي في حُماة الحكايا ⚔️','حسين'],'ako__10f':['حسين وعباس','جندي في حُماة الحكايا ⚔️','عباس'],
  'abw24085':['أحمد'],'med_abderrahman.314':['عبدالرحمن'],'koussay_bsf':['قصي'],'57691l':['شعيل'],'abdulqader_bek':['قدوري','صاحب مطعم قدوري 🍽️'],'nhwdgzh':['عمار'],'hamamm_sha_1':['الشهم','إمام الجامع الكبير 🕌','همام'],
  'a________bh511':['إبراهيم'],'_10_mustafath_9_9':['_10_mustafath_9_9'],'_2465885642':['خطاب','قائد المدفعية 💣'],'ne___el0':['نضال','جندي في حُماة الحكايا ⚔️'],'abdelalim12027':['عبدالعليم','قائد حُماة الحكايا 👑'],
  '5t_r39a__':['علي','جندي في حُماة الحكايا ⚔️'],'alligator.92267767':['فهد','جندي في حُماة الحكايا ⚔️'],'husi_351':['husi_351','جندي في حُماة الحكايا ⚔️'],'rmhlyllwsh':['rmhlyllwsh','جندي في حُماة الحكايا ⚔️'],
