@@ -620,6 +620,27 @@ SHOPS.forEach(sh=>{box(2.4,.7,.12,mat.plaque,sh.x,3.25,sh.z+.75);box(2.2,.5,.14,
  for(let k=0;k<3;k++){const b=new THREE.Mesh(new THREE.CylinderGeometry(.16,.12,.12,12),M(0xe9dfc9));b.position.set(x-.6+k*.32,.86,z-.1);scene.add(b);const f=new THREE.Mesh(new THREE.SphereGeometry(.12,10,6,0,Math.PI*2,0,Math.PI/2),M(0x7a4a22));f.position.set(x-.6+k*.32,.9,z-.1);scene.add(f)}
  const sm=new THREE.SphereGeometry(.28,8,6);for(let k=0;k<5;k++){const m=new THREE.MeshStandardMaterial({color:0xf2efe8,transparent:true,opacity:.45,depthWrite:false});const o=new THREE.Mesh(sm,m);scene.add(o);(window.__foul=window.__foul||[]).push({o,x:x+.5,z:z+.05,y0:1.8,ph:k/5})}
  const el=document.createElement('div');el.className='lb';el.innerHTML='<b>فول أبو أيوب 🫘</b><i>فطور السوق الساخن</i>';document.getElementById('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(x,3.9,z)})}
+// ===== دكان السلاح: jijou وأيوب (سيوف ورماح ودروع) =====
+{const x=-34,z=-2.75;const steel=M(0xd5d8dd,{metalness:.9,roughness:.2}),gold=M(0xd4a640,{metalness:.8,roughness:.3}),wood=M(0x5a3a22),lea=M(0x6b3a1e);
+ // رف السلاح خلف البسطة
+ box(2.8,.12,.14,wood,x,2.45,z-.55);box(2.8,.12,.14,wood,x,.6,z-.55);box(.12,2.1,.14,wood,x-1.35,1.5,z-.55);box(.12,2.1,.14,wood,x+1.35,1.5,z-.55);
+ for(let k=0;k<4;k++){const sx=x-.9+k*.6;// سيف واقف
+  box(.07,1.15,.02,steel,sx,1.55,z-.48);box(.36,.06,.06,gold,sx,.98,z-.48);box(.06,.26,.06,lea,sx,.82,z-.48);const pm=new THREE.Mesh(new THREE.SphereGeometry(.05,8,6),gold);pm.position.set(sx,.68,z-.48);scene.add(pm)}
+ // رماح متكئة
+ for(let k=0;k<3;k++){const sp=new THREE.Group();const sh=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,3.2,6),wood);sh.position.y=1.6;sp.add(sh);const tip=new THREE.Mesh(new THREE.ConeGeometry(.08,.38,6),steel);tip.position.y=3.35;sp.add(tip);
+  sp.position.set(x+1.6+k*.18,0,z-.4+k*.12);sp.rotation.z=-.12-k*.04;sp.traverse(o=>o.castShadow=true);scene.add(sp)}
+ // دروع على البسطة
+ [[-.75,0xa8432e],[0,0x1f3a6b],[.75,0x1f5c3a]].forEach(([dx,c])=>{const sd=new THREE.Mesh(new THREE.CylinderGeometry(.32,.32,.06,18),M(c,{roughness:.5}));sd.rotation.x=Math.PI/2-.35;sd.position.set(x+dx,1.12,z+.05);sd.castShadow=true;scene.add(sd);
+  const bo=new THREE.Mesh(new THREE.SphereGeometry(.08,10,8),gold);bo.position.set(x+dx,1.14,z+.1);scene.add(bo)});
+ // السندان والمطرقة والشرر
+ const anv=new THREE.Group();const ab=new THREE.Mesh(new THREE.BoxGeometry(.5,.35,.3),M(0x2b2b2e,{metalness:.7}));ab.position.y=.75;anv.add(ab);const at=new THREE.Mesh(new THREE.BoxGeometry(.75,.14,.32),M(0x3a3a3e,{metalness:.7}));at.position.y=.98;anv.add(at);
+ const ast=new THREE.Mesh(new THREE.CylinderGeometry(.22,.28,.6,10),wood);ast.position.y=.3;anv.add(ast);anv.position.set(x-2.1,0,z+.9);anv.traverse(o=>o.castShadow=true);scene.add(anv);
+ const hot=new THREE.Mesh(new THREE.BoxGeometry(.5,.04,.08),new THREE.MeshStandardMaterial({color:0xff9a3a,emissive:0xff5a00,emissiveIntensity:2}));hot.position.set(x-2.1,1.07,z+.9);scene.add(hot);
+ const spk=[];for(let k=0;k<8;k++){const m=new THREE.Mesh(new THREE.SphereGeometry(.035,5,4),new THREE.MeshBasicMaterial({color:0xffd060}));m.visible=false;scene.add(m);spk.push(m)}
+ const smith=makeChar(0x3a2a20);smith.g.visible=true;smith.g.position.set(x-2.1,0,z+1.65);smith.g.rotation.y=Math.PI;smith.g.scale.setScalar(1.15);
+ const keep=makeChar(0x1f3a6b);keep.g.visible=true;keep.g.position.set(x+.2,0,z-1.25);keep.arms[0].rotation.x=-.9;
+ window.__forge={arm:smith.arms[1],spk,x:x-2.1,y:1.1,z:z+.9,last:0};
+ const el=document.createElement('div');el.className='lb';el.innerHTML='<b>⚔️ دكان السلاح</b><i>جيجو وأيوب · سيوف ورماح ودروع</i>';document.getElementById('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(x,4.1,z)})}
 // قافلة الجمال
 amb.camels=[];
 {
@@ -1439,7 +1460,7 @@ renderer.domElement.addEventListener('pointerup',e=>{
 
 
 // ================= وضع اللعب: ادخل بشخصيتك =================
-const USERS={'95ql':['الوليد','صاحب المدينة 👑'],'ayoub.ba16':['أيوب'],'jijou':['jijou'],'moh_2008_amed':['محمد فلوس','أمين بيت المال 💰','محمد فلوس'],'bsngse':['حسين وعباس','جندي في حُماة الحكايا ⚔️','حسين'],'ako__10f':['حسين وعباس','جندي في حُماة الحكايا ⚔️','عباس'],
+const USERS={'95ql':['الوليد','صاحب المدينة 👑'],'ayoub.ba16':['أيوب','صاحب دكان السلاح ⚔️'],'jijou':['jijou','صاحب دكان السلاح ⚔️'],'moh_2008_amed':['محمد فلوس','أمين بيت المال 💰','محمد فلوس'],'bsngse':['حسين وعباس','جندي في حُماة الحكايا ⚔️','حسين'],'ako__10f':['حسين وعباس','جندي في حُماة الحكايا ⚔️','عباس'],
  'abw24085':['أحمد'],'med_abderrahman.314':['عبدالرحمن'],'koussay_bsf':['قصي'],'57691l':['شعيل'],'abdulqader_bek':['قدوري','صاحب مطعم قدوري 🍽️'],'nhwdgzh':['عمار'],'hamamm_sha_1':['الشهم','إمام الجامع الكبير 🕌','همام'],
  'a________bh511':['إبراهيم'],'_10_mustafath_9_9':['_10_mustafath_9_9'],'_2465885642':['خطاب','قائد المدفعية 💣'],'ne___el0':['نضال','جندي في حُماة الحكايا ⚔️'],'abdelalim12027':['عبدالعليم','قائد حُماة الحكايا 👑'],
  '5t_r39a__':['علي','جندي في حُماة الحكايا ⚔️'],'alligator.92267767':['فهد','جندي في حُماة الحكايا ⚔️'],'husi_351':['husi_351','جندي في حُماة الحكايا ⚔️'],'rmhlyllwsh':['rmhlyllwsh','جندي في حُماة الحكايا ⚔️'],
@@ -1458,6 +1479,7 @@ const NPCS=[
  {id:'muhtasib',name:'المحتسب بلال ⚖️',pos:[-16.9,0,-5],user:'bileljl2008',lines:n=>[`أهلًا يا ${n}، أنا محتسب السوق ⚖️`,'فتّشت السوق كامل… وحطّيت ختم «مُفتَّش» على المحلات النظيفة ✅','أراقب الموازين والأسعار… ما أحد يغش في سوق الحكايا!','جرّبت فول أبو أيوب؟ أنا فتّشته… طعمه ممتاز 😋']},
  {id:'butcher',name:'الجزار ياسر 🥩',pos:[-24.2,0,-2.6],user:'yasser__ben4',lines:n=>[`حيّاك يا ${n}! 🔪`,'عندي لحم غزال طازج… صيد اليوم 🦌','وقدوري ياخذ لحمه مني، قل له يطبخ لك 🍽️']},
  {id:'foul',name:'فول أبو أيوب 🫘',pos:[-29.5,0,1.6],user:'ahmad6642691',lines:n=>[`صباح الخير يا ${n}! ☀️`,'فول حار من القدر… بالكمّون والليمون 🫘','الفطور على حسابي اليوم 😄']},
+ {id:'armory',name:'دكان السلاح ⚔️ جيجو وأيوب',pos:[-34,0,-.6],user:'jijou',lines:n=>[`حيّاك يا ${n}! تبي سيف ولا رمح؟ ⚔️`,'كل سلاح هنا مطروق على السندان قدّامك 🔨🔥','سيوف طليطلة الأندلسية كانت مشهورة في العالم كله بقوّة فولاذها… وسيوفنا على نفس الطريقة 😎']},
  {id:'treasurer',name:'أمين بيت المال محمد فلوس 💰',pos:[0,0,0],user:'moh_2008_amed',lines:n=>[`أهلًا يا ${n}! عدّ معي… ألف، ألفين… 💰`,'أنا أمين بيت المال، خزنة الحكايا بيدي ومفتاحها عندي 🗝️','في الأندلس كان الدينار القرطبي الذهبي يتعامل فيه التجّار من بغداد لين أوروبا ✨']},
  {id:'resto',name:'مطعم قدوري 🍽️',pos:[-6,0,-11],enter:'restaurant',user:'abdulqader_bek',lines:n=>[`تفضّل يا ${n}، المطعم مفتوح 🍽️`,'أول مطعم في مدينة الحكايا!','ادخل واختار طاولتك 😋']}];
 ;{const ti=names.indexOf('محمد فلوس');const tn=NPCS.find(n=>n.id==='treasurer');if(ti>=0&&houses[ti]){const d=houseDoor(ti);const hp=houses[ti].grp.position;const sx=(d.x-hp.x),sz=(d.z-hp.z),L=Math.hypot(sx,sz)||1;tn.pos=[d.x+sz/L*1.6,0,d.z-sx/L*1.6];
@@ -1703,7 +1725,9 @@ function loop(t){
  updateAttack(t/1000);updateCannons(t/1000);updatePeace(t/1000);swingKings(t/1000);
  if(inside&&PAL.on)updatePalace(t/1000);
  if(inside)for(const q of inPeople){q.head.rotation.y=Math.sin(t/1000*.6+q.ph)*.5}
- updateSky();if(window.__coin)window.__coin.position.y=1.05+Math.abs(Math.sin(t/260))*.5;
+ updateSky();if(window.__forge){const F=window.__forge,ph=(t/1000*2.2)%1;F.arm.rotation.x=-1.6+Math.sin(ph*Math.PI*2)*.9;if(ph<.08&&t-F.last>300){F.last=t;F.spk.forEach(m=>{m.visible=true;m.userData={t0:t,vx:(Math.random()-.5)*2,vy:1.5+Math.random()*1.5,vz:(Math.random()-.5)*2}})}
+ F.spk.forEach(m=>{if(!m.visible)return;const k=(t-m.userData.t0)/1000;if(k>.5){m.visible=false;return}m.position.set(F.x+m.userData.vx*k,F.y+m.userData.vy*k-4.9*k*k,F.z+m.userData.vz*k)})}
+ if(window.__coin)window.__coin.position.y=1.05+Math.abs(Math.sin(t/260))*.5;
  renderer.render(inside?inScene:scene,camera);
  const W=innerWidth,H=innerHeight;
  for(const h of houses){if(!h.vis)continue;
