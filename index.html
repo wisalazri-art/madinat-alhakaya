@@ -99,7 +99,8 @@ const $=id=>document.getElementById(id);
 let names=[];
 try{const s=localStorage.getItem('hakaya-names-v7');names=(s!==null?s:SAMPLE).split('\n')}catch(e){names=SAMPLE.split('\n')}
 names=names.map(s=>s.trim()).filter(Boolean);
-try{if(!localStorage.getItem('hakaya-added-v23')){NEW_NAMES.forEach(n=>{if(!names.includes(n))names.push(n)});localStorage.setItem('hakaya-names-v7',names.join('\n'));localStorage.setItem('hakaya-added-v17','1')}}catch(e){NEW_NAMES.forEach(n=>{if(!names.includes(n))names.push(n)})}
+try{if(!localStorage.getItem('hakaya-added-v23')){NEW_NAMES.forEach(n=>{if(!names.includes(n))names.push(n)});localStorage.setItem('hakaya-names-v7',names.join('\n'));localStorage.setItem('hakaya-added-v23','1')}}catch(e){NEW_NAMES.forEach(n=>{if(!names.includes(n))names.push(n)})}
+{const RI=names.indexOf('مطعم قدوري');if(RI!==25){if(RI>=0)names.splice(RI,1);if(names.length>25)names.splice(25,0,'مطعم قدوري')}}
 names=names.slice(0,100);
 $('names').value=names.join('\n');
 $('dist').innerHTML=DISTRICTS.map((d,i)=>`<span><s style="background:${d.color}"></s>${d.name} ${AR(i*25+1)}–${AR(i*25+25)}</span>`).join('');
@@ -1061,7 +1062,7 @@ function refresh(){
   h.el.classList.toggle('num',!n);
   h.el.firstChild.textContent=n?'دار '+n:AR(h.i+1);
   h.el.lastChild.textContent=n?DISTRICTS[h.d].job+' · '+AR(h.i+1):'';
-  h.vis=!!(n||showNums);h.el.style.display=h.vis?'block':'none';});
+  h.vis=!!(n||showNums);if(h.i===25)h.vis=false;h.el.style.display=h.vis?'block':'none';});
  $('count').textContent=AR(names.length)+' من ١٠٠ بيت محجوز';
 }
 applyTime();
@@ -1419,7 +1420,7 @@ $('bAttack').onclick=()=>{if(atk.on)return;$('bAttack').disabled=true;startAttac
 const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();let down=null;
 renderer.domElement.addEventListener('pointerdown',e=>down=[e.clientX,e.clientY]);
 renderer.domElement.addEventListener('pointerup',e=>{
- if(inside||!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>6)return;
+ if(game.on||inside||!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>6)return;
  const r=renderer.domElement.getBoundingClientRect();ptr.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
  ray.setFromCamera(ptr,camera);const hit=ray.intersectObjects(clickables)[0];
  if(!hit){$('card').style.display='none';return}
@@ -1435,6 +1436,128 @@ renderer.domElement.addEventListener('pointerup',e=>{
  flyTo(pos.clone().add(dir.multiplyScalar(26)).setY(Math.max(14,pos.y+14)),pos.clone().setY(2));
 });
 
+
+// ================= وضع اللعب: ادخل بشخصيتك =================
+const USERS={'95ql':['الوليد','صاحب المدينة 👑'],'ayoub.ba16':['أيوب'],'jijou':['jijou'],'moh_2008_amed':['محمد فلوس'],'bsngse':['حسين وعباس','جندي في حُماة الحكايا ⚔️','حسين'],'ako__10f':['حسين وعباس','جندي في حُماة الحكايا ⚔️','عباس'],
+ 'abw24085':['أحمد'],'med_abderrahman.314':['عبدالرحمن'],'koussay_bsf':['قصي'],'57691l':['شعيل'],'abdulqader_bek':['قدوري','صاحب مطعم قدوري 🍽️'],'nhwdgzh':['عمار'],'hamamm_sha_1':['الشهم','إمام الجامع الكبير 🕌','همام'],
+ 'a________bh511':['إبراهيم'],'_10_mustafath_9_9':['_10_mustafath_9_9'],'_2465885642':['خطاب','قائد المدفعية 💣'],'ne___el0':['نضال','جندي في حُماة الحكايا ⚔️'],'abdelalim12027':['عبدالعليم','قائد حُماة الحكايا 👑'],
+ '5t_r39a__':['علي','جندي في حُماة الحكايا ⚔️'],'alligator.92267767':['فهد','جندي في حُماة الحكايا ⚔️'],'husi_351':['husi_351','جندي في حُماة الحكايا ⚔️'],'rmhlyllwsh':['rmhlyllwsh','جندي في حُماة الحكايا ⚔️'],
+ 'mohamad_al_sbeeh':['محمد','جندي في حُماة الحكايا ⚔️'],'sbhyb.ry':['صبحي','جندي في حُماة الحكايا ⚔️'],'hn_4ll':['حسين'],'cr7_the_best97':['cr7_the_best97','جندي في حُماة الحكايا ⚔️'],'bileljl2008':['بلال','المحتسب ⚖️'],
+ 'mjhwllhwy.x':['mjhwllhwy.x'],'abdouu_tr_03':['عبد القادر','قنّاص المدينة 🎯'],'ryn__zvr':['ريان','قائد جيش فولكانور ⚔️'],'_ah1md4':['دار أحمد','','أحمد'],
+ 'ilyaaaa_33':[null,'عمدة مدينة الحكايا 🎖️','العمدة',[13,0,48.6]],'ahmed_o15_1':[null,'إمبراطور فولكانور 🌋','الإمبراطور',[76,2.4,-18]],'yasser__ben4':[null,'جزار السوق 🥩','ياسر',[-22,0,-1]],'ahmad6642691':[null,'صاحب فول أبو أيوب 🫘','أبو أيوب',[-28,0,.5]]};
+const NPCS=[
+ {id:'king',name:'ملك الحكايا 👑',pos:[0,0,-81],enter:'palace',lines:n=>[`أهلًا بك يا ${n} في مدينتي!`,'قصري مفتوح لأهل الحكايا… ادخل وشوف قاعة العرش 👑','وإذا شفت غريب يتكلم مع العدو… بلّغ الحرس، فيه خائن بيننا 🕵️']},
+ {id:'imam',name:'الإمام همام 🕌',pos:[8.4,0,-3],enter:'mosque',user:'hamamm_sha_1',lines:n=>[`السلام عليكم يا ${n} 🤍`,'حيّاك الله في الجامع الكبير، قلب مدينة الحكايا.','ادخل وشوف المحراب… في قرطبة كان الجامع الكبير من عجائب الدنيا ✨']},
+ {id:'mayor',name:'العمدة 🎖️',pos:[10.4,0,48.6],user:'ilyaaaa_33',lines:n=>[`هلا والله يا ${n}! أنا عمدة المدينة 🎖️`,'أي طلب للمدينة… اكتبه في تعليقات @8istory وأنا أوصله للملك.','وقريب بنبني حي جديد… فكّر وش نسمّيه 🏘️']},
+ {id:'emperor',name:'الإمبراطور 🌋',pos:[83,4.6,-18],user:'ahmed_o15_1',lines:n=>[`من يقترب من عرش فولكانور؟ آه… أنت ${n} 👑`,'إمبراطوريتي حليفة للحكايا، وجيشي ينزل من التلّ إذا جا الخطر 🔥','اركع… أمزح 😄 حيّاك الله']},
+ {id:'general',name:'الجنرال ريان ⚔️',pos:[60,0,-16.5],user:'ryn__zvr',lines:n=>[`قف! من هناك؟… آه ${n}، تفضّل 🐎`,'أنا قائد جيش فولكانور.','تبغى تصير فارس عندي؟ اكتب «أبي أصير فارس فولكانور» في التعليقات 🛡️']},
+ {id:'commander',name:'القائد عبدالعليم 👑',pos:[-74,0,-19],user:'abdelalim12027',lines:n=>[`انتباه! 🫡 أهلًا يا ${n}`,'هذا معسكر حُماة الحكايا… ١٣ جندي وقنّاص وقائد مدفعية.','تبغى تنضم؟ اكتب «أنا جندي» في التعليقات ⚔️']},
+ {id:'sniper',name:'القنّاص عبد القادر 🎯',pos:[-70,0,-32.5],user:'abdouu_tr_03',lines:n=>[`(من فوق البرج) شششش… لا ترفع صوتك يا ${n} 🎯`,'أراقب الأفق… لو شفت العدو أطلق الإنذار.','قوسي ما يخطي 🏹']},
+ {id:'gunner',name:'قائد المدفعية خطاب 💣',pos:[0,0,52.5],user:'_2465885642',lines:n=>[`(من فوق البوابة) هلا يا ${n}! 💣`,'المدافع جاهزة… أي عدو يقرب من القنطرة نرحّب فيه بطريقتنا 😄','لا تقرب من البارود 🔥']},
+ {id:'muhtasib',name:'المحتسب بلال ⚖️',pos:[-16.9,0,-5],user:'bileljl2008',lines:n=>[`أهلًا يا ${n}، أنا محتسب السوق ⚖️`,'أراقب الموازين والأسعار… ما أحد يغش في سوق الحكايا!','جرّبت فول أبو أيوب؟ أنا فتّشته… طعمه ممتاز 😋']},
+ {id:'butcher',name:'الجزار ياسر 🥩',pos:[-24.2,0,-2.6],user:'yasser__ben4',lines:n=>[`حيّاك يا ${n}! 🔪`,'عندي لحم غزال طازج… صيد اليوم 🦌','وقدوري ياخذ لحمه مني، قل له يطبخ لك 🍽️']},
+ {id:'foul',name:'فول أبو أيوب 🫘',pos:[-29.5,0,1.6],user:'ahmad6642691',lines:n=>[`صباح الخير يا ${n}! ☀️`,'فول حار من القدر… بالكمّون والليمون 🫘','الفطور على حسابي اليوم 😄']},
+ {id:'resto',name:'مطعم قدوري 🍽️',pos:[-6,0,-11],enter:'restaurant',user:'abdulqader_bek',lines:n=>[`تفضّل يا ${n}، المطعم مفتوح 🍽️`,'أول مطعم في مدينة الحكايا!','ادخل واختار طاولتك 😋']}];
+const game={on:false,user:null,p:new THREE.Vector3(),vel:0,yaw:0,keys:{},jx:0,jy:0,obs:[],near:null,last:0,talk:null,step:0};
+{const st=document.createElement('style');st.textContent=`
+#gStart{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,rgba(30,40,60,.75),rgba(8,10,16,.94));font-family:'Amiri',serif}
+#gStart .box{width:min(420px,90vw);text-align:center;color:#F3EAD8}
+#gStart h1{font-family:'Aref Ruqaa',serif;font-size:56px;color:#E6C98A;margin:0 0 6px}
+#gStart p{margin:0 0 18px;font-size:18px;opacity:.85}
+#gStart input{width:100%;box-sizing:border-box;font-size:20px;padding:14px 16px;border-radius:14px;border:2px solid #C9A45C;background:#0e1a2b;color:#fff;text-align:center;direction:ltr}
+#gStart button{width:100%;margin-top:12px;font-size:20px;padding:14px;border-radius:14px;border:0;cursor:pointer}
+#gGo{background:#C9A45C;color:#1a1208;font-weight:700}#gView{background:rgba(255,255,255,.1);color:#F3EAD8}
+#gMsg{min-height:24px;margin-top:10px;font-size:16px;color:#ffd36a}
+body.game header,body.game #panel,body.game #hint,body.game #card{display:none!important}
+#gHud{display:none}body.game:not(.inside) #gHud{display:block}
+#joy{position:fixed;left:24px;bottom:28px;width:128px;height:128px;border-radius:50%;background:rgba(14,26,43,.45);border:2px solid rgba(201,164,92,.7);touch-action:none;z-index:20}
+#knob{position:absolute;left:39px;top:39px;width:50px;height:50px;border-radius:50%;background:rgba(230,201,138,.85);pointer-events:none}
+#gAct{position:fixed;right:22px;bottom:40px;display:flex;flex-direction:column;gap:10px;z-index:20}
+#gAct button{font-size:18px;padding:12px 18px;border-radius:999px;border:2px solid #C9A45C;background:rgba(14,26,43,.85);color:#F3EAD8;font-family:'Amiri',serif;min-width:150px}
+#gTop{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;z-index:20;pointer-events:none}
+#gTop>*{pointer-events:auto}#gWho{background:rgba(14,26,43,.8);border:1px solid #C9A45C;border-radius:12px;padding:6px 12px;color:#E6C98A;font-size:16px}
+#gMap{font-size:15px;padding:8px 12px;border-radius:10px;border:1px solid #C9A45C;background:rgba(14,26,43,.8);color:#F3EAD8}
+#gTalk{position:fixed;left:12px;right:12px;bottom:190px;margin:auto;max-width:560px;background:rgba(14,26,43,.92);border:2px solid #C9A45C;border-radius:16px;padding:14px 18px;color:#F3EAD8;font-size:19px;z-index:25;display:none;font-family:'Amiri',serif}
+#gTalk b{display:block;color:#E6C98A;margin-bottom:4px}#gTalk small{display:block;opacity:.6;font-size:13px;margin-top:6px}
+#gToast{position:fixed;top:64px;left:0;right:0;text-align:center;z-index:25;pointer-events:none;font-family:'Aref Ruqaa',serif;font-size:28px;color:#ffd36a;text-shadow:0 2px 10px #000;opacity:0;transition:opacity .6s}
+.lb.me b{color:#ffd36a}`;document.head.appendChild(st);
+ const d=document.createElement('div');d.innerHTML=`<div id="gStart"><div class="box"><h1>مدينة الحكايا</h1><p>ادخل المدينة بشخصيتك… وامشِ لين بيتك 🏰</p>
+ <label for="gUser" style="display:block;margin-bottom:6px">يوزرك في إنستقرام</label><input id="gUser" placeholder="@username" autocomplete="off" autocapitalize="off">
+ <button id="gGo">ادخل المدينة 🎮</button><button id="gView">تفرّج على الخريطة 👀</button><div id="gMsg"></div></div></div>
+ <div id="gHud"><div id="gTop"><span id="gWho"></span><button id="gMap">🗺️ الخريطة</button></div><div id="joy"><div id="knob"></div></div><div id="gAct"><button id="gTalkB" style="display:none"></button><button id="gEnterB" style="display:none"></button></div></div>
+ <div id="gTalk" role="dialog" aria-live="polite"><b id="gTalkN"></b><span id="gTalkT"></span><small>اضغط للمتابعة</small></div><div id="gToast"></div>`;document.body.appendChild(d)}
+try{const u=localStorage.getItem('hakaya-user');if(u)$('gUser').value=u}catch(e){}
+const toast=(t,ms=3200)=>{const e=$('gToast');e.textContent=t;e.style.opacity=1;clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.opacity=0,ms)};
+// الشخصية
+const hero=(()=>{const g=new THREE.Group();const a=(geo,m,x,y,z,par=g)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=true;par.add(o);return o};
+ const robe=M(0xf6f2ea),bisht=M(0x6b4a2e),skin=M(0xc99a6e);
+ a(new THREE.CylinderGeometry(.3,.44,1.35,14),robe,0,.68,0);const bm=new THREE.MeshStandardMaterial({color:0x6b4a2e,side:THREE.DoubleSide,roughness:.7});const b=new THREE.Mesh(new THREE.CylinderGeometry(.36,.5,1.25,16,1,true,Math.PI*.15,Math.PI*1.7),bm);b.position.y=.72;g.add(b);
+ const head=a(new THREE.SphereGeometry(.22,14,12),skin,0,1.62,0);a(new THREE.SphereGeometry(.14,10,8),M(0x2a1c10),0,1.52,.1).scale.set(1,1.1,.7);
+ a(new THREE.SphereGeometry(.26,14,10,0,Math.PI*2,0,Math.PI*.6),robe,0,1.68,-.01);a(new THREE.BoxGeometry(.44,.5,.04),robe,0,1.45,-.18);a(new THREE.TorusGeometry(.22,.035,6,18),M(0x111111),0,1.78,0).rotation.x=Math.PI/2;
+ const arms=[-1,1].map(sd=>{const p=new THREE.Group();p.position.set(sd*.33,1.3,0);g.add(p);a(new THREE.CylinderGeometry(.07,.06,.62,8),robe,0,-.3,0,p);a(new THREE.SphereGeometry(.06,8,6),skin,0,-.62,0,p);return p});
+ g.visible=false;scene.add(g);return{g,arms,bm}})();
+const meTag=document.createElement('div');meTag.className='lb me';meTag.innerHTML='<b></b><i></i>';$('labels').appendChild(meTag);const meTagPos=new THREE.Vector3();
+function houseDoor(i){const h=houses[i];const p=h.grp.position,pr=h.body.geometry.parameters;const faceX=Math.abs(p.x)<Math.abs(p.z),dir=faceX?-Math.sign(p.x):-Math.sign(p.z);
+ return faceX?new THREE.Vector3(p.x+dir*(pr.width/2+1.4),0,p.z):new THREE.Vector3(p.x,0,p.z+dir*(pr.depth/2+1.4))}
+function groundY(x,z){const d=Math.hypot(x-84,z+18);if(d<5.6)return 4.6;if(d<7.6)return 2.4+(7.6-d)/2*2.2;if(d<16)return 2.4;if(d<19)return 2.4*(19-d)/3;return 0}
+function blocked(x,z){const r=Math.hypot(x,z);if(r>55.4&&r<60&&!(Math.abs(x)<3.4&&z>0))return true;if(z>74.5&&z<97.5&&Math.abs(x)>3.2)return true;if(r>175)return true;
+ for(const b of game.obs)if(x>b[0]&&x<b[1]&&z>b[2]&&z<b[3])return true;return false}
+function startGame(){let u=$('gUser').value.trim().replace(/^@/,'').toLowerCase();if(!u){$('gMsg').textContent='اكتب يوزرك أول 🙂';return}
+ try{localStorage.setItem('hakaya-user',u)}catch(e){}
+ const info=USERS[u];let spawn,disp,title='زائر للمدينة',hi;
+ if(info){disp=info[2]||info[0]||u;title=info[1]||'من سكّان الحكايا 🏠';
+  const hi2=info[0]?names.indexOf(info[0]):-1;
+  if(hi2>=0&&hi2!==25){spawn=houseDoor(hi2);hi=`أهلًا يا ${disp}! هذا بيتك «دار ${info[0]}» 🏠`}else if(info[3]){spawn=new THREE.Vector3(info[3][0],0,info[3][2]);hi=`أهلًا يا ${disp}… ${title}`}}
+ if(!spawn){disp=u;spawn=new THREE.Vector3(0,0,66);hi='أهلًا بك يا زائر! اكتب اسمك في تعليقات @8istory ونبني لك بيت 🏠'}
+ game.user={u,disp,title};game.obs=[];
+ clickables.forEach(o=>{if(!o.visible||(o.parent&&!o.parent.visible))return;const bb=new THREE.Box3().setFromObject(o);if(!isFinite(bb.min.x))return;game.obs.push([bb.min.x-.35,bb.max.x+.35,bb.min.z-.35,bb.max.z+.35])});
+ game.p.copy(spawn);game.p.y=groundY(spawn.x,spawn.z);hero.g.position.copy(game.p);hero.g.visible=true;
+ hero.bm.color.set(info?(info[1]&&info[1].includes('جندي')?0x4a1440:info[1]&&info[1].includes('إمام')?0x2a2a30:0x6b4a2e):0x3b4a6b);
+ meTag.firstChild.textContent=disp;meTag.lastChild.textContent=title;
+ $('gWho').textContent=`${disp} · ${title}`;
+ game.on=true;document.body.classList.add('game');$('gStart').style.display='none';$('card').style.display='none';fly=null;controls.autoRotate=false;
+ controls.minDistance=4;controls.maxDistance=22;controls.maxPolarAngle=Math.PI*.46;
+ const tg=game.p.clone().add(new THREE.Vector3(0,1.6,0));const back=new THREE.Vector3(-spawn.x,0,-spawn.z).normalize();if(!isFinite(back.x))back.set(0,0,1);
+ controls.target.copy(tg);camera.position.copy(tg).add(new THREE.Vector3(-back.x*9,4.5,-back.z*9));controls.update();
+ setTimeout(()=>toast(hi,4200),300)}
+function stopGame(){game.on=false;document.body.classList.remove('game');hero.g.visible=false;meTag.style.opacity=0;$('gTalk').style.display='none';
+ controls.minDistance=14;controls.maxDistance=420;controls.maxPolarAngle=Math.PI*.48;$('gStart').style.display='flex'}
+$('gGo').onclick=startGame;$('gUser').addEventListener('keydown',e=>{if(e.key==='Enter')startGame()});
+$('gView').onclick=()=>{$('gStart').style.display='none'};
+$('gMap').onclick=stopGame;
+// الجويستك
+{const j=$('joy'),k=$('knob');let id=null;const R=50;const set=(e)=>{const r=j.getBoundingClientRect();let dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);const l=Math.hypot(dx,dy);if(l>R){dx*=R/l;dy*=R/l}k.style.transform=`translate(${dx}px,${dy}px)`;game.jx=dx/R;game.jy=dy/R};
+ j.addEventListener('pointerdown',e=>{id=e.pointerId;j.setPointerCapture(id);set(e);e.preventDefault()});j.addEventListener('pointermove',e=>{if(e.pointerId===id)set(e)});
+ const end=e=>{if(e.pointerId!==id)return;id=null;k.style.transform='';game.jx=game.jy=0};j.addEventListener('pointerup',end);j.addEventListener('pointercancel',end)}
+addEventListener('keydown',e=>{if(!game.on||e.target.tagName==='INPUT')return;game.keys[e.key.toLowerCase()]=true});addEventListener('keyup',e=>{game.keys[e.key.toLowerCase()]=false});
+// الكلام والدخول
+$('gTalkB').onclick=()=>{const n=game.near;if(!n)return;const me=game.user;const own=n.user&&n.user===me.u;const L=own?[`هذا مكانك يا ${me.disp}! الناس يمرّون يسلّمون عليك 😄`,...n.lines(me.disp).slice(1)]:n.lines(me.disp);game.talk={n,L,i:0};showLine()};
+function showLine(){const t=game.talk;if(!t)return;if(t.i>=t.L.length){$('gTalk').style.display='none';game.talk=null;return}$('gTalkN').textContent=t.n.name;$('gTalkT').textContent=t.L[t.i];$('gTalk').style.display='block'}
+$('gTalk').onclick=()=>{if(game.talk){game.talk.i++;showLine()}};
+$('gEnterB').onclick=()=>{const e=game.enter;if(!e)return;$('gTalk').style.display='none';game.talk=null;selected=e.sel;enterPlace()};
+function updateGame(t){const dt=Math.min(.05,(t-(game.last||t))/1000);game.last=t;if(!game.on||inside)return;
+ const K=game.keys;let ix=game.jx+((K['d']||K['arrowright'])?1:0)-((K['a']||K['arrowleft'])?1:0),iy=game.jy+((K['s']||K['arrowdown'])?1:0)-((K['w']||K['arrowup'])?1:0);
+ const l=Math.hypot(ix,iy);if(l>1){ix/=l;iy/=l}
+ const f=controls.target.clone().sub(camera.position);f.y=0;f.normalize();const rx=-f.z,rz=f.x;
+ const mx=f.x*(-iy)+rx*ix,mz=f.z*(-iy)+rz*ix;const sp=(K['shift']?8:5.2)*Math.min(1,l);
+ const moving=sp>.2;const old=game.p.clone();
+ if(moving){const nx=game.p.x+mx*sp*dt,nz=game.p.z+mz*sp*dt;if(!blocked(nx,nz)){game.p.x=nx;game.p.z=nz}else if(!blocked(nx,game.p.z))game.p.x=nx;else if(!blocked(game.p.x,nz))game.p.z=nz;
+  const ty=Math.atan2(mx,mz);let d=ty-hero.g.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));hero.g.rotation.y+=d*Math.min(1,dt*12);game.step+=dt*sp*1.6}
+ const gy=groundY(game.p.x,game.p.z);game.p.y+=(gy-game.p.y)*Math.min(1,dt*10);
+ hero.g.position.set(game.p.x,game.p.y+(moving?Math.abs(Math.sin(game.step))*.06:0),game.p.z);
+ const sw=moving?Math.sin(game.step)*.55:0;hero.arms[0].rotation.x=sw;hero.arms[1].rotation.x=-sw;
+ const dl=game.p.clone().sub(old);camera.position.add(dl);controls.target.set(game.p.x,game.p.y+1.6,game.p.z);
+ meTagPos.set(game.p.x,game.p.y+2.5,game.p.z);
+ // أقرب شخصية أو باب
+ let best=null,bd=4.2;for(const n of NPCS){const d=Math.hypot(n.pos[0]-game.p.x,n.pos[2]-game.p.z);if(d<bd&&Math.abs((n.pos[1]||0)-game.p.y)<3){bd=d;best=n}}
+ if(best!==game.near){game.near=best;$('gTalkB').style.display=best?'block':'none';if(best)$('gTalkB').textContent='💬 كلّم '+best.name;if(!best&&game.talk){game.talk=null;$('gTalk').style.display='none'}}
+ let en=null;const md=Math.hypot(game.p.x,game.p.z);if(md<10.5&&md>7)en={sel:{mosque:true},t:'🚪 ادخل الجامع'};
+ if(Math.hypot(game.p.x,game.p.z+82)<5.5)en={sel:{palace:true},t:'🚪 ادخل القصر'};
+ if(Math.hypot(game.p.x+6,game.p.z+11)<3.2||Math.hypot(game.p.x+11,game.p.z+11)<5)en={sel:{restaurant:true},t:'🚪 ادخل المطعم'};
+ for(const h of houses){if(!h.vis||h.i===25)continue;const dp=houseDoor(h.i);if(Math.hypot(dp.x-game.p.x,dp.z-game.p.z)<2.2){const n=names[h.i];en={sel:{name:n,named:true},t:'🚪 ادخل دار '+n};break}}
+ if((en&&en.t)!==(game.enter&&game.enter.t)){game.enter=en;$('gEnterB').style.display=en?'block':'none';if(en)$('gEnterB').textContent=en.t}
+}
+
 // الحلقة
 const v=new THREE.Vector3();
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}
@@ -1442,6 +1565,7 @@ addEventListener('resize',resize);resize();
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function loop(t){
  if(fly){const k=Math.min(1,(t-fly.s)/1100),e=k<.5?2*k*k:1-((-2*k+2)**2)/2;camera.position.lerpVectors(fly.p0,fly.p,e);controls.target.lerpVectors(fly.t0,fly.t,e);if(k>=1)fly=null}
+ updateGame(t);
  controls.update();
  if(!reduce){wheel.rotation.z-=.004;updatePeople(t/1000);updateGuards(t/1000);updateHorses(t/1000);updateAmbience(t/1000);updateKing(t/1000)}
  updatePolice(t/1000);updateArmy(t/1000,!reduce);
@@ -1458,6 +1582,7 @@ function loop(t){
     h.el.style.transform=`translate(${(v.x+1)/2*W}px,${(1-v.y)/2*H}px) translate(-50%,-100%) scale(${s})`;
   h.el.style.zIndex=String(1000-Math.round(dist));
  }
+ if(game.on&&!inside){v.copy(meTagPos);const dist=camera.position.distanceTo(v);v.project(camera);if(v.z>1){meTag.style.opacity=0}else{meTag.style.opacity=1;meTag.style.transform=`translate(${(v.x+1)/2*W}px,${(1-v.y)/2*H}px) translate(-50%,-100%) scale(${Math.max(.6,Math.min(1.3,14/dist))})`;meTag.style.zIndex='2000'}}else meTag.style.opacity=0;
  for(const tg of TAGS){v.copy(tg.pos);const dist=camera.position.distanceTo(v);v.project(camera);
   if(v.z>1||dist>320){tg.el.style.opacity=0}else{const s=Math.max(.45,Math.min(1.7,70/dist));tg.el.style.opacity=1;tg.el.style.transform=`translate(${(v.x+1)/2*W}px,${(1-v.y)/2*H}px) translate(-50%,-100%) scale(${s})`;tg.el.style.zIndex=String(1000-Math.round(dist))}}
  requestAnimationFrame(loop);
