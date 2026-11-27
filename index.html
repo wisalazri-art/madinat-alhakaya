@@ -1545,7 +1545,7 @@ function buildPalace(){
  return{target:new THREE.Vector3(0,3,-8),pos:new THREE.Vector3(0,4.6,15),maxD:26,title:'قصر الملك · قاعة العرش'};
 }
 function enterPlace(){
- if(!selected)return;const r=selected.palace?buildPalace():selected.mosque?buildMosque():selected.restaurant?buildRestaurant():buildHouse(selected.name,selected.named);
+ if(!selected||selected.khan)return;const r=selected.palace?buildPalace():selected.mosque?buildMosque():selected.restaurant?buildRestaurant():buildHouse(selected.name,selected.named);
  saved={p:camera.position.clone(),t:controls.target.clone(),min:controls.minDistance,max:controls.maxDistance,pol:controls.maxPolarAngle,ar:controls.autoRotate};
  fly=null;inside=true;document.body.classList.add('inside');$('bExit').style.display='block';$('inTitle').textContent=r.title;$('inTitle').style.display='block';
  if(selected.named&&!selected.palace&&!selected.mosque&&!selected.restaurant)placeFurniture(selected.name);
@@ -1565,9 +1565,10 @@ renderer.domElement.addEventListener('pointerup',e=>{
  const r=renderer.domElement.getBoundingClientRect();ptr.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
  ray.setFromCamera(ptr,camera);const hit=ray.intersectObjects(clickables)[0];
  if(!hit){$('card').style.display='none';return}
- if(inside)return;
+ if(inside)return;$('bEnter').style.display='block';
  if(hit.object.userData.restaurant){selected={restaurant:true};$('cName').textContent='مطعم قدوري البخاري';$('cInfo').textContent='رز بخاري، مدفون، مدني، مضغوط وشواية · صاحبه قدوري';$('card').style.display='block';return}
  if(hit.object.userData.palace){selected={palace:true};$('cName').textContent='قصر الملك';$('cInfo').textContent='ادخل قاعة العرش وسلّم على الملك 👑';$('card').style.display='block';return}
+ if(hit.object.userData.khan){selected={khan:true};$('cName').textContent='خان القوافل 🐪';$('cInfo').textContent='تجارة مع قرطبة وإشبيلية وغرناطة وطليطلة · بقرار وزير الاقتصاد أحمد';$('bEnter').style.display='none';$('card').style.display='block';return}
  if(hit.object.userData.mosque){selected={mosque:true};$('cName').textContent='الجامع الكبير';$('cInfo').textContent='قلب مدينة الحكايا';$('card').style.display='block';return}
  const h=houses[hit.object.userData.i],n=names[h.i],pos=h.grp.position;selected={name:n||('بيت رقم '+AR(h.i+1)),named:!!n};
  $('cName').textContent=n?'دار '+n:'بيت رقم '+AR(h.i+1);
@@ -1600,13 +1601,14 @@ const NPCS=[
  {id:'foul',name:'فول أبو أيوب 🫘',pos:[-29.5,0,1.6],user:'ahmad6642691',lines:n=>[`صباح الخير يا ${n}! ☀️`,'فول حار من القدر… بالكمّون والليمون 🫘','الفطور على حسابي اليوم 😄']},
  {id:'armory',name:'دكان السلاح ⚔️ جيجو وأيوب',pos:[-34,0,-.6],user:'jijou',lines:n=>[`حيّاك يا ${n}! تبي سيف ولا رمح؟ ⚔️`,'كل سلاح هنا مطروق على السندان قدّامك 🔨🔥','سيوف طليطلة الأندلسية كانت مشهورة في العالم كله بقوّة فولاذها… وسيوفنا على نفس الطريقة 😎']},
  {id:'librarian',name:'أمين المكتبة حسين 📚',pos:[2.4,0,-40.6],user:'bsngse',lines:n=>[`أهلًا يا ${n}، تفضّل خزانة الكتب 📚`,'في قرطبة جمع الخليفة الحكم الثاني مكتبة فيها مئات الآلاف من المجلّدات… أكبر مكتبة في أوروبا وقتها ✨','تبي كتاب؟ اكتب اسمه في التعليقات ونحطه على الرف 😄']},
- {id:'economy',name:'وزير الاقتصاد أحمد 💼',pos:[-16.2,0,4.2],user:'almhmdylyhsynmhmd',lines:n=>[`حيّاك يا ${n}! ديوان الاقتصاد يرحّب بك 💼`,'أنا أنظّم التجارة والقوافل… وأمين بيت المال محمد فلوس يحفظ الذهب 💰','السوق يكبر: لحم، فول، سلاح… وش المحل الجاي؟ 🏪']},
+ {id:'economy',name:'وزير الاقتصاد أحمد 💼',pos:[-16.2,0,4.2],user:'almhmdylyhsynmhmd',lines:n=>[`حيّاك يا ${n}! ديوان الاقتصاد يرحّب بك 💼`,'أنا أنظّم التجارة والقوافل… وأمين بيت المال محمد فلوس يحفظ الذهب 💰','السوق يكبر: لحم، فول، سلاح… وش المحل الجاي؟ 🏪','📜 قراري: فتحنا تجارة مع قرطبة وإشبيلية وغرناطة وطليطلة… قافلتنا توصل «خان القوافل» برّا السور الشرقي 🐪','سافر للخان واشتغل مع القافلة… وصّل البضاعة للسوق وخذ أجرك 💰']},
  {id:'thughur',name:'حاكم الثغر 🏯',pos:[-92.5,0,-55],user:'__0_ma_1_',lines:n=>[`قف! أنت على حدود الحكايا يا ${n} 🏯`,'أنا حاكم الثغر… أحرس حدود المدينة الغربية من الغزاة ⚔️','في الأندلس كانت «الثغور» حصون الحدود، ولها حكّام أقوياء يحمونها 🛡️']},
  {id:'archers',name:'قائد الرماة كرم 🏹',pos:[-12,7,56.6],user:'karammustafa035',lines:n=>[`(من فوق السور) هلا يا ${n}! 🏹`,'رماة الحكايا الـ١٤ تحت أمري على السور الجنوبي','في الأندلس كان رماة الأسوار أول خط دفاع عن المدينة… وسهامنا جاهزة 🔥']},
  {id:'post',name:'وزير البريد والأخبار 🕊️',pos:[-83.8,0,41.6],user:'ghosts_no1',lines:n=>[`أهلًا يا ${n}! عندي لك رسالة… 📜`,'أنا وزير البريد: كل خبر في الحكايا يمرّ من ديواني، والحمام الزاجل يوصّله 🕊️','في الأندلس كان للدولة «ديوان البريد» ينقل الأخبار بين المدن بسرعة على الخيل والحمام ✨']},
  {id:'quran',name:'الشيخ عبدالله · معهد الإيمان 📖',pos:[-97,0,8.4],user:'abdallha1a',lines:n=>[`السلام عليكم يا ${n} 🤍`,'حيّاك في معهد الإيمان لتعليم القرآن… الطلاب يحفظون الحين 📖','في قرطبة كانت حلقات القرآن والعلم في الجامع الكبير يحضرها طلاب من كل البلاد ✨']},
  {id:'cavalry',name:'قائد الفرسان تيم 🐎',pos:[-71,0,-23],user:'mjhwllhwy.x',lines:n=>[`(من فوق الفرس) هلا يا ${n}! 🐎`,'أنا في مقدّمة جيش حُماة الحكايا… أول من يهجم وآخر من يرجع ⚔️','في الأندلس كانت الخيل العربية سرّ قوة الفرسان، سريعة وصبورة 🔥']},
  {id:'furniture',name:'نجّار محل الأثاث 🪑',pos:[-42,0,-.9],lines:n=>[`هلا يا ${n}! تبي تأثّث بيتك؟ 🪑`,'عندنا مجالس ومخدات، ومناديس بمسامير نحاس، وسجاد ملفوف 🧵','نجّارين الأندلس اشتهروا بسقوف الخشب المنقوش المعشّق… بعضها باقي إلى اليوم في قصر الحمراء ✨','اضغط «🛒 تسوّق أثاث» واختار اللي يعجبك… ويوصل بيتك على طول 🏠']},
+ {id:'caravan',name:'تاجر القافلة 🐪',pos:[87.5,0,47.5],lines:n=>[`أهلًا يا ${n}! وصلت القافلة من قرطبة 🐪`,'بقرار من وزير الاقتصاد أحمد صار للحكايا تجارة مع قرطبة وإشبيلية وغرناطة وطليطلة 💼','جبنا سجاد غرناطي وجرار فخّار من مالقة… تلقاها في محل الأثاث 🧶🏺','تبي تشتغل؟ اضغط «🐪 اشتغل مع القافلة» ووصّل البضاعة لسوق الحكايا… وخذ ٢٥ دينار 💰','في الأندلس كانت القوافل والسفن تربط قرطبة بالمشرق والمغرب… والحرير الأندلسي كان يوصل لأسواق بعيدة ✨']},
  {id:'shurta',name:'صاحب الشرطة 🚔',pos:[78,0,28.6],lines:n=>[`أهلًا يا ${n}، أنا صاحب الشرطة 🚔`,'في قرطبة كان «صاحب الشرطة» منصب كبير يحفظ الأمن في المدينة… وأنا على نفس الطريق','السلاح للدفاع بس… اللي يعتدي على أحد مكانه هنا في السجن 🔒','وأصحاب المناصب والشخصيات الاعتبارية محميين… واللي يقرّب منهم الحرس يردّونه 🛡️']},
  {id:'arena',name:'حكَم حلبة النزال 🤺',pos:[30,0,57.2],lines:n=>[`حيّاك يا ${n}! هذي حلبة النزال ⚔️`,'داخل الحلبة القتال مسموح… بدون شرطة ولا سجن','كل واحد عنده ١٠٠ ❤️، واللي يهزم خصمه ياخذ ١٠ دنانير 💰 والدرع يخفّف الضربة نص 🛡️']},
  {id:'doctor',name:'طبيبة المدينة 🩺',pos:[-72.6,0,7.4],user:'zahara____wra',lines:n=>[`أهلًا يا ${n}… خلّني أشوفك 🩺`,'دار الشفاء مفتوحة لكل أهل الحكايا… وإذا تعوّرت في الحلبة تعال لي ❤️‍🩹','في قرطبة عاش «الزهراوي»، أبو الجراحة، وكتابه «التصريف» درّسوه في أوروبا قرون طويلة ✨']},
@@ -1827,7 +1829,7 @@ const FURN=[
  {id:'chest',n:'مندوس منقوش',e:'🧰',p:40},{id:'chair',n:'كرسي خشب',e:'🪑',p:25},{id:'table',n:'طاولة بفانوس',e:'🏮',p:35},
  {id:'palm',n:'نخلة في أصيص',e:'🌴',p:30},{id:'roses',n:'أصيص ورد',e:'🌹',p:20},{id:'lamp',n:'مصباح نحاسي',e:'🕯️',p:30},
  {id:'bed',n:'سرير خشب',e:'🛏️',p:70},{id:'ward',n:'خزانة ملابس',e:'🚪',p:60},{id:'fount',n:'نافورة أندلسية',e:'⛲',p:90},
- {id:'gold',n:'صندوق ذهب',e:'💰',p:120},{id:'throne',n:'كرسي العرش',e:'👑',p:150},{id:'sword',n:'سيف معلّق على حامل',e:'⚔️',p:50}];
+ {id:'gold',n:'صندوق ذهب',e:'💰',p:120},{id:'throne',n:'كرسي العرش',e:'👑',p:150},{id:'sword',n:'سيف معلّق على حامل',e:'⚔️',p:50},{id:'rug',n:'سجادة غرناطية (من القافلة)',e:'🧶',p:45},{id:'jar',n:'جرّة فخّار من مالقة (من القافلة)',e:'🏺',p:25}];
 const FSLOTS=[[-2.7,1.6,Math.PI/2],[-2.7,3.4,Math.PI/2],[3.3,1.4,-Math.PI/2],[3.3,3.3,-Math.PI/2],[-1.5,3.6,Math.PI],[1.5,3.6,Math.PI],[-1.6,1.2,0],[1.6,1.2,0]];
 const HOMEF={coins:150,items:[],daily:'',talked:{}};
 function homeKey(){return 'hakaya-home-'+(game.user?game.user.u:'')}
@@ -1866,6 +1868,8 @@ function furnMesh(id){const g=new THREE.Group();const b=(w,h,d,m,x,y,z)=>{const 
  if(id==='fount'){cy(.8,.85,.3,IM(0xe8e0d0),0,.15,0,20);cy(.7,.7,.04,IM(0x3a8ab0,{emissive:0x0a3050,emissiveIntensity:.3}),0,.3,0,20);cy(.08,.1,.6,IM(0xe8e0d0),0,.55,0);cy(.25,.2,.08,IM(0xe8e0d0),0,.85,0);sp(.06,IM(0x9fd8f0),0,.95,0)}
  if(id==='gold'){b(.8,.5,.5,dark,0,.25,0);b(.84,.08,.54,gold,0,.5,0);for(let k=0;k<8;k++)cy(.08,.08,.03,gold,-.25+(k%4)*.17,.56+Math.floor(k/4)*.03,-.1+Math.floor(k/4)*.15)}
  if(id==='throne'){b(.9,.5,.8,IM(0x4a1440),0,.25,0);b(.9,1.4,.15,gold,0,1,-.35);b(.12,.4,.8,gold,-.45,.65,0);b(.12,.4,.8,gold,.45,.65,0);sp(.1,IM(0xc0182a),0,1.6,-.33)}
+ if(id==='rug'){b(1.6,.03,1.1,IM(0x8e1b1b),0,.015,0);b(1.3,.035,.8,IM(0x1f3a6b),0,.02,0);b(.5,.04,.5,IM(0xd4a640),0,.025,0)}
+ if(id==='jar'){cy(.22,.18,.5,IM(0xb5603a),0,.25,0);sp(.26,IM(0xb5603a),0,.42,0);cy(.1,.14,.22,IM(0xa0502e),0,.72,0);cy(.27,.27,.05,IM(0xe8d6a8),0,.42,0,16)}
  if(id==='sword'){b(.5,.08,.3,dark,0,.04,0);b(.06,1,.06,wood,0,.5,0);const s=b(.06,1.1,.02,IM(0xd8dde2),0,1.1,.06);b(.36,.06,.08,gold,0,.6,.06)}
  g.traverse(o=>{o.castShadow=true});return g}
 const FCL=v=>Math.max(-4.3,Math.min(4.3,+v||0));
@@ -2022,12 +2026,63 @@ function openArms(){const G=$('gShopG');G.innerHTML='';$('gShop').style.display=
 $('gArmsB').onclick=openArms;
 
 // ================= خريطة التنقّل: اضغط مكان وتوصله =================
+// خان القوافل — قرار وزير الاقتصاد أحمد: تجارة مع مدن الأندلس
+const KHAN={x:96,z:50};
+{const st=M(0xe6d2a8),dk=M(0xb89a66),rf=M(0xb5603a),wd=M(0x6b4a2e);const {x,z}=KHAN;
+ // الأسوار مع بوابتين غرب وشرق
+ const Wl=(...a)=>{const o=box(...a);o.userData.khan=1;clickables.push(o)};Wl(15,3.6,.7,st,x,1.8,z-7);Wl(15,3.6,.7,st,x,1.8,z+7);
+ [[-7,-1],[7,-1]].forEach(([dx])=>{Wl(.7,3.6,5,st,x+dx,1.8,z-4.5);Wl(.7,3.6,5,st,x+dx,1.8,z+4.5)});
+ // رواق مسقوف على الشمال والجنوب
+ box(13.4,.3,2.6,rf,x,3.1,z-5.6);box(13.4,.3,2.6,rf,x,3.1,z+5.6);
+ for(let k=-5;k<=5;k+=2.5){box(.35,2.9,.35,dk,x+k,1.45,z-4.4);box(.35,2.9,.35,dk,x+k,1.45,z+4.4)}
+ // أبراج الأركان
+ [[-7,-7],[7,-7],[-7,7],[7,7]].forEach(([dx,dz])=>{const t=new THREE.Mesh(new THREE.CylinderGeometry(1,1.1,5,10),st);t.position.set(x+dx,2.5,z+dz);t.castShadow=true;scene.add(t);const c=new THREE.Mesh(new THREE.ConeGeometry(1.3,1.4,10),rf);c.position.set(x+dx,5.7,z+dz);scene.add(c)});
+ // قوس البوابة الغربية
+ box(.9,.8,3.4,dk,x-7,3.9,z);
+ // بئر في الوسط
+ {const w=new THREE.Mesh(new THREE.CylinderGeometry(.9,.95,.8,16),dk);w.position.set(x,.4,z);w.castShadow=true;scene.add(w);box(.12,1.6,.12,wd,x-.8,1.2,z);box(.12,1.6,.12,wd,x+.8,1.2,z);box(1.8,.12,.12,wd,x,2,z)}
+ // بضاعة: صناديق وأكياس وجرار
+ const sack=M(0xcdb68a),jar=M(0xb5603a),silk=[M(0x8e1b1b),M(0x1f3a6b),M(0x2f7a3a)];
+ [[-4,-3],[-3,-3.2],[-4,-2],[3.5,3],[4.5,3.2]].forEach(([dx,dz],i)=>box(.9,.8,.9,wd,x+dx,.4+(i===2?0:0),z+dz));
+ [[3.5,-3],[4.3,-2.8],[3.9,-2.1]].forEach(([dx,dz])=>{const o=new THREE.Mesh(new THREE.SphereGeometry(.45,10,8),sack);o.scale.y=.8;o.position.set(x+dx,.36,z+dz);o.castShadow=true;scene.add(o)});
+ [[-4,3],[-3.3,3.4]].forEach(([dx,dz])=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(.25,.2,.7,10),jar);o.position.set(x+dx,.35,z+dz);o.castShadow=true;scene.add(o)});
+ silk.forEach((m,i)=>box(1.4,.12,.9,m,x-1.5+i*1.5,.06+i*.12,z+3.2));
+ // أعلام المدن التجارية
+ [['#8e1b1b',-5],['#1f3a6b',-1.7],['#2f7a3a',1.7],['#d4a640',5]].forEach(([c,dx])=>{box(.08,2.2,.08,wd,x+dx,4.7,z-7);const f=box(.9,.55,.04,M(new THREE.Color(c).getHex()),x+dx+.45,5.5,z-7)});
+ const el=document.createElement('div');el.className='lb';el.innerHTML='<b>🐪 خان القوافل</b><i>قرطبة · إشبيلية · غرناطة · طليطلة</i>';$('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(x,7.4,z)});
+}
+// القافلة: جمال رايحة جاية بين الأفق والخان
+function camelMesh(){const g=new THREE.Group();const c=M(0xc8a06a),dk=M(0x8a6a44);const a=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=true;g.add(o);return o};
+ a(new THREE.BoxGeometry(.8,.7,1.7),c,0,1.55,0);const h=a(new THREE.SphereGeometry(.45,10,8),c,0,2.05,-.1);h.scale.set(1,.9,1.3);
+ const n=a(new THREE.BoxGeometry(.3,.9,.3),c,0,2.1,.95);n.rotation.x=-.5;a(new THREE.BoxGeometry(.32,.3,.6),c,0,2.55,1.35);
+ const legs=[[-.28,-.6],[.28,-.6],[-.28,.6],[.28,.6]].map(([x,z])=>a(new THREE.BoxGeometry(.16,1.2,.16),dk,x,.6,z));
+ a(new THREE.BoxGeometry(1.2,.45,.5),M(0x8e1b1b),0,2.45,-.1);a(new THREE.BoxGeometry(.5,.5,.5),M(0x6b4a2e),.7,1.8,-.1);a(new THREE.BoxGeometry(.5,.5,.5),M(0x6b4a2e),-.7,1.8,-.1);
+ g.userData.legs=legs;return g}
+const CARAVAN={g:[],m:null};
+{for(let i=0;i<3;i++){const c=camelMesh();scene.add(c);CARAVAN.g.push(c)}const ch=makeChar(0x3a5a8a);ch.g.visible=true;scene.add(ch.g);CARAVAN.m=ch}
+function caravanTick(t){const T=(t/1000)%80;let u;if(T<30)u=T/30;else if(T<45)u=1;else if(T<75)u=1-(T-45)/30;else u=0;const dir=(T<45)?-1:1,moving=(T<30||(T>=45&&T<75));
+ const x0=150,x1=KHAN.x+2.5,z=KHAN.z+.2;const lead=x0+(x1-x0)*u;
+ const ry=dir<0?-Math.PI/2:Math.PI/2;CARAVAN.m.g.position.set(lead+dir*2.2,0,z+.9);CARAVAN.m.g.rotation.y=ry;
+ CARAVAN.g.forEach((c,i)=>{c.position.set(lead-dir*i*3.2,0,z);c.rotation.y=ry;const sw=moving?Math.sin(t/180+i)*.35:0;c.userData.legs.forEach((l,k)=>l.rotation.x=(k%2?sw:-sw))});
+ if(moving){const s=Math.sin(t/160)*.6;CARAVAN.m.arms[0].rotation.x=s;CARAVAN.m.arms[1].rotation.x=-s}}
+// شغلة القافلة: توصيل بضاعة للسوق
+const JOB={on:false,t0:0,crate:null,dest:[-30,0,0],lim:90};
+{const d=document.createElement('div');d.innerHTML='<button id="gJobB" style="display:none">🐪 اشتغل مع القافلة</button><div id="gJob" style="display:none;position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:40;background:rgba(20,30,48,.9);border:2px solid #C9A45C;border-radius:12px;padding:6px 14px;color:#F3EAD8;font-family:Amiri,serif;font-size:16px"></div>';document.body.appendChild(d);$('gAct').appendChild($('gJobB'));$('gJobB').style.cssText=$('gArmsB').style.cssText;$('gJobB').className=$('gArmsB').className;$('gJobB').style.display='none'}
+function jobStart(){if(!game.on)return;if(!myHouse()&&!(USERS[game.user.u]&&USERS[game.user.u][1])){toast('🏠 الشغلة لأهل المدينة… اكتب اسمك في تعليقات @8istory ونبني لك بيت',3200);return}
+ if(JOB.on){toast('📦 معك بضاعة! وصّلها لسوق الحكايا',2000);return}const wait=(HOMEF.jobAt||0)+5*60*1000-Date.now();if(wait>0){toast('🐪 القافلة ترتاح… ارجع بعد '+AR(Math.ceil(wait/60000))+' دقيقة',2400);return}
+ JOB.on=true;JOB.t0=Date.now();JOB.crate=new THREE.Mesh(new THREE.BoxGeometry(.6,.45,.45),M(0x6b4a2e));JOB.crate.position.set(0,1.55,.45);hero.g.add(JOB.crate);
+ toast('📦 استلمت بضاعة من قرطبة! وصّلها لسوق الحكايا قبل '+AR(JOB.lim)+' ثانية',3200)}
+function jobEnd(ok){if(JOB.crate&&JOB.crate.parent)JOB.crate.parent.remove(JOB.crate);JOB.crate=null;JOB.on=false;$('gJob').style.display='none';
+ if(ok){HOMEF.jobAt=Date.now();HOMEF.trips=(HOMEF.trips||0)+1;earn(25,'وصّلت بضاعة القافلة 🐪');if(NET.ok)NET.c.publish(NET.T+'chat',JSON.stringify({id:NET.id,u:game.user.u,sys:1,txt:'🐪 '+game.user.disp+' وصّل بضاعة القافلة من قرطبة لسوق الحكايا'}))}else toast('⌛ تأخرت… البضاعة رجعت للخان، جرّب مرة ثانية',2600)}
+function jobTick(){if(!JOB.on)return;const left=JOB.lim-(Date.now()-JOB.t0)/1000;const jb=$('gJob');jb.style.display='block';jb.textContent='📦 وصّل البضاعة للسوق 🛒 · '+AR(Math.max(0,Math.ceil(left)))+' ث';
+ if(Date.now()<COP.jailUntil||left<=0){jobEnd(false);return}if(Math.hypot(game.p.x-JOB.dest[0],game.p.z-JOB.dest[2])<6)jobEnd(true)}
+$('gJobB').onclick=jobStart;
 const DESTS=[
  {n:'بيتي',e:'🏠',home:1},{n:'قصر الملك',e:'👑',p:[0,0,-76.5]},{n:'ولي العهد',e:'🤴',p:[10,0,-69.5]},{n:'الجامع الكبير',e:'🕌',p:[0,0,9.2]},{n:'السوق',e:'🛒',p:[-30,0,0]},
  {n:'مطعم قدوري',e:'🍽️',p:[-6,0,-8.6]},{n:'دكان السلاح',e:'⚔️',p:[-34,0,.2]},{n:'محل الأثاث',e:'🪑',p:[-42,0,.2]},{n:'دار الحسبة',e:'⚖️',p:[-16.9,0,-2.8]},
  {n:'ديوان الاقتصاد',e:'💼',p:[-16.2,0,2.8]},{n:'خزانة الكتب',e:'📚',p:[2.4,0,-38.6]},{n:'معهد الإيمان',e:'📖',p:[-97,0,11]},{n:'دار العمدة',e:'🎖️',p:[10,0,45.8]},
  {n:'ديوان البريد',e:'🕊️',p:[-84,0,39]},{n:'البوابة والقنطرة',e:'🌉',p:[0,0,64]},{n:'السور الجنوبي',e:'🏹',p:[-10.5,7,56.6]},{n:'معسكر الجيش',e:'🛡️',p:[-74,0,-15]},
- {n:'برج القنّاص',e:'🎯',p:[-70,0,-30.5]},{n:'إمبراطورية فولكانور',e:'🌋',p:[76,2.4,-18]},{n:'حصن الثغر',e:'🏯',p:[-91,0,-55]},{n:'سجن المدينة',e:'🚔',p:[78,0,30.5]},{n:'حلبة النزال',e:'🤺',p:[30,0,56.6]},{n:'دار الشفاء',e:'🩺',p:[-73,0,11]},{n:'ساحة الدواوين',e:'⛲',p:[-85,0,25]}];
+ {n:'برج القنّاص',e:'🎯',p:[-70,0,-30.5]},{n:'إمبراطورية فولكانور',e:'🌋',p:[76,2.4,-18]},{n:'حصن الثغر',e:'🏯',p:[-91,0,-55]},{n:'سجن المدينة',e:'🚔',p:[78,0,30.5]},{n:'حلبة النزال',e:'🤺',p:[30,0,56.6]},{n:'دار الشفاء',e:'🩺',p:[-73,0,11]},{n:'ساحة الدواوين',e:'⛲',p:[-85,0,25]},{n:'خان القوافل',e:'🐪',p:[86,0,50]}];
 {const st=document.createElement('style');st.textContent=`#gMapUI{position:fixed;inset:0;z-index:62;display:none;align-items:center;justify-content:center;background:rgba(6,8,14,.78);font-family:'Amiri',serif}
 #gMapUI .pn{width:min(560px,96vw);max-height:94vh;display:flex;flex-direction:column;background:#152238;border:2px solid #C9A45C;border-radius:18px;padding:12px;color:#F3EAD8;gap:10px}
 #gMapUI h3{margin:0;font-family:'Aref Ruqaa',serif;color:#E6C98A;font-size:24px;display:flex;justify-content:space-between;align-items:center}
@@ -2069,7 +2124,7 @@ function drawMap(){const c=$('gMapC'),g=c.getContext('2d');const S=720/(MAPV.x1-
  g.font="bold 22px 'Amiri',serif";g.fillStyle='#fff';g.strokeStyle='#000';g.lineWidth=4;g.strokeText('أنت',ux,uz-22);g.fillText('أنت',ux,uz-22)}
 function openMap(){if(!game.on)return;if(document.pointerLockElement)document.exitPointerLock();$('gMapUI').style.display='flex';drawMap();
  const L=$('gMapL');L.innerHTML='';for(const d of DESTS){const p=destPos(d);if(!p)continue;const b=document.createElement('button');b.textContent=d.e+' '+d.n;b.onclick=()=>travel(p,d.n);L.appendChild(b)}}
-function travel(p,name){if(SK.on)return;if(Date.now()<COP.jailUntil){toast('🔒 أنت في السجن… ما تقدر تتنقّل',2000);return}if(COP.on){toast('🚨 الشرطة وراك! ما تقدر تهرب',2000);return}
+function travel(p,name){if(SK.on)return;if(JOB.on){toast('📦 البضاعة ما تنقل بالخريطة… امشِ للسوق!',2200);return}if(Date.now()<COP.jailUntil){toast('🔒 أنت في السجن… ما تقدر تتنقّل',2000);return}if(COP.on){toast('🚨 الشرطة وراك! ما تقدر تهرب',2000);return}
  $('gMapUI').style.display='none';const f=$('gFade');f.style.opacity=1;
  setTimeout(()=>{game.p.set(p[0],p[1]||0,p[2]);const fl=floorAt(p[0],p[2],(p[1]||0)+.5);game.p.y=Math.max(fl,p[1]||0);game.vx=game.vz=game.vy=0;setFly(false,true);game.onG=true;
   game.yaw=Math.atan2(p[0],p[2])+(Math.hypot(p[0],p[2])<1?0:0);game.camP=null;f.style.opacity=0;toast('📍 وصلت: '+name,1800);if(NET.ok)pubPos()},260)}
@@ -2122,7 +2177,7 @@ function updateGame(t){const dt=Math.min(.05,(t-(game.last||t))/1000);game.last=
  netTick(t,moving||!game.onG);
  // أقرب شخصية أو باب
  let best=null,bd=4.2;for(const n of NPCS){const d=Math.hypot(n.pos[0]-P.x,n.pos[2]-P.z);if(d<bd&&Math.abs((n.pos[1]||0)-P.y)<3){bd=d;best=n}}
- $('gShopB').style.display=(best&&best.id==='furniture')?'block':'none';$('gArmsB').style.display=(best&&best.id==='armory')?'block':'none';
+ $('gShopB').style.display=(best&&best.id==='furniture')?'block':'none';$('gArmsB').style.display=(best&&best.id==='armory')?'block':'none';$('gJobB').style.display=(best&&best.id==='caravan')?'block':'none';
  if(best!==game.near){game.near=best;$('gTalkB').style.display=best?'block':'none';if(best)$('gTalkB').textContent='💬 كلّم '+best.name;if(!best&&game.talk){game.talk=null;$('gTalk').style.display='none'}}
  let en=null;if(P.y<2){const md=Math.hypot(P.x,P.z);if(md<10.5&&md>7)en={sel:{mosque:true},t:'🚪 ادخل الجامع'};
  if(Math.hypot(P.x,P.z+82)<5.5)en={sel:{palace:true},t:'🚪 ادخل القصر'};
@@ -2170,6 +2225,7 @@ function loop(t){
  if(window.__thFlag)window.__thFlag.rotation.y=Math.sin(t/500)*.25;
  if(window.__cav)window.__cav.arm.rotation.z=Math.sin(t/700)*.25;
  if(window.__saw)window.__saw.m.position.x=window.__saw.x+Math.sin(t/180)*.18;
+ caravanTick(t);if(game.on)jobTick();
  if(window.__coin)window.__coin.position.y=1.05+Math.abs(Math.sin(t/260))*.5;
  if(OUT&&game.on&&!PERF.low){try{OUT.render(inside?inScene:scene,camera)}catch(e){OUT=null;renderer.render(inside?inScene:scene,camera)}}else renderer.render(inside?inScene:scene,camera);
  const W=innerWidth,H=innerHeight;
