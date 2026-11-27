@@ -1612,6 +1612,7 @@ const NPCS=[
  {id:'cavalry',name:'قائد الفرسان تيم 🐎',pos:[-71,0,-23],user:'mjhwllhwy.x',lines:n=>[`(من فوق الفرس) هلا يا ${n}! 🐎`,'أنا في مقدّمة جيش حُماة الحكايا… أول من يهجم وآخر من يرجع ⚔️','في الأندلس كانت الخيل العربية سرّ قوة الفرسان، سريعة وصبورة 🔥']},
  {id:'furniture',name:'نجّار محل الأثاث 🪑',pos:[-42,0,-.9],lines:n=>[`هلا يا ${n}! تبي تأثّث بيتك؟ 🪑`,'عندنا مجالس ومخدات، ومناديس بمسامير نحاس، وسجاد ملفوف 🧵','نجّارين الأندلس اشتهروا بسقوف الخشب المنقوش المعشّق… بعضها باقي إلى اليوم في قصر الحمراء ✨','اضغط «🛒 تسوّق أثاث» واختار اللي يعجبك… ويوصل بيتك على طول 🏠']},
  {id:'caravan',name:'تاجر القافلة 🐪',pos:[87.5,0,47.5],lines:n=>[`أهلًا يا ${n}! وصلت القافلة من قرطبة 🐪`,'بقرار من وزير الاقتصاد أحمد صار للحكايا تجارة مع قرطبة وإشبيلية وغرناطة وطليطلة 💼','جبنا سجاد غرناطي وجرار فخّار من مالقة… تلقاها في محل الأثاث 🧶🏺','تبي تشتغل؟ اضغط «🐪 اشتغل مع القافلة» ووصّل البضاعة لسوق الحكايا… وخذ ٢٥ دينار 💰','في الأندلس كانت القوافل والسفن تربط قرطبة بالمشرق والمغرب… والحرير الأندلسي كان يوصل لأسواق بعيدة ✨']},
+ {id:'dalal',name:'دلّال الأراضي 🏗️',pos:[60,0,-45.5],lines:n=>[`حيّاك يا ${n}! تبي أرض؟ 🏗️`,'ورا ظهري ٢٠ أرض… كل وحدة ١٠×١٠ متر، والأرض بـ٢٠٠ دينار','ادخل أي أرض مكتوب عليها «للبيع» واضغط «🏷️ اشترِ»… أرض وحدة لكل لاعب','بعدها اضغط «🧱 ابنِ» واختار المادة: حجر، طوب، خشب، جص، قرميد، زجاج، ذهب، زليج… المكعب بدينار وترجع لك إذا هدمته','في الأندلس بنوا قصر الحمراء طبقة فوق طبقة… وإنت ابنِ قصرك مكعب مكعب 🧱✨']},
  {id:'shurta',name:'صاحب الشرطة 🚔',pos:[78,0,28.6],lines:n=>[`أهلًا يا ${n}، أنا صاحب الشرطة 🚔`,'في قرطبة كان «صاحب الشرطة» منصب كبير يحفظ الأمن في المدينة… وأنا على نفس الطريق','السلاح للدفاع بس… اللي يعتدي على أحد مكانه هنا في السجن 🔒','وأصحاب المناصب والشخصيات الاعتبارية محميين… واللي يقرّب منهم الحرس يردّونه 🛡️']},
  {id:'arena',name:'حكَم حلبة النزال 🤺',pos:[30,0,57.2],lines:n=>[`حيّاك يا ${n}! هذي حلبة النزال ⚔️`,'داخل الحلبة القتال مسموح… بدون شرطة ولا سجن','كل واحد عنده ١٠٠ ❤️، واللي يهزم خصمه ياخذ ١٠ دنانير 💰 والدرع يخفّف الضربة نص 🛡️']},
  {id:'doctor',name:'طبيبة المدينة 🩺',pos:[-72.6,0,7.4],user:'zahara____wra',lines:n=>[`أهلًا يا ${n}… خلّني أشوفك 🩺`,'دار الشفاء مفتوحة لكل أهل الحكايا… وإذا تعوّرت في الحلبة تعال لي ❤️‍🩹','في قرطبة عاش «الزهراوي»، أبو الجراحة، وكتابه «التصريف» درّسوه في أوروبا قرون طويلة ✨']},
@@ -1706,10 +1707,10 @@ function houseDoor(i){const h=houses[i];const p=h.grp.position,pr=h.body.geometr
 function groundY(x,z){const d=Math.hypot(x-84,z+18);if(d<5.6)return 4.6;if(d<7.6)return 2.4+(7.6-d)/2*2.2;if(d<16)return 2.4;if(d<19)return 2.4*(19-d)/3;return 0}
 const WALLH=7;
 function onWall(x,z){const r=Math.hypot(x,z);return r>55.4&&r<60&&!(Math.abs(x)<3.4&&z>0)}
-function blocked(x,z,y=0){const r=Math.hypot(x,z);if(r>175)return true;if(y<WALLH-.1&&onWall(x,z))return true;if(y<.5&&z>74.5&&z<97.5&&Math.abs(x)>3.2)return true;
+function blocked(x,z,y=0){const r=Math.hypot(x,z);if(r>175)return true;if(typeof voxBlocked==='function'&&voxBlocked(x,z,y))return true;if(y<WALLH-.1&&onWall(x,z))return true;if(y<.5&&z>74.5&&z<97.5&&Math.abs(x)>3.2)return true;
  for(const b of game.obs)if(y+.45<b[4]&&x>b[0]&&x<b[1]&&z>b[2]&&z<b[3])return true;return false}
 function floorAt(x,z,y){let f=groundY(x,z);if(onWall(x,z)&&y>=WALLH-.6)f=Math.max(f,WALLH);
- for(const b of game.obs)if(b[4]<=y+.6&&b[4]>f&&x>b[0]+.3&&x<b[1]-.3&&z>b[2]+.3&&z<b[3]-.3)f=b[4];return f}
+ for(const b of game.obs)if(b[4]<=y+.6&&b[4]>f&&x>b[0]+.3&&x<b[1]-.3&&z>b[2]+.3&&z<b[3]-.3)f=b[4];if(typeof voxFloor==='function')f=Math.max(f,voxFloor(x,z,y));return f}
 function enterGame(){let u=$('gUser').value.trim().replace(/^@/,'').toLowerCase();if(!u){$('gMsg').textContent='اكتب يوزرك أول 🙂';return}
  try{localStorage.setItem('hakaya-user',u)}catch(e){}
  const info=USERS[u];let spawn,disp,title='زائر للمدينة',hi;
@@ -1795,9 +1796,9 @@ function peerInfo(u){const i=USERS[u];return i?{d:i[2]||i[0]||u,ti:i[1]||'من �
 function netStart(){if(NET.c||NET.loading)return;NET.loading=true;sysMsg('⏳ جاري الاتصال بشات المدينة…');const s=document.createElement('script');s.src='https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js';
  s.onload=netConnect;s.onerror=()=>{NET.loading=false;sysMsg('⚠️ الشات ما اشتغل… تأكد من النت')};document.head.appendChild(s)}
 function netConnect(){try{const c=window.mqtt.connect('wss://broker.hivemq.com:8884/mqtt',{clientId:'hk_'+NET.id,keepalive:30,clean:true,reconnectPeriod:4000,connectTimeout:9000,will:{topic:NET.T+'bye',payload:JSON.stringify({id:NET.id}),qos:0,retain:false}});NET.c=c;
- c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye',NET.T+'hit',NET.T+'ko',NET.T+'sale/+',NET.T+'ledger/+',NET.T+'home/+']);CLOUD.sub=null;cloudSub();if(game.user)setTimeout(()=>{if(!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants();paySalary()}},3500);homePub();if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
+ c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye',NET.T+'hit',NET.T+'ko',NET.T+'sale/+',NET.T+'ledger/+',NET.T+'home/+',NET.T+'land/+',NET.T+'build/+']);CLOUD.sub=null;cloudSub();if(game.user)setTimeout(()=>{if(!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants();paySalary()}},3500);homePub();if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
  c.on('close',()=>{if(NET.ok)sysMsg('🔴 انقطع الشات… يعيد الاتصال');NET.ok=false});
- c.on('message',(tp,buf)=>{let m;try{m=JSON.parse(buf.toString())}catch(e){return}if(!m||typeof m!=='object'||m.id===NET.id)return;const k=tp.slice(NET.T.length);
+ c.on('message',(tp,buf)=>{let m;try{m=JSON.parse(buf.toString())}catch(e){return}if(!m||typeof m!=='object')return;const k=tp.slice(NET.T.length);if(k.startsWith('land/')){onLand(+k.slice(5),m);return}if(k.startsWith('build/')){onBuild(+k.slice(6),m);return}if(m.id===NET.id)return;
   if(k==='pos')onPos(m);else if(k==='chat')onChat(m);else if(k.startsWith('save/'))onCloud(m);else if(k==='hit')onHit(m);else if(k==='ko')onKO(m);else if(k.startsWith('sale/'))onSale(m);else if(k.startsWith('ledger/'))onLedger(k.slice(7),m);else if(k.startsWith('home/')){if(typeof m.u==='string'&&Array.isArray(m.items))NET.homes[m.u.toLowerCase()]=m.items.filter(x=>typeof x==='string'||(x&&typeof x.id==='string')).slice(0,8)}else if(k==='bye')dropPeer(m.id)})}catch(e){sysMsg('⚠️ الشات غير متاح')}}
 function pubPos(){if(!NET.ok||!game.on)return;const P=game.p;NET.c.publish(NET.T+'pos',JSON.stringify({id:NET.id,u:game.user.u,x:+P.x.toFixed(2),y:+P.y.toFixed(2),z:+P.z.toFixed(2),r:+hero.g.rotation.y.toFixed(2),f:game.fly?1:0,c:hero.bm.color.getHex(),w:hero.wid||'',fm:hero.female?1:0,s:hero.hasShield?1:0,a:performance.now()-ATK.t<500?1:0,h:Math.max(0,Math.round(game.hp))}))}
 function netTick(t,act){if(!NET.ok||!game.on)return;if(t-NET.lastPub<(act?130:2500))return;NET.lastPub=t;pubPos()}
@@ -2094,12 +2095,78 @@ function jobEnd(ok){if(JOB.crate&&JOB.crate.parent)JOB.crate.parent.remove(JOB.c
 function jobTick(){if(!JOB.on)return;const left=JOB.lim-(Date.now()-JOB.t0)/1000;const jb=$('gJob');jb.style.display='block';jb.textContent='📦 وصّل البضاعة للسوق 🛒 · '+AR(Math.max(0,Math.ceil(left)))+' ث';
  if(Date.now()<COP.jailUntil||left<=0){jobEnd(false);return}if(Math.hypot(game.p.x-JOB.dest[0],game.p.z-JOB.dest[2])<6)jobEnd(true)}
 $('gJobB').onclick=jobStart;
+// ===== أراضي البناء: اشترِ أرض وابنِ فيها بالمكعبات (طريقة ماينكرافت) =====
+const LAND={x0:34,z0:-96,cols:5,rows:4,size:10,gap:2,price:200,maxH:12,maxB:600};
+const BLK=[{n:'حجر',c:0x9a948a},{n:'طوب',c:0xb5603a},{n:'خشب',c:0x8a5a2b},{n:'جص أبيض',c:0xf1e7d6},{n:'حجر رملي',c:0xd9bf8a},{n:'قرميد',c:0x8e2a1e},{n:'زجاج',c:0x9fd8f0,op:.55},{n:'ذهب',c:0xd4a640,em:0x3a2a08},{n:'زليج أزرق',c:0x1f5a8a},{n:'عشب',c:0x5a8a3a}];
+const PLOTS=[];for(let r=0;r<LAND.rows;r++)for(let c=0;c<LAND.cols;c++){const i=PLOTS.length;PLOTS.push({i,x:LAND.x0+c*(LAND.size+LAND.gap),z:LAND.z0+r*(LAND.size+LAND.gap),owner:'',blocks:new Map(),grp:null,tag:null})}
+const VOX=new Map();const vk=(x,y,z)=>x+','+y+','+z;
+const BMAT=BLK.map(b=>{const m=new TM({color:b.c});if(b.op){m.transparent=true;m.opacity=b.op}if(b.em){m.emissive=new THREE.Color(b.em);m.emissiveIntensity=.4}return m});const BGEO=new THREE.BoxGeometry(1,1,1);
+const BS={on:false,tool:'put',t:0,plot:null};
+function plotAt(x,z){for(const p of PLOTS)if(x>=p.x&&x<p.x+LAND.size&&z>=p.z&&z<p.z+LAND.size)return p;return null}
+function myPlot(){if(!game.user)return null;return PLOTS.find(p=>p.owner===game.user.u)||null}
+// الأرض والحدود واللافتات
+{const lot=M(0xc8b080),post=M(0x6b4a2e),rope=M(0xd9c49a);
+ for(const p of PLOTS){const S=LAND.size;box(S,.06,S,lot,p.x+S/2,.03,p.z+S/2);[[0,0],[S,0],[0,S],[S,S]].forEach(([dx,dz])=>box(.18,1.1,.18,post,p.x+dx,.55,p.z+dz));
+  box(S,.05,.05,rope,p.x+S/2,.9,p.z);box(S,.05,.05,rope,p.x+S/2,.9,p.z+S);box(.05,.05,S,rope,p.x,.9,p.z+S/2);box(.05,.05,S,rope,p.x+S,.9,p.z+S/2);
+  const el=document.createElement('div');el.className='lb';el.innerHTML='<b></b><i></i>';$('labels').appendChild(el);p.tag=el;TAGS.push({el,pos:new THREE.Vector3(p.x+S/2,2.2,p.z+S/2)});plotLabel(p)}
+ const el=document.createElement('div');el.className='lb';el.innerHTML='<b>🏗️ أراضي البناء</b><i>اشترِ أرض وابنِ اللي تبيه</i>';$('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(LAND.x0+29,7,LAND.z0+49)});}
+function plotLabel(p){const inf=p.owner?peerInfo(p.owner):null;p.tag.querySelector('b').textContent=p.owner?'🏗️ أرض '+inf.d:'🏷️ أرض للبيع رقم '+AR(p.i+1);p.tag.querySelector('i').textContent=p.owner?AR(p.blocks.size)+' مكعب':AR(LAND.price)+' دينار'}
+function plotRebuild(p){if(p.grp){scene.remove(p.grp);p.grp.traverse(o=>{if(o.isInstancedMesh)o.dispose&&o.dispose()})}for(const k of [...VOX.keys()]){if(VOX.get(k).p===p.i)VOX.delete(k)}
+ const g=new THREE.Group();const by=BLK.map(()=>[]);for(const [k,t] of p.blocks){const [x,y,z]=k.split(',').map(Number);by[t].push([x,y,z]);VOX.set(vk(p.x+x,y,p.z+z),{p:p.i,k})}
+ const m4=new THREE.Matrix4();by.forEach((arr,t)=>{if(!arr.length)return;const im=new THREE.InstancedMesh(BGEO,BMAT[t],arr.length);im.castShadow=im.receiveShadow=true;im.userData.cells=arr;im.userData.plot=p.i;
+  arr.forEach((c,j)=>{m4.makeTranslation(p.x+c[0]+.5,c[1]+.5,p.z+c[2]+.5);im.setMatrixAt(j,m4)});im.instanceMatrix.needsUpdate=true;g.add(im)});
+ p.grp=g;scene.add(g);plotLabel(p);if(renderer.shadowMap)renderer.shadowMap.needsUpdate=true}
+function voxAt(x,y,z){return VOX.has(vk(Math.floor(x),Math.floor(y),Math.floor(z)))}
+function voxBlocked(x,z,y){if(!VOX.size)return false;for(const [ox,oz] of [[.28,.28],[-.28,.28],[.28,-.28],[-.28,-.28]]){for(let h=Math.floor(y+.08);h<=Math.floor(y+1.5);h++)if(voxAt(x+ox,h,z+oz))return true}return false}
+function voxFloor(x,z,y){if(!VOX.size)return -1;let f=-1;for(const [ox,oz] of [[0,0],[.25,.25],[-.25,.25],[.25,-.25],[-.25,-.25]]){for(let h=Math.min(LAND.maxH,Math.floor(y+.6))-1;h>=0;h--)if(voxAt(x+ox,h,z+oz)){if(h+1<=y+.6)f=Math.max(f,h+1);break}}return f}
+function plotStr(p){return [...p.blocks].map(([k,t])=>k+','+t).join(';')}
+function plotPub(p){if(!NET.ok)return;NET.c.publish(NET.T+'build/'+p.i,JSON.stringify({u:p.owner,b:plotStr(p),ts:Date.now()}),{retain:true,qos:1})}
+function onLand(i,m){const p=PLOTS[i];if(!p)return;const u=typeof m.u==='string'?m.u.slice(0,30).toLowerCase():'';if(p.owner&&p.owner!==u&&m.ts&&p.ts&&m.ts>p.ts)return;p.owner=u;p.ts=+m.ts||0;plotLabel(p)}
+function onBuild(i,m){const p=PLOTS[i];if(!p||typeof m.b!=='string'||typeof m.u!=='string'||m.u.toLowerCase()!==p.owner)return;if(BS.on&&BS.plot===p)return;
+ const mp=new Map();for(const e of m.b.split(';').slice(0,LAND.maxB)){const a=e.split(',').map(Number);if(a.length!==4||!a.every(Number.isInteger))continue;const [x,y,z,t]=a;if(x<0||x>=LAND.size||z<0||z>=LAND.size||y<0||y>=LAND.maxH||t<0||t>=BLK.length)continue;mp.set(x+','+y+','+z,t)}
+ p.blocks=mp;plotRebuild(p)}
+function buyPlot(){const p=plotAt(game.p.x,game.p.z);if(!p||!game.on)return;if(!NET.ok){toast('⚠️ لازم تكون متصل عشان تشتري',2000);return}
+ if(p.owner){toast('هذي الأرض لها صاحب 🙂',1600);return}if(myPlot()){toast('عندك أرض من قبل… أرض وحدة لكل لاعب 🏗️',2200);return}
+ if(HOMEF.coins<LAND.price){toast('💰 تحتاج '+AR(LAND.price)+' دينار… معك '+AR(HOMEF.coins),2400);return}
+ HOMEF.coins-=LAND.price;HOMEF.plot=p.i;homeSave();coinsUI();p.owner=game.user.u;p.ts=Date.now();NET.c.publish(NET.T+'land/'+p.i,JSON.stringify({u:p.owner,ts:p.ts}),{retain:true,qos:1});plotLabel(p);
+ NET.c.publish(NET.T+'chat',JSON.stringify({id:NET.id,u:game.user.u,sys:1,txt:'🏗️ '+game.user.disp+' اشترى الأرض رقم '+AR(p.i+1)+' في حي البنّائين!'}));toast('🎉 الأرض صارت لك! اضغط «🧱 ابنِ» وابدأ',3000)}
+// واجهة البناء
+{const st=document.createElement('style');st.textContent=`#bBar{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:45;display:none;flex-direction:column;align-items:center;gap:6px;font-family:'Amiri',serif}
+#bBar .pal{display:flex;gap:4px;background:rgba(14,26,43,.88);border:2px solid #C9A45C;border-radius:14px;padding:5px;max-width:96vw;overflow-x:auto}
+#bBar .pal i{width:36px;height:36px;border-radius:8px;border:2px solid transparent;flex:none}#bBar .pal i.on{border-color:#ffd36a;box-shadow:0 0 0 2px #000}
+#bBar .row{display:flex;gap:6px}#bBar button{font-family:'Amiri',serif;font-size:15px;padding:6px 12px;border-radius:10px;border:1px solid #C9A45C;background:rgba(14,26,43,.9);color:#F3EAD8}#bBar button.on{background:#C9A45C;color:#1a1208;font-weight:700}
+#bInfo{color:#F3EAD8;font-size:14px;background:rgba(14,26,43,.8);border-radius:8px;padding:2px 10px}#bCross{position:fixed;left:50%;top:50%;width:18px;height:18px;margin:-9px;z-index:44;display:none;pointer-events:none}#bCross:before,#bCross:after{content:'';position:absolute;background:#fff;box-shadow:0 0 2px #000}#bCross:before{left:8px;top:0;width:2px;height:18px}#bCross:after{top:8px;left:0;height:2px;width:18px}`;document.head.appendChild(st);
+ const d=document.createElement('div');d.innerHTML='<div id="bBar"><div id="bInfo"></div><div class="pal" id="bPal"></div><div class="row"><button id="bPut" class="on">🧱 بناء</button><button id="bDig">⛏️ هدم</button><button id="bDone">✅ خلاص</button></div></div><div id="bCross"></div><button id="gBuyB" style="display:none"></button><button id="gBuildB" style="display:none">🧱 ابنِ في أرضك</button>';document.body.appendChild(d);
+ $('gAct').appendChild($('gBuyB'));$('gAct').appendChild($('gBuildB'));[$('gBuyB'),$('gBuildB')].forEach(b=>{b.className=$('gArmsB').className;b.style.cssText=$('gArmsB').style.cssText;b.style.display='none'});
+ BLK.forEach((b,i)=>{const e=document.createElement('i');e.style.background='#'+b.c.toString(16).padStart(6,'0');e.title=b.n;e.onclick=()=>{BS.t=i;BS.tool='put';bUI()};$('bPal').appendChild(e)});
+ $('bPut').onclick=()=>{BS.tool='put';bUI()};$('bDig').onclick=()=>{BS.tool='dig';bUI()};$('bDone').onclick=buildEnd;$('gBuyB').onclick=buyPlot;$('gBuildB').onclick=buildStart}
+function bUI(){[...$('bPal').children].forEach((e,i)=>e.classList.toggle('on',i===BS.t&&BS.tool==='put'));$('bPut').classList.toggle('on',BS.tool==='put');$('bDig').classList.toggle('on',BS.tool==='dig');
+ const p=BS.plot;$('bInfo').textContent=(BS.tool==='put'?'🧱 '+BLK[BS.t].n+' · ':'⛏️ هدم · ')+(p?AR(p.blocks.size)+'/'+AR(LAND.maxB)+' مكعب':'')+' · 💰 '+AR(HOMEF.coins)+' · المكعب بدينار'}
+function buildStart(){const p=myPlot();if(!p)return;BS.on=true;BS.plot=p;$('bBar').style.display='flex';$('gBuildB').style.display='none';bUI();toast(matchMedia('(pointer:fine)').matches?'🧱 اضغط بالماوس عشان تحط مكعب · كليك يمين يهدم':'🧱 المس الأرض أو أي مكعب عشان تبني فوقه',3200)}
+function buildEnd(){if(!BS.on)return;BS.on=false;$('bBar').style.display='none';$('bCross').style.display='none';const p=BS.plot;BS.plot=null;if(p){plotPub(p);plotLabel(p)}homeSave()}
+const BRAY=new THREE.Raycaster(),BV=new THREE.Vector2();
+function buildAct(cx,cy,dig){const p=BS.plot;if(!BS.on||!p)return;if(document.pointerLockElement)BV.set(0,0);else{const r=renderer.domElement.getBoundingClientRect();BV.set((cx-r.left)/r.width*2-1,-(cy-r.top)/r.height*2+1)}
+ BRAY.setFromCamera(BV,camera);BRAY.far=40;const hits=p.grp?BRAY.intersectObjects(p.grp.children,false):[];let cell=null,place=null;
+ if(hits.length&&hits[0].instanceId!==undefined){const h=hits[0];const c=h.object.userData.cells[h.instanceId];cell=c;const n=h.face.normal;place=[c[0]+Math.round(n.x),c[1]+Math.round(n.y),c[2]+Math.round(n.z)]}
+ else{const t=-BRAY.ray.origin.y/BRAY.ray.direction.y;if(t>0&&t<60){const hx=BRAY.ray.origin.x+BRAY.ray.direction.x*t,hz=BRAY.ray.origin.z+BRAY.ray.direction.z*t;place=[Math.floor(hx-p.x),0,Math.floor(hz-p.z)]}}
+ if(dig||BS.tool==='dig'){if(!cell)return;p.blocks.delete(cell.join(','));HOMEF.coins+=1;plotRebuild(p);bUI();return}
+ if(!place)return;const [x,y,z]=place;if(x<0||x>=LAND.size||z<0||z>=LAND.size||y<0||y>=LAND.maxH){toast('🚧 خارج حدود أرضك',1200);return}
+ const P=game.p;if(Math.floor(P.x)===p.x+x&&Math.floor(P.z)===p.z+z&&y>=Math.floor(P.y)-0&&y<=Math.floor(P.y+1.6)){toast('تحرّك شوي… لا تبني فوق راسك 😄',1200);return}
+ if(p.blocks.size>=LAND.maxB){toast('وصلت الحد ('+AR(LAND.maxB)+' مكعب)',1600);return}if(HOMEF.coins<1){toast('💰 خلصت دنانيرك',1400);return}
+ const k=x+','+y+','+z;if(p.blocks.has(k))return;p.blocks.set(k,BS.t);HOMEF.coins-=1;plotRebuild(p);bUI()}
+{const el=renderer.domElement;let d0=null;el.addEventListener('pointerdown',e=>{if(!BS.on)return;d0=[e.clientX,e.clientY,performance.now(),e.button]});
+ el.addEventListener('pointerup',e=>{if(!BS.on||!d0)return;const mv=Math.hypot(e.clientX-d0[0],e.clientY-d0[1]),dt=performance.now()-d0[2];const btn=d0[3];d0=null;if(document.pointerLockElement||(mv<10&&dt<450))buildAct(e.clientX,e.clientY,btn===2)});
+ el.addEventListener('contextmenu',e=>{if(BS.on)e.preventDefault()})}
+function landTick(){if(!game.on)return;const P=game.p;const p=plotAt(P.x,P.z);const mine=p&&game.user&&p.owner===game.user.u;
+ $('gBuyB').style.display=(p&&!p.owner&&!BS.on)?'block':'none';if(p&&!p.owner)$('gBuyB').textContent='🏷️ اشترِ الأرض رقم '+AR(p.i+1)+' ('+AR(LAND.price)+' دينار)';
+ $('gBuildB').style.display=(mine&&!BS.on)?'block':'none';$('bCross').style.display=(BS.on&&document.pointerLockElement)?'block':'none';
+ if(BS.on&&(!p||p!==BS.plot)&&Math.hypot(P.x-(BS.plot.x+5),P.z-(BS.plot.z+5))>22){buildEnd();toast('✅ حفظنا بناءك',1400)}}
 const DESTS=[
  {n:'بيتي',e:'🏠',home:1},{n:'قصر الملك',e:'👑',p:[0,0,-76.5]},{n:'ولي العهد',e:'🤴',p:[10,0,-69.5]},{n:'الجامع الكبير',e:'🕌',p:[0,0,9.2]},{n:'السوق',e:'🛒',p:[-30,0,0]},
  {n:'مطعم قدوري',e:'🍽️',p:[-6,0,-8.6]},{n:'دكان السلاح',e:'⚔️',p:[-34,0,.2]},{n:'محل الأثاث',e:'🪑',p:[-42,0,.2]},{n:'دار الحسبة',e:'⚖️',p:[-16.9,0,-2.8]},
  {n:'ديوان الاقتصاد',e:'💼',p:[-16.2,0,2.8]},{n:'خزانة الكتب',e:'📚',p:[2.4,0,-38.6]},{n:'معهد الإيمان',e:'📖',p:[-97,0,11]},{n:'دار العمدة',e:'🎖️',p:[10,0,45.8]},
  {n:'ديوان البريد',e:'🕊️',p:[-84,0,39]},{n:'البوابة والقنطرة',e:'🌉',p:[0,0,64]},{n:'السور الجنوبي',e:'🏹',p:[-10.5,7,56.6]},{n:'معسكر الجيش',e:'🛡️',p:[-74,0,-15]},
- {n:'برج القنّاص',e:'🎯',p:[-70,0,-30.5]},{n:'إمبراطورية فولكانور',e:'🌋',p:[76,2.4,-18]},{n:'حصن الثغر',e:'🏯',p:[-91,0,-55]},{n:'سجن المدينة',e:'🚔',p:[78,0,30.5]},{n:'حلبة النزال',e:'🤺',p:[30,0,56.6]},{n:'دار الشفاء',e:'🩺',p:[-73,0,11]},{n:'ساحة الدواوين',e:'⛲',p:[-85,0,25]},{n:'خان القوافل',e:'🐪',p:[86,0,50]},{n:'خيمة الجنرال قصي',e:'🎖️',p:[-56.5,0,-27]}];
+ {n:'برج القنّاص',e:'🎯',p:[-70,0,-30.5]},{n:'إمبراطورية فولكانور',e:'🌋',p:[76,2.4,-18]},{n:'حصن الثغر',e:'🏯',p:[-91,0,-55]},{n:'سجن المدينة',e:'🚔',p:[78,0,30.5]},{n:'حلبة النزال',e:'🤺',p:[30,0,56.6]},{n:'دار الشفاء',e:'🩺',p:[-73,0,11]},{n:'ساحة الدواوين',e:'⛲',p:[-85,0,25]},{n:'خان القوافل',e:'🐪',p:[86,0,50]},{n:'خيمة الجنرال قصي',e:'🎖️',p:[-56.5,0,-27]},{n:'أراضي البناء',e:'🏗️',p:[60,0,-44]}];
 {const st=document.createElement('style');st.textContent=`#gMapUI{position:fixed;inset:0;z-index:62;display:none;align-items:center;justify-content:center;background:rgba(6,8,14,.78);font-family:'Amiri',serif}
 #gMapUI .pn{width:min(560px,96vw);max-height:94vh;display:flex;flex-direction:column;background:#152238;border:2px solid #C9A45C;border-radius:18px;padding:12px;color:#F3EAD8;gap:10px}
 #gMapUI h3{margin:0;font-family:'Aref Ruqaa',serif;color:#E6C98A;font-size:24px;display:flex;justify-content:space-between;align-items:center}
@@ -2141,7 +2208,7 @@ function drawMap(){const c=$('gMapC'),g=c.getContext('2d');const S=720/(MAPV.x1-
  g.font="bold 22px 'Amiri',serif";g.fillStyle='#fff';g.strokeStyle='#000';g.lineWidth=4;g.strokeText('أنت',ux,uz-22);g.fillText('أنت',ux,uz-22)}
 function openMap(){if(!game.on)return;if(document.pointerLockElement)document.exitPointerLock();$('gMapUI').style.display='flex';drawMap();
  const L=$('gMapL');L.innerHTML='';for(const d of DESTS){const p=destPos(d);if(!p)continue;const b=document.createElement('button');b.textContent=d.e+' '+d.n;b.onclick=()=>travel(p,d.n);L.appendChild(b)}}
-function travel(p,name){if(SK.on)return;if(JOB.on){toast('📦 البضاعة ما تنقل بالخريطة… امشِ للسوق!',2200);return}if(Date.now()<COP.jailUntil){toast('🔒 أنت في السجن… ما تقدر تتنقّل',2000);return}if(COP.on){toast('🚨 الشرطة وراك! ما تقدر تهرب',2000);return}
+function travel(p,name){if(SK.on)return;if(BS.on)buildEnd();if(JOB.on){toast('📦 البضاعة ما تنقل بالخريطة… امشِ للسوق!',2200);return}if(Date.now()<COP.jailUntil){toast('🔒 أنت في السجن… ما تقدر تتنقّل',2000);return}if(COP.on){toast('🚨 الشرطة وراك! ما تقدر تهرب',2000);return}
  $('gMapUI').style.display='none';const f=$('gFade');f.style.opacity=1;
  setTimeout(()=>{game.p.set(p[0],p[1]||0,p[2]);const fl=floorAt(p[0],p[2],(p[1]||0)+.5);game.p.y=Math.max(fl,p[1]||0);game.vx=game.vz=game.vy=0;setFly(false,true);game.onG=true;
   game.yaw=Math.atan2(p[0],p[2])+(Math.hypot(p[0],p[2])<1?0:0);game.camP=null;f.style.opacity=0;toast('📍 وصلت: '+name,1800);if(NET.ok)pubPos()},260)}
@@ -2242,7 +2309,7 @@ function loop(t){
  if(window.__thFlag)window.__thFlag.rotation.y=Math.sin(t/500)*.25;
  if(window.__cav)window.__cav.arm.rotation.z=Math.sin(t/700)*.25;if(window.__qusay)window.__qusay.arm.rotation.x=-.9+Math.sin(t/900)*.25;
  if(window.__saw)window.__saw.m.position.x=window.__saw.x+Math.sin(t/180)*.18;
- caravanTick(t);if(game.on)jobTick();
+ caravanTick(t);if(game.on){jobTick();landTick()}
  if(window.__coin)window.__coin.position.y=1.05+Math.abs(Math.sin(t/260))*.5;
  if(OUT&&game.on&&!PERF.low){try{OUT.render(inside?inScene:scene,camera)}catch(e){OUT=null;renderer.render(inside?inScene:scene,camera)}}else renderer.render(inside?inScene:scene,camera);
  const W=innerWidth,H=innerHeight;
