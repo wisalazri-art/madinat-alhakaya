@@ -94,13 +94,13 @@ const DISTRICTS=[
  {name:'حارة العطّارين',job:'العطّار',color:'#D98E5A',sx:-1,sz:-1},
  {name:'حارة الصنّاع',job:'الصانع',color:'#8FB3C9',sx:-1,sz:1},
  {name:'حارة البساتين',job:'صاحب البستان',color:'#7FAE7A',sx:1,sz:1}];
-const SAMPLE='الوليد\nأيوب\njijou\nمحمد فلوس\nحسين وعباس\nأحمد\nعبدالرحمن\nقصي\nشعيل\nقدوري\nعمار\nالشهم\nإبراهيم\n_10_mustafath_9_9\nخطاب\nنضال\nعبدالعليم\nعلي\nفهد\nhusi_351\nrmhlyllwsh\nمحمد\nصبحي\nhamamm_sha_1\nحسين\ncr7_the_best97\nبلال\nتيم\nعبد القادر\nريان\nدار أحمد\nمحمد العدوي\nكرم\nبكور\nعبدالله\nelbardouia\nمحمد الأزرق';
-const NEW_NAMES=['أحمد','عبدالرحمن','قصي','شعيل','قدوري','عمار','الشهم','إبراهيم','_10_mustafath_9_9','خطاب','نضال','عبدالعليم','علي','فهد','husi_351','rmhlyllwsh','محمد','صبحي','hamamm_sha_1','حسين','cr7_the_best97','بلال','تيم','عبد القادر','ريان','دار أحمد','محمد العدوي','كرم','بكور','عبدالله','elbardouia','محمد الأزرق'];
+const SAMPLE='الوليد\nأيوب\njijou\nمحمد فلوس\nحسين وعباس\nأحمد\nعبدالرحمن\nقصي\nشعيل\nقدوري\nعمار\nالشهم\nإبراهيم\n_10_mustafath_9_9\nخطاب\nنضال\nعبدالعليم\nعلي\nفهد\nhusi_351\nrmhlyllwsh\nمحمد\nصبحي\nhamamm_sha_1\nحسين\ncr7_the_best97\nبلال\nتيم\nعبد القادر\nريان\nدار أحمد\nمحمد العدوي\nكرم\nبكور\nعبدالله\nelbardouia\nمحمد الأزرق\nآدم';
+const NEW_NAMES=['أحمد','عبدالرحمن','قصي','شعيل','قدوري','عمار','الشهم','إبراهيم','_10_mustafath_9_9','خطاب','نضال','عبدالعليم','علي','فهد','husi_351','rmhlyllwsh','محمد','صبحي','hamamm_sha_1','حسين','cr7_the_best97','بلال','تيم','عبد القادر','ريان','دار أحمد','محمد العدوي','كرم','بكور','عبدالله','elbardouia','محمد الأزرق','آدم'];
 const $=id=>document.getElementById(id);
 let names=[];
 try{const s=localStorage.getItem('hakaya-names-v7');names=(s!==null?s:SAMPLE).split('\n')}catch(e){names=SAMPLE.split('\n')}
 names=names.map(s=>s.trim()).filter(Boolean).map(n=>n==='mjhwllhwy.x'?'تيم':n);
-try{if(!localStorage.getItem('hakaya-added-v28')){NEW_NAMES.forEach(n=>{if(!names.includes(n))names.push(n)});localStorage.setItem('hakaya-names-v7',names.join('\n'));localStorage.setItem('hakaya-added-v28','1')}}catch(e){NEW_NAMES.forEach(n=>{if(!names.includes(n))names.push(n)})}
+try{if(!localStorage.getItem('hakaya-added-v29')){NEW_NAMES.forEach(n=>{if(!names.includes(n))names.push(n)});localStorage.setItem('hakaya-names-v7',names.join('\n'));localStorage.setItem('hakaya-added-v29','1')}}catch(e){NEW_NAMES.forEach(n=>{if(!names.includes(n))names.push(n)})}
 {const RI=names.indexOf('مطعم قدوري');if(RI!==25){if(RI>=0)names.splice(RI,1);if(names.length>25)names.splice(25,0,'مطعم قدوري')}}
 names=names.slice(0,100);
 // بيوت بمكان محدد (طلبات «جنب فلان»): هيثم مقابل دار أيوب وجيجو عبر الشارع
@@ -752,6 +752,12 @@ SHOPS.forEach(sh=>{box(2.4,.7,.12,mat.plaque,sh.x,3.25,sh.z+.75);box(2.2,.5,.14,
  const dr=makeChar(0xf6f2ea,{female:true,dress:0x2f7a5a,scarf:0xf6f2ea});dr.g.visible=true;dr.g.position.set(x+.4,0,z+.6);dr.g.rotation.y=0;dr.arms[1].rotation.x=-.8;
  const sc=new THREE.Mesh(new THREE.BoxGeometry(.3,.05,.22),M(0xf3ead8));sc.position.set(x+.75,1.1,z+.95);sc.rotation.x=-.5;scene.add(sc);
  const el=document.createElement('div');el.className='lb';el.innerHTML='<b>🩺 دار الشفاء</b><i>طبيبة المدينة</i>';document.getElementById('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(x,7,z)})}
+// ===== ولي العهد آدم (adam.salem01) عند بوابة القصر =====
+{const x=9.5,z=-73.2;const pr=makeChar(0x4a1440);pr.g.visible=true;pr.g.position.set(x,0,z);pr.g.rotation.y=-Math.PI/5;pr.g.scale.setScalar(1.12);
+ const gold=M(0xffd36a,{emissive:0x6a4a10,emissiveIntensity:.5});const cr=new THREE.Mesh(new THREE.CylinderGeometry(.26,.3,.2,12,1,true),gold);cr.position.y=2.2;pr.body.add(cr);
+ for(let k=0;k<6;k++){const t=new THREE.Mesh(new THREE.ConeGeometry(.06,.18,6),gold);const a=k/6*Math.PI*2;t.position.set(Math.cos(a)*.27,2.38,Math.sin(a)*.27);pr.body.add(t)}
+ const cape=new THREE.Mesh(new THREE.BoxGeometry(.9,1.4,.06),M(0x8e1b1b));cape.position.set(0,1.05,-.42);pr.body.add(cape);setWeapon(pr,'sword',false);pr.arms[1].rotation.x=-.4;
+ const el=document.createElement('div');el.className='lb';el.innerHTML='<b>👑 ولي العهد آدم</b><i>وارث عرش الحكايا</i>';document.getElementById('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(x,3.6,z)})}
 // قافلة الجمال
 amb.camels=[];
 {
@@ -1573,7 +1579,7 @@ renderer.domElement.addEventListener('pointerup',e=>{
 
 
 // ================= وضع اللعب: ادخل بشخصيتك =================
-const USERS={'95ql':['الوليد','صاحب المدينة 👑'],'ayoub.ba16':['أيوب','صاحب دكان السلاح ⚔️'],'jijou':['jijou','صاحب دكان السلاح ⚔️'],'almhmdylyhsynmhmd':['أحمد','وزير الاقتصاد 💼','أحمد',[-16.2,0,4.2]],'__0_ma_1_':[null,'حاكم الثغر 🏯','حاكم الثغر',[-92,0,-55]],'anoradoan2323':['محمد العدوي'],'karammustafa035':['كرم','قائد الرماة 🏹','كرم'],'ghosts_no1':[null,'وزير البريد والأخبار 🕊️','وزير البريد',[-83.8,0,40]],'abdallha1a':['عبدالله','شيخ معهد الإيمان 📖','الشيخ عبدالله'],'lnstgram_5679':['بكور'],'elbardouia':['elbardouia','صاحب دكان في السوق 🏪'],'zahara____wra':[null,'طبيبة المدينة 🩺','الطبيبة',[-72.6,0,9.4]],'mr.azrak':['محمد الأزرق'],'haythem_41_':['هيثم','جار أيوب وجيجو 🏠'],'moh_2008_amed':['محمد فلوس','أمين بيت المال 💰','محمد فلوس'],'bsngse':['حسين وعباس','أمين المكتبة 📚','حسين'],'ako__10f':['حسين وعباس','جندي في حُماة الحكايا ⚔️','عباس'],
+const USERS={'95ql':['الوليد','صاحب المدينة 👑'],'ayoub.ba16':['أيوب','صاحب دكان السلاح ⚔️'],'jijou':['jijou','صاحب دكان السلاح ⚔️'],'almhmdylyhsynmhmd':['أحمد','وزير الاقتصاد 💼','أحمد',[-16.2,0,4.2]],'__0_ma_1_':[null,'حاكم الثغر 🏯','حاكم الثغر',[-92,0,-55]],'anoradoan2323':['محمد العدوي'],'karammustafa035':['كرم','قائد الرماة 🏹','كرم'],'ghosts_no1':[null,'وزير البريد والأخبار 🕊️','وزير البريد',[-83.8,0,40]],'abdallha1a':['عبدالله','شيخ معهد الإيمان 📖','الشيخ عبدالله'],'lnstgram_5679':['بكور'],'elbardouia':['elbardouia','صاحب دكان في السوق 🏪'],'zahara____wra':[null,'طبيبة المدينة 🩺','الطبيبة',[-72.6,0,9.4]],'mr.azrak':['محمد الأزرق'],'adam.salem01':['آدم','ولي العهد 👑','ولي العهد آدم'],'haythem_41_':['هيثم','جار أيوب وجيجو 🏠'],'moh_2008_amed':['محمد فلوس','أمين بيت المال 💰','محمد فلوس'],'bsngse':['حسين وعباس','أمين المكتبة 📚','حسين'],'ako__10f':['حسين وعباس','جندي في حُماة الحكايا ⚔️','عباس'],
  'abw24085':['أحمد'],'med_abderrahman.314':['عبدالرحمن'],'koussay_bsf':['قصي'],'57691l':['شعيل'],'abdulqader_bek':['قدوري','صاحب مطعم قدوري البخاري 🍽️'],'nhwdgzh':['عمار'],'hamamm_sha_1':['الشهم','إمام الجامع الكبير 🕌','همام'],
  'a________bh511':['إبراهيم'],'_10_mustafath_9_9':['_10_mustafath_9_9'],'_2465885642':['خطاب','قائد المدفعية 💣'],'ne___el0':['نضال','جندي في حُماة الحكايا ⚔️'],'abdelalim12027':['عبدالعليم','قائد حُماة الحكايا 👑'],
  '5t_r39a__':['علي','جندي في حُماة الحكايا ⚔️'],'alligator.92267767':['فهد','جندي في حُماة الحكايا ⚔️'],'husi_351':['husi_351','جندي في حُماة الحكايا ⚔️'],'rmhlyllwsh':['rmhlyllwsh','جندي في حُماة الحكايا ⚔️'],
@@ -1604,6 +1610,7 @@ const NPCS=[
  {id:'shurta',name:'صاحب الشرطة 🚔',pos:[78,0,28.6],lines:n=>[`أهلًا يا ${n}، أنا صاحب الشرطة 🚔`,'في قرطبة كان «صاحب الشرطة» منصب كبير يحفظ الأمن في المدينة… وأنا على نفس الطريق','السلاح للدفاع بس… اللي يعتدي على أحد مكانه هنا في السجن 🔒','وأصحاب المناصب والشخصيات الاعتبارية محميين… واللي يقرّب منهم الحرس يردّونه 🛡️']},
  {id:'arena',name:'حكَم حلبة النزال 🤺',pos:[30,0,57.2],lines:n=>[`حيّاك يا ${n}! هذي حلبة النزال ⚔️`,'داخل الحلبة القتال مسموح… بدون شرطة ولا سجن','كل واحد عنده ١٠٠ ❤️، واللي يهزم خصمه ياخذ ١٠ دنانير 💰 والدرع يخفّف الضربة نص 🛡️']},
  {id:'doctor',name:'طبيبة المدينة 🩺',pos:[-72.6,0,7.4],user:'zahara____wra',lines:n=>[`أهلًا يا ${n}… خلّني أشوفك 🩺`,'دار الشفاء مفتوحة لكل أهل الحكايا… وإذا تعوّرت في الحلبة تعال لي ❤️‍🩹','في قرطبة عاش «الزهراوي»، أبو الجراحة، وكتابه «التصريف» درّسوه في أوروبا قرون طويلة ✨']},
+ {id:'prince',name:'ولي العهد آدم 👑',pos:[9.5,0,-71.6],user:'adam.salem01',lines:n=>[`أهلًا يا ${n}، أنا ولي عهد الحكايا 👑`,'العرش للملك… وأنا أتعلّم منه الحكم لين يجي يومي ⚔️','عبد الرحمن الناصر اختاره جدّه يخلفه وهو شاب… وصار من أعظم حكّام الأندلس ✨']},
  {id:'treasurer',name:'أمين بيت المال محمد فلوس 💰',pos:[0,0,0],user:'moh_2008_amed',lines:n=>[`أهلًا يا ${n}! عدّ معي… ألف، ألفين… 💰`,'أنا أمين بيت المال، خزنة الحكايا بيدي ومفتاحها عندي 🗝️','في الأندلس كان الدينار القرطبي الذهبي يتعامل فيه التجّار من بغداد لين أوروبا ✨']},
  {id:'resto',name:'مطعم قدوري البخاري 🍽️',pos:[-6,0,-11],enter:'restaurant',user:'abdulqader_bek',lines:n=>[`تفضّل يا ${n}، مطعم قدوري البخاري مفتوح 🍽️`,'عندنا رز بخاري على الفحم، مدفون، مدني، مضغوط وشواية… وكل الشعبيات 🔥','ولائم الملك والجيش عندنا VIP 👑 ونبي طبّاخ ونادل… تبي تشتغل؟ اكتب «أبي أشتغل في المطعم» 👨‍🍳']}];
 ;{const ti=names.indexOf('محمد فلوس');const tn=NPCS.find(n=>n.id==='treasurer');if(ti>=0&&houses[ti]){const d=houseDoor(ti);const hp=houses[ti].grp.position;const sx=(d.x-hp.x),sz=(d.z-hp.z),L=Math.hypot(sx,sz)||1;tn.pos=[d.x+sz/L*1.6,0,d.z-sx/L*1.6];
@@ -1985,7 +1992,7 @@ $('gArmsB').onclick=openArms;
 
 // ================= خريطة التنقّل: اضغط مكان وتوصله =================
 const DESTS=[
- {n:'بيتي',e:'🏠',home:1},{n:'قصر الملك',e:'👑',p:[0,0,-76.5]},{n:'الجامع الكبير',e:'🕌',p:[0,0,9.2]},{n:'السوق',e:'🛒',p:[-30,0,0]},
+ {n:'بيتي',e:'🏠',home:1},{n:'قصر الملك',e:'👑',p:[0,0,-76.5]},{n:'ولي العهد',e:'🤴',p:[10,0,-69.5]},{n:'الجامع الكبير',e:'🕌',p:[0,0,9.2]},{n:'السوق',e:'🛒',p:[-30,0,0]},
  {n:'مطعم قدوري',e:'🍽️',p:[-6,0,-8.6]},{n:'دكان السلاح',e:'⚔️',p:[-34,0,.2]},{n:'محل الأثاث',e:'🪑',p:[-42,0,.2]},{n:'دار الحسبة',e:'⚖️',p:[-16.9,0,-2.8]},
  {n:'ديوان الاقتصاد',e:'💼',p:[-16.2,0,2.8]},{n:'خزانة الكتب',e:'📚',p:[2.4,0,-38.6]},{n:'معهد الإيمان',e:'📖',p:[-97,0,11]},{n:'دار العمدة',e:'🎖️',p:[10,0,45.8]},
  {n:'ديوان البريد',e:'🕊️',p:[-84,0,39]},{n:'البوابة والقنطرة',e:'🌉',p:[0,0,64]},{n:'السور الجنوبي',e:'🏹',p:[-10.5,7,56.6]},{n:'معسكر الجيش',e:'🛡️',p:[-74,0,-15]},
