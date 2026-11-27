@@ -1616,7 +1616,7 @@ const NPCS=[
  {id:'arena',name:'حكَم حلبة النزال 🤺',pos:[30,0,57.2],lines:n=>[`حيّاك يا ${n}! هذي حلبة النزال ⚔️`,'داخل الحلبة القتال مسموح… بدون شرطة ولا سجن','كل واحد عنده ١٠٠ ❤️، واللي يهزم خصمه ياخذ ١٠ دنانير 💰 والدرع يخفّف الضربة نص 🛡️']},
  {id:'doctor',name:'طبيبة المدينة 🩺',pos:[-72.6,0,7.4],user:'zahara____wra',lines:n=>[`أهلًا يا ${n}… خلّني أشوفك 🩺`,'دار الشفاء مفتوحة لكل أهل الحكايا… وإذا تعوّرت في الحلبة تعال لي ❤️‍🩹','في قرطبة عاش «الزهراوي»، أبو الجراحة، وكتابه «التصريف» درّسوه في أوروبا قرون طويلة ✨']},
  {id:'prince',name:'ولي العهد آدم 👑',pos:[9.5,0,-71.6],user:'adam.salem01',lines:n=>[`أهلًا يا ${n}، أنا ولي عهد الحكايا 👑`,'العرش للملك… وأنا أتعلّم منه الحكم لين يجي يومي ⚔️','عبد الرحمن الناصر اختاره جدّه يخلفه وهو شاب… وصار من أعظم حكّام الأندلس ✨']},
- {id:'treasurer',name:'أمين بيت المال محمد فلوس 💰',pos:[0,0,0],user:'moh_2008_amed',lines:n=>[`أهلًا يا ${n}! عدّ معي… ألف، ألفين… 💰`,'أنا أمين بيت المال، خزنة الحكايا بيدي ومفتاحها عندي 🗝️','في الأندلس كان الدينار القرطبي الذهبي يتعامل فيه التجّار من بغداد لين أوروبا ✨']},
+ {id:'treasurer',name:'أمين بيت المال محمد فلوس 💰',pos:[0,0,0],user:'moh_2008_amed',lines:n=>[`أهلًا يا ${n}! عدّ معي… ألف، ألفين… 💰`,'أنا أمين بيت المال، خزنة الحكايا بيدي ومفتاحها عندي 🗝️','في الأندلس كان الدينار القرطبي الذهبي يتعامل فيه التجّار من بغداد لين أوروبا ✨','📜 كشف الرواتب: كل موظف في المدينة ياخذ راتبه من بيت المال كل أسبوعين… يوصله أول ما يدخل اللعبة 💼','ولي العهد ٤٠٠ · قائد الحُماة ٣٥٠ · الجنرال ٣٢٠ · الوزراء والعمدة ٣٠٠ · أمين المال وحاكم الثغر ٢٨٠ · القادة ٢٥٠ · المحتسب والإمام والطبيبة ٢٢٠ · شيخ المعهد ٢٠٠ · أمين المكتبة والقنّاص ١٨٠ · الجندي ١٢٠ · أصحاب المحلات ١٠٠ 💰']},
  {id:'resto',name:'مطعم قدوري البخاري 🍽️',pos:[-6,0,-11],enter:'restaurant',user:'abdulqader_bek',lines:n=>[`تفضّل يا ${n}، مطعم قدوري البخاري مفتوح 🍽️`,'عندنا رز بخاري على الفحم، مدفون، مدني، مضغوط وشواية… وكل الشعبيات 🔥','ولائم الملك والجيش عندنا VIP 👑 ونبي طبّاخ ونادل… تبي تشتغل؟ اكتب «أبي أشتغل في المطعم» 👨‍🍳']}];
 ;{const ti=names.indexOf('محمد فلوس');const tn=NPCS.find(n=>n.id==='treasurer');if(ti>=0&&houses[ti]){const d=houseDoor(ti);const hp=houses[ti].grp.position;const sx=(d.x-hp.x),sz=(d.z-hp.z),L=Math.hypot(sx,sz)||1;tn.pos=[d.x+sz/L*1.6,0,d.z-sx/L*1.6];
   const g=new THREE.Group();const gold=M(0xd4a640,{metalness:.8,roughness:.3}),wood=M(0x5a3a22);const a=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=true;g.add(o);return o};
@@ -1795,7 +1795,7 @@ function peerInfo(u){const i=USERS[u];return i?{d:i[2]||i[0]||u,ti:i[1]||'من �
 function netStart(){if(NET.c||NET.loading)return;NET.loading=true;sysMsg('⏳ جاري الاتصال بشات المدينة…');const s=document.createElement('script');s.src='https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js';
  s.onload=netConnect;s.onerror=()=>{NET.loading=false;sysMsg('⚠️ الشات ما اشتغل… تأكد من النت')};document.head.appendChild(s)}
 function netConnect(){try{const c=window.mqtt.connect('wss://broker.hivemq.com:8884/mqtt',{clientId:'hk_'+NET.id,keepalive:30,clean:true,reconnectPeriod:4000,connectTimeout:9000,will:{topic:NET.T+'bye',payload:JSON.stringify({id:NET.id}),qos:0,retain:false}});NET.c=c;
- c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye',NET.T+'hit',NET.T+'ko',NET.T+'sale/+',NET.T+'ledger/+',NET.T+'home/+']);CLOUD.sub=null;cloudSub();if(game.user)setTimeout(()=>{if(!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants()}},3500);homePub();if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
+ c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye',NET.T+'hit',NET.T+'ko',NET.T+'sale/+',NET.T+'ledger/+',NET.T+'home/+']);CLOUD.sub=null;cloudSub();if(game.user)setTimeout(()=>{if(!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants();paySalary()}},3500);homePub();if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
  c.on('close',()=>{if(NET.ok)sysMsg('🔴 انقطع الشات… يعيد الاتصال');NET.ok=false});
  c.on('message',(tp,buf)=>{let m;try{m=JSON.parse(buf.toString())}catch(e){return}if(!m||typeof m!=='object'||m.id===NET.id)return;const k=tp.slice(NET.T.length);
   if(k==='pos')onPos(m);else if(k==='chat')onChat(m);else if(k.startsWith('save/'))onCloud(m);else if(k==='hit')onHit(m);else if(k==='ko')onKO(m);else if(k.startsWith('sale/'))onSale(m);else if(k.startsWith('ledger/'))onLedger(k.slice(7),m);else if(k.startsWith('home/')){if(typeof m.u==='string'&&Array.isArray(m.items))NET.homes[m.u.toLowerCase()]=m.items.filter(x=>typeof x==='string'||(x&&typeof x.id==='string')).slice(0,8)}else if(k==='bye')dropPeer(m.id)})}catch(e){sysMsg('⚠️ الشات غير متاح')}}
@@ -1841,19 +1841,29 @@ function homeLoad(){for(const k of Object.keys(HOMEF))delete HOMEF[k];Object.ass
 function homeSave(){HOMEF.ts=Date.now();try{localStorage.setItem(homeKey(),JSON.stringify(HOMEF))}catch(e){}coinsUI();homePub();cloudSave()}
 // ☁️ حفظ سحابي: أغراض اللاعب (دنانير، أثاث، سلاح) تنحفظ باسمه وترجع له من أي جهاز أو متصفح
 const CLOUD={sub:null,t:null,got:false,base:0,ready:false};
+// رواتب موظفي المدينة: تنصرف من بيت المال كل أسبوعين (أول دفعة ٢٧ نوفمبر ٢٠٢٦)
+const PAY_EPOCH=Date.UTC(2026,10,27),PAY_SPAN=14*864e5;
+const SALARY={'95ql':500,'adam.salem01':400,'abdelalim12027':350,'koussay_bsf':320,'almhmdylyhsynmhmd':300,'ghosts_no1':300,'ilyaaaa_33':300,'moh_2008_amed':280,'__0_ma_1_':280,
+ 'mjhwllhwy.x':250,'karammustafa035':250,'_2465885642':250,'bileljl2008':220,'hamamm_sha_1':220,'zahara____wra':220,'abdallha1a':200,'bsngse':180,'abdouu_tr_03':180,
+ 'ako__10f':120,'ne___el0':120,'5t_r39a__':120,'alligator.92267767':120,'husi_351':120,'rmhlyllwsh':120,'mohamad_al_sbeeh':120,'sbhyb.ry':120,'cr7_the_best97':120,
+ 'abdulqader_bek':100,'ayoub.ba16':100,'jijou':100,'yasser__ben4':100,'ahmad6642691':100,'elbardouia':100};
+function paySalary(){if(!game.user||!CLOUD.ready)return;const amt=SALARY[game.user.u];if(!amt)return;const per=Math.floor((Date.now()-PAY_EPOCH)/PAY_SPAN);if(per<0)return;
+ const last=Number.isInteger(HOMEF.payP)?HOMEF.payP:-1;if(last>=per)return;HOMEF.payP=per;HOMEF.coins+=amt;homeSave();coinsUI();
+ const nx=new Date(PAY_EPOCH+(per+1)*PAY_SPAN);setTimeout(()=>toast('💼 راتبك وصل: +'+AR(amt)+' دينار من بيت المال · الراتب الجاي '+AR(nx.getUTCDate())+'/'+AR(nx.getUTCMonth()+1),4200),2600);
+ if(NET.ok)NET.c.publish(NET.T+'chat',JSON.stringify({id:NET.id,u:game.user.u,sys:1,txt:'💼 '+game.user.disp+' استلم راتبه من بيت المال'}))}
 // منح من صاحب المدينة (تنطبق مرة وحدة لكل منحة)
 const GRANTS={'95ql':[{id:'g20261127a',n:1000,why:'منحة من خزانة الحكايا 👑'}]};
 function applyGrants(){if(!game.user||!CLOUD.ready)return;const L=GRANTS[game.user.u];if(!L)return;HOMEF.grants=HOMEF.grants||[];let ch=false;for(const g of L){if(HOMEF.grants.includes(g.id))continue;HOMEF.grants.push(g.id);HOMEF.coins+=g.n;ch=true;setTimeout(()=>toast('💰 +'+AR(g.n)+' دينار · '+g.why,3600),1200)}if(ch){homeSave();coinsUI()}}
-function cloudSave(){if(!game.user||!CLOUD.ready)return;clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>{if(!NET.ok||!game.user)return;const d={};['coins','items','daily','arms','equip','shield','armsClaimed','wanted','crimes','grants'].forEach(k=>{if(HOMEF[k]!==undefined)d[k]=HOMEF[k]});
+function cloudSave(){if(!game.user||!CLOUD.ready)return;clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>{if(!NET.ok||!game.user)return;const d={};['coins','items','daily','arms','equip','shield','armsClaimed','wanted','crimes','grants','payP'].forEach(k=>{if(HOMEF[k]!==undefined)d[k]=HOMEF[k]});
  NET.c.publish(NET.T+'save/'+game.user.u,JSON.stringify({u:game.user.u,ts:HOMEF.ts||Date.now(),d}),{retain:true,qos:1})},800)}
-function cloudSub(){if(!NET.ok||!game.user)return;const t=NET.T+'save/'+game.user.u;if(CLOUD.sub===t)return;if(CLOUD.sub)NET.c.unsubscribe(CLOUD.sub);CLOUD.sub=t;CLOUD.got=false;CLOUD.ready=false;NET.c.subscribe(t,{qos:1});setTimeout(()=>{if(CLOUD.sub===t&&!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants()}},3500)}
+function cloudSub(){if(!NET.ok||!game.user)return;const t=NET.T+'save/'+game.user.u;if(CLOUD.sub===t)return;if(CLOUD.sub)NET.c.unsubscribe(CLOUD.sub);CLOUD.sub=t;CLOUD.got=false;CLOUD.ready=false;NET.c.subscribe(t,{qos:1});setTimeout(()=>{if(CLOUD.sub===t&&!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants();paySalary()}},3500)}
 function onCloud(m){if(!game.user||typeof m.u!=='string'||m.u!==game.user.u||!m.d||typeof m.d!=='object')return;const first=!CLOUD.got;CLOUD.got=true;CLOUD.ready=true;const ts=+m.ts||0;
- if(ts<=CLOUD.base||(!first&&ts<=(HOMEF.ts||0))){if(first){cloudSave();setTimeout(applyGrants,300)}return}CLOUD.base=ts;const d=m.d;
+ if(ts<=CLOUD.base||(!first&&ts<=(HOMEF.ts||0))){if(first){cloudSave();setTimeout(()=>{applyGrants();paySalary()},300)}return}CLOUD.base=ts;const d=m.d;
  const okItem=x=>(typeof x==='string'&&FURN.some(f=>f.id===x))||(x&&typeof x.id==='string'&&FURN.some(f=>f.id===x.id));
  HOMEF.coins=Math.max(0,Math.min(1e6,Math.floor(+d.coins||0)));HOMEF.items=Array.isArray(d.items)?d.items.filter(okItem).slice(0,8):[];
  HOMEF.arms=Array.isArray(d.arms)?d.arms.filter(x=>ARMS.some(a=>a.id===x)):[];HOMEF.equip=ARMS.some(a=>a.id===d.equip)?d.equip:'';HOMEF.shield=!!d.shield;
- HOMEF.armsClaimed=Math.max(0,+d.armsClaimed||0);HOMEF.wanted=d.wanted?1:0;HOMEF.crimes=Math.max(0,+d.crimes||0);if(typeof d.daily==='string')HOMEF.daily=d.daily;HOMEF.grants=Array.isArray(d.grants)?d.grants.filter(x=>typeof x==='string').slice(0,50):[];HOMEF.ts=ts;
- try{localStorage.setItem(homeKey(),JSON.stringify(HOMEF))}catch(e){}coinsUI();armsUI();homePub();setTimeout(applyGrants,300);
+ HOMEF.armsClaimed=Math.max(0,+d.armsClaimed||0);HOMEF.wanted=d.wanted?1:0;HOMEF.crimes=Math.max(0,+d.crimes||0);if(typeof d.daily==='string')HOMEF.daily=d.daily;HOMEF.grants=Array.isArray(d.grants)?d.grants.filter(x=>typeof x==='string').slice(0,50):[];HOMEF.payP=Number.isInteger(d.payP)?d.payP:(Number.isInteger(HOMEF.payP)?HOMEF.payP:-1);HOMEF.ts=ts;
+ try{localStorage.setItem(homeKey(),JSON.stringify(HOMEF))}catch(e){}coinsUI();armsUI();homePub();setTimeout(()=>{applyGrants();paySalary()},300);
  if(inside&&selected&&selected.name===myHouse())refreshFurn(selected.name);toast('☁️ رجعت أغراضك: '+AR(HOMEF.coins)+' دينار · '+AR(HOMEF.items.length)+' قطعة أثاث'+(HOMEF.arms.length?' · '+AR(HOMEF.arms.length)+' سلاح':''),3200)}
 function homePub(){if(NET.ok&&game.user&&myHouse())NET.c.publish(NET.T+'home/'+game.user.u,JSON.stringify({u:game.user.u,items:HOMEF.items.slice(0,8)}),{retain:true,qos:0})}
 function coinsUI(){const e=$('gCoins');if(e)e.textContent='💰 '+AR(HOMEF.coins)}
