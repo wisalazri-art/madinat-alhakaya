@@ -2044,7 +2044,7 @@ function isVIP(u){const i=USERS[u];return !!(i&&i[1]&&!/جندي|زائر|سكّ
 function guardBlock(name){const P=game.p;game.vx=-game.vx*.5-Math.sin(hero.g.rotation.y)*8;game.vz=-game.vz*.5-Math.cos(hero.g.rotation.y)*8;game.vy=Math.max(game.vy,3);
  ATK.warn++;if(ATK.warn===1){toast('🛡️ '+name+' شخصية اعتبارية محمية… الحرس منعوك! هذا إنذار أول ⚠️',3200)}else{toast('🛡️ حاولت تعتدي على '+name+' مرة ثانية!',2000);crime(name)}}
 function attack(){if(SK.on)return;if(!HOMEF.equip||HOMEF.equip==='shield'){toast('ما معك سلاح… روح دكان السلاح ⚔️',2000);return}if(Date.now()<COP.jailUntil){toast('أنت في السجن 🔒',1500);return}
- if(performance.now()-ATK.t<700)return;ATK.t=performance.now();const P=game.p;if(siegeHit())return;
+ if(performance.now()-ATK.t<700)return;ATK.t=performance.now();const P=game.p;if(siegeHit())return;if(typeof SIEGE!=='undefined'&&SIEGE.start){let near=1e9;for(const e of SIEGE.en)if(e.ch.g.visible)near=Math.min(near,Math.hypot(e.x-P.x,e.z-P.z));if(near<12){toast('قرّب أكثر من الغازي ⚔️ ('+AR(Math.round(near))+' م)',900)}}
  let tgt=null,td=2.8;for(const [id,p] of NET.peers){const d=Math.hypot(p.pos.x-P.x,p.pos.z-P.z);if(d<td&&Math.abs(p.pos.y-P.y)<2){td=d;tgt={peer:id,name:p.d}}}
  if(!tgt)for(const n of NPCS){const d=Math.hypot(n.pos[0]-P.x,n.pos[2]-P.z);if(d<td&&Math.abs((n.pos[1]||0)-P.y)<2.5){td=d;tgt={npc:n,name:n.name}}}
  if(!tgt)return;const tp=tgt.peer&&NET.peers.get(tgt.peer);const legal=tp&&inArena(P.x,P.z)&&inArena(tp.pos.x,tp.pos.z);
@@ -2419,12 +2419,12 @@ function siegeTick(dt){const w=siegeWindow();if(w!==SIEGE.start)siegeBuild(w);if
  const P=game.p;let alive=0;for(const e of SIEGE.en){if(SIEGE.dead.has(e.i)&&e.respawn&&now>e.respawn&&now<SIEGE.start+SIEGE.len-60000){SIEGE.dead.delete(e.i);e.respawn=0}if(SIEGE.dead.has(e.i)||now<e.at){e.ch.g.visible=false;continue}alive++;e.ch.g.visible=true;
   let tx=0,tz=58;const dp=Math.hypot(P.x-e.x,P.z-e.z);if(game.on&&dp<18&&P.y<3){tx=P.x;tz=P.z}else if(e.z>97.5&&Math.abs(e.x)>2){tx=0;tz=99}else if(e.z>74){tx=0;tz=60}
   const dx=tx-e.x,dz=tz-e.z,L=Math.hypot(dx,dz);if(L>1.4){e.x+=dx/L*3.2*dt;e.z+=dz/L*3.2*dt;e.ch.arms[0].rotation.x=Math.sin(now/180+e.i)*.6;e.ch.arms[1].rotation.x=-Math.sin(now/180+e.i)*.6}
-  e.ch.g.position.set(e.x,groundY(e.x,e.z),e.z);e.ch.g.rotation.y=Math.atan2(dx,dz);
+  e.ch.g.position.set(e.x,groundY(e.x,e.z)+(e.flash&&now-e.flash<250?.35:0),e.z);e.ch.g.rotation.y=Math.atan2(dx,dz);{const f=e.flash&&now-e.flash<250;e.ch.bm.color.setHex(f?0xffffff:0x9a1f1f);e.ch.g.scale.setScalar(f?1.15:1)}
   if(game.on&&dp<1.8&&now-e.last>1500&&game.hp>0&&Date.now()>COP.jailUntil){e.last=now;e.ch.arms[1].rotation.x=-2.2;let dmg=8;if(HOMEF.shield)dmg=4;game.hp-=dmg;game.lastHit=Date.now();hpUI();const f=$('gHurt');f.style.opacity=.5;setTimeout(()=>f.style.opacity=0,220);if(game.hp<=0)knockout('siege','جيش الغزاة')}}
  {let cx=0,cz=0,c=0;for(const e of SIEGE.en){if(e.ch.g.visible){cx+=e.x;cz+=e.z;c++}}SIEGE_TAG.el.style.display=c?'':'none';if(c)SIEGE_TAG.pos.set(cx/c,4.5,cz/c);SIEGE.cx=c?cx/c:0;SIEGE.cz=c?cz/c:90}
  if(game.on&&!GM.mode&&!DLV.on)gameBar('⚔️ الغزاة عند البوابة الجنوبية! العدد: '+AR(alive)+' · قتلت '+AR(SIEGE.kills)+' · باقي '+AR(Math.ceil((SIEGE.start+SIEGE.len-now)/60000))+' د')}
-function siegeHit(){if(!SIEGE.start)return false;const P=game.p;let best=null,bd=2.8;for(const e of SIEGE.en){if(SIEGE.dead.has(e.i)||!e.ch.g.visible)continue;const d=Math.hypot(e.x-P.x,e.z-P.z);if(d<bd){bd=d;best=e}}if(!best)return false;
- best.hp-=(DMG[HOMEF.equip]||15)*2;best.x+=(best.x-P.x)/bd*1.2;best.z+=(best.z-P.z)/bd*1.2;if(best.hp<=0){siegeDie(best);SIEGE.kills++;NET.ok&&NET.c.publish(NET.T+'siege',JSON.stringify({id:NET.id,s:SIEGE.start,k:best.i,g:best.gen||0,u:game.user.u}));earn(5,'أسقطت غازي ⚔️');scoreSubmit('siege',SIEGE.kills,false)}return true}
+function siegeHit(){if(!SIEGE.start)return false;const P=game.p;let best=null,bd=3.6;for(const e of SIEGE.en){if(SIEGE.dead.has(e.i)||!e.ch.g.visible)continue;const d=Math.hypot(e.x-P.x,e.z-P.z);if(d<bd){bd=d;best=e}}if(!best)return false;
+ const dm=(DMG[HOMEF.equip]||15)*2;best.hp-=dm;best.x+=(best.x-P.x)/Math.max(bd,.3)*1.8;best.z+=(best.z-P.z)/Math.max(bd,.3)*1.8;best.flash=Date.now();hero.arms[1].rotation.x=-2.4;toast(best.hp>0?'💥 -'+AR(dm)+' · صحة الغازي '+AR(Math.max(0,best.hp))+'/٦٠':'💀 طاح الغازي!',900);if(best.hp<=0){siegeDie(best);SIEGE.kills++;NET.ok&&NET.c.publish(NET.T+'siege',JSON.stringify({id:NET.id,s:SIEGE.start,k:best.i,g:best.gen||0,u:game.user.u}));earn(5,'أسقطت غازي ⚔️');scoreSubmit('siege',SIEGE.kills,false)}return true}
 SCORES.siege=[];
 // ---------- ٢) قصة الخائن ----------
 const TRAITOR={start:'2026-11-28',reveal:'2026-12-04',ans:'tailor',S:[['merchant','التاجر الغريب 🧳'],['guard','حارس البوابة الليلي 🌙'],['tailor','الخيّاط الصامت 🧵'],['courier','ساعي البريد المستعجل 📨'],['lamp','صانع الفوانيس 🏮']],
