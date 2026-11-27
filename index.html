@@ -1579,7 +1579,7 @@ const NPCS=[
  {id:'quran',name:'الشيخ عبدالله · معهد الإيمان 📖',pos:[15,0,-45.6],user:'abdallha1a',lines:n=>[`السلام عليكم يا ${n} 🤍`,'حيّاك في معهد الإيمان لتعليم القرآن… الطلاب يحفظون الحين 📖','في قرطبة كانت حلقات القرآن والعلم في الجامع الكبير يحضرها طلاب من كل البلاد ✨']},
  {id:'cavalry',name:'قائد الفرسان تيم 🐎',pos:[-71,0,-23],user:'mjhwllhwy.x',lines:n=>[`(من فوق الفرس) هلا يا ${n}! 🐎`,'أنا في مقدّمة جيش حُماة الحكايا… أول من يهجم وآخر من يرجع ⚔️','في الأندلس كانت الخيل العربية سرّ قوة الفرسان، سريعة وصبورة 🔥']},
  {id:'furniture',name:'نجّار محل الأثاث 🪑',pos:[-42,0,-.9],lines:n=>[`هلا يا ${n}! تبي تأثّث بيتك؟ 🪑`,'عندنا مجالس ومخدات، ومناديس بمسامير نحاس، وسجاد ملفوف 🧵','نجّارين الأندلس اشتهروا بسقوف الخشب المنقوش المعشّق… بعضها باقي إلى اليوم في قصر الحمراء ✨','اضغط «🛒 تسوّق أثاث» واختار اللي يعجبك… ويوصل بيتك على طول 🏠']},
- {id:'shurta',name:'صاحب الشرطة 🚔',pos:[78,0,28.6],lines:n=>[`أهلًا يا ${n}، أنا صاحب الشرطة 🚔`,'في قرطبة كان «صاحب الشرطة» منصب كبير يحفظ الأمن في المدينة… وأنا على نفس الطريق','السلاح للدفاع بس… اللي يعتدي على أحد مكانه هنا في السجن 🔒']},
+ {id:'shurta',name:'صاحب الشرطة 🚔',pos:[78,0,28.6],lines:n=>[`أهلًا يا ${n}، أنا صاحب الشرطة 🚔`,'في قرطبة كان «صاحب الشرطة» منصب كبير يحفظ الأمن في المدينة… وأنا على نفس الطريق','السلاح للدفاع بس… اللي يعتدي على أحد مكانه هنا في السجن 🔒','وأصحاب المناصب والشخصيات الاعتبارية محميين… واللي يقرّب منهم الحرس يردّونه 🛡️']},
  {id:'treasurer',name:'أمين بيت المال محمد فلوس 💰',pos:[0,0,0],user:'moh_2008_amed',lines:n=>[`أهلًا يا ${n}! عدّ معي… ألف، ألفين… 💰`,'أنا أمين بيت المال، خزنة الحكايا بيدي ومفتاحها عندي 🗝️','في الأندلس كان الدينار القرطبي الذهبي يتعامل فيه التجّار من بغداد لين أوروبا ✨']},
  {id:'resto',name:'مطعم قدوري البخاري 🍽️',pos:[-6,0,-11],enter:'restaurant',user:'abdulqader_bek',lines:n=>[`تفضّل يا ${n}، مطعم قدوري البخاري مفتوح 🍽️`,'عندنا رز بخاري على الفحم، مدفون، مدني، مضغوط وشواية… وكل الشعبيات 🔥','ولائم الملك والجيش عندنا VIP 👑 ونبي طبّاخ ونادل… تبي تشتغل؟ اكتب «أبي أشتغل في المطعم» 👨‍🍳']}];
 ;{const ti=names.indexOf('محمد فلوس');const tn=NPCS.find(n=>n.id==='treasurer');if(ti>=0&&houses[ti]){const d=houseDoor(ti);const hp=houses[ti].grp.position;const sx=(d.x-hp.x),sz=(d.z-hp.z),L=Math.hypot(sx,sz)||1;tn.pos=[d.x+sz/L*1.6,0,d.z-sx/L*1.6];
@@ -1742,7 +1742,7 @@ function pubPos(){if(!NET.ok||!game.on)return;const P=game.p;NET.c.publish(NET.T
 function netTick(t,act){if(!NET.ok||!game.on)return;if(t-NET.lastPub<(act?130:2500))return;NET.lastPub=t;pubPos()}
 function onPos(m){if(typeof m.u!=='string'||typeof m.id!=='string'||![m.x,m.y,m.z].every(isFinite))return;let p=NET.peers.get(m.id);
  if(!p){if(NET.peers.size>=40)return;const c=makeChar(m.c|0);const tag=mkTag('peer');const inf=peerInfo(m.u.slice(0,30).toLowerCase());tag.querySelector('b').textContent=inf.d;tag.querySelector('i').textContent=inf.ti;
-  p={c,tag,d:inf.d,tp:new THREE.Vector3(m.x,m.y,m.z),pos:new THREE.Vector3(m.x,m.y,m.z),r:+m.r||0,step:0,tpos:new THREE.Vector3()};NET.peers.set(m.id,p);if(game.on)sysMsg(`👋 ${inf.d} دخل المدينة`)}
+  p={c,tag,u:m.u.slice(0,30).toLowerCase(),d:inf.d,tp:new THREE.Vector3(m.x,m.y,m.z),pos:new THREE.Vector3(m.x,m.y,m.z),r:+m.r||0,step:0,tpos:new THREE.Vector3()};NET.peers.set(m.id,p);if(game.on)sysMsg(`👋 ${inf.d} دخل المدينة`)}
  p.tp.set(m.x,m.y,m.z);p.r=+m.r||0;p.f=!!m.f;p.last=performance.now();p.c.bm.color.setHex((m.c|0)&0xffffff);const w=['sword','spear','bow','axe'].includes(m.w)?m.w:'';if(w!==(p.c.wid||'')||!!m.s!==!!p.c.hasShield)setWeapon(p.c,w,!!m.s);p.atk=m.a?performance.now():p.atk}
 function dropPeer(id){const p=NET.peers.get(id);if(!p)return;scene.remove(p.c.g);p.tag.remove();NET.peers.delete(id)}
 function updatePeers(dt){const now=performance.now();for(const[id,p]of NET.peers){if(now-p.last>9000){dropPeer(id);continue}
@@ -1880,13 +1880,19 @@ function updateCop(dt,P){if(COP.on&&COP.g){const g=COP.g.g;const dx=P.x-g.positi
  const left=COP.jailUntil-Date.now();if(left>0){P.x=Math.max(JAIL.x-JAIL.w/2+.6,Math.min(JAIL.x+JAIL.w/2-.6,P.x));P.z=Math.max(JAIL.z-JAIL.d/2+.6,Math.min(JAIL.z+JAIL.d/2-.4,P.z));P.y=0;if(game.fly)setFly(false,true);$('gJailT').textContent=AR(Math.ceil(left/1000))}
  else if($('gJail').style.display==='block'){$('gJail').style.display='none';game.p.set(JAIL.x,0,JAIL.z+JAIL.d/2+2.5);if(COP.g)COP.g.g.visible=false;toast('🔓 انتهت محكوميتك… احترم أهل المدينة 🤝',3000)}}
 // الهجوم
-const ATK={t:-9};
+const ATK={t:-9,warn:0};
+// الشخصيات الاعتبارية: كل شخصيات المدينة + أصحاب المناصب (مو الجنود ولا السكّان العاديين)
+function isVIP(u){const i=USERS[u];return !!(i&&i[1]&&!/جندي|زائر|سكّان|جار/.test(i[1]))}
+function guardBlock(name){const P=game.p;game.vx=-game.vx*.5-Math.sin(hero.g.rotation.y)*8;game.vz=-game.vz*.5-Math.cos(hero.g.rotation.y)*8;game.vy=Math.max(game.vy,3);
+ ATK.warn++;if(ATK.warn===1){toast('🛡️ '+name+' شخصية اعتبارية محمية… الحرس منعوك! هذا إنذار أول ⚠️',3200)}else{toast('🛡️ حاولت تعتدي على '+name+' مرة ثانية!',2000);crime(name)}}
 function attack(){if(!HOMEF.equip||HOMEF.equip==='shield'){toast('ما معك سلاح… روح دكان السلاح ⚔️',2000);return}if(Date.now()<COP.jailUntil){toast('أنت في السجن 🔒',1500);return}
  if(performance.now()-ATK.t<700)return;ATK.t=performance.now();const P=game.p;
  let tgt=null,td=2.8;for(const [id,p] of NET.peers){const d=Math.hypot(p.pos.x-P.x,p.pos.z-P.z);if(d<td&&Math.abs(p.pos.y-P.y)<2){td=d;tgt={peer:id,name:p.d}}}
  if(!tgt)for(const n of NPCS){const d=Math.hypot(n.pos[0]-P.x,n.pos[2]-P.z);if(d<td&&Math.abs((n.pos[1]||0)-P.y)<2.5){td=d;tgt={npc:n,name:n.name}}}
- if(!tgt)return;if(tgt.peer&&NET.ok)NET.c.publish(NET.T+'hit',JSON.stringify({id:NET.id,to:tgt.peer,u:game.user.u}));crime(tgt.name)}
-function onHit(m){if(m.to!==NET.id||!game.on)return;const inf=peerInfo(String(m.u).slice(0,30).toLowerCase());const p=NET.peers.get(m.id);
+ if(!tgt)return;
+ if(tgt.npc||(tgt.peer&&isVIP((NET.peers.get(tgt.peer)||{}).u))){guardBlock(tgt.name);return}
+ if(tgt.peer&&NET.ok)NET.c.publish(NET.T+'hit',JSON.stringify({id:NET.id,to:tgt.peer,u:game.user.u}));crime(tgt.name)}
+function onHit(m){if(m.to!==NET.id||!game.on)return;if(isVIP(game.user.u)){toast('🛡️ الحرس حموك من اعتداء… أنت شخصية اعتبارية 👑',2400);return}const inf=peerInfo(String(m.u).slice(0,30).toLowerCase());const p=NET.peers.get(m.id);
  if(p){const dx=game.p.x-p.pos.x,dz=game.p.z-p.pos.z,L=Math.hypot(dx,dz)||1;game.vx+=dx/L*9;game.vz+=dz/L*9;game.vy=Math.max(game.vy,4)}
  const f=$('gHurt');f.style.opacity=.55;setTimeout(()=>f.style.opacity=0,250);toast((HOMEF.equip==='shield'||HOMEF.shield?'🛡️ درعك حماك! ':'💥 ')+inf.d+' اعتدى عليك… الشرطة بتتصرّف 🚨',2600)}
 // واجهة
