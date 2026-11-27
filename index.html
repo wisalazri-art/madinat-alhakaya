@@ -1575,6 +1575,11 @@ body.game header,body.game #panel,body.game #hint,body.game #card{display:none!i
 #gTalk b{display:block;color:#E6C98A;margin-bottom:4px}#gTalk small{display:block;opacity:.6;font-size:13px;margin-top:6px}
 #gToast{position:fixed;top:64px;left:0;right:0;text-align:center;z-index:25;pointer-events:none;font-family:'Aref Ruqaa',serif;font-size:28px;color:#ffd36a;text-shadow:0 2px 10px #000;opacity:0;transition:opacity .6s}
 .lb.me b{color:#ffd36a}.lb.peer b{color:#bfe3ff}
+body.game .lb{font-size:13px;transition:opacity .25s}
+body.game .lb b{font-family:'Amiri',serif;font-weight:700;color:#fff;text-shadow:0 1px 2px #000,0 0 3px rgba(0,0,0,.9);line-height:1.15}
+body.game .lb i{display:none}
+body.game .lb.me b{color:#ffd36a}body.game .lb.peer b{color:#bfe3ff}
+body.game .lb .bub{font-size:13px;max-width:170px;padding:2px 8px;border-radius:10px}
 .lb .bub{display:block;font-style:normal;font-family:'Amiri',serif;font-size:.62em;background:rgba(255,255,255,.95);color:#1a1208;border-radius:12px;padding:3px 10px;margin:0 auto 4px;max-width:260px;white-space:normal;width:max-content}.lb .bub:empty{display:none}
 #gBtns{position:fixed;right:18px;bottom:24px;display:grid;grid-template-columns:repeat(2,64px);gap:10px;z-index:20}
 .gb{width:64px;height:64px;border-radius:50%;border:2px solid rgba(201,164,92,.8);background:rgba(14,26,43,.6);color:#F3EAD8;font-size:26px;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;padding:0}
@@ -1635,9 +1640,9 @@ function startGame(){let u=$('gUser').value.trim().replace(/^@/,'').toLowerCase(
  hero.bm.color.set(info?(info[1]&&info[1].includes('جندي')?0x4a1440:info[1]&&info[1].includes('إمام')?0x2a2a30:0x6b4a2e):0x3b4a6b);
  meTag.querySelector('b').textContent=disp;meTag.querySelector('i').textContent=title;
  $('gWho').textContent=`${disp} · ${title}`;
- game.on=true;document.body.classList.add('game');$('gStart').style.display='none';$('card').style.display='none';fly=null;controls.autoRotate=false;controls.enabled=false;camera.far=420;camera.fov=55;camera.updateProjectionMatrix();scene.fog&&(scene.fog.near=140,scene.fog.far=430);
+ game.on=true;document.body.classList.add('game');$('gStart').style.display='none';$('card').style.display='none';fly=null;controls.autoRotate=false;controls.enabled=false;camera.far=420;camera.fov=50;camera.updateProjectionMatrix();scene.fog&&(scene.fog.near=140,scene.fog.far=430);
  const back=new THREE.Vector3(-spawn.x,0,-spawn.z).normalize();if(!isFinite(back.x))back.set(0,0,-1);
- game.yaw=Math.atan2(-back.x,-back.z);game.pitch=.32;game.dist=8;game.vx=game.vz=game.vy=0;game.onG=true;setFly(false,true);
+ game.yaw=Math.atan2(-back.x,-back.z);game.pitch=.62;game.dist=11;game.camP=null;game.fp=false;game.vx=game.vz=game.vy=0;game.onG=true;setFly(false,true);
  setTimeout(()=>toast(hi,4200),300);netStart();if(NET.ok)pubPos()}
 function stopGame(){if(NET.ok)NET.c.publish(NET.T+'bye',JSON.stringify({id:NET.id}));setFly(false,true);closeChat();if(document.pointerLockElement)document.exitPointerLock();
  game.on=false;document.body.classList.remove('game');hero.g.visible=false;meTag.style.opacity=0;$('gTalk').style.display='none';controls.enabled=true;
@@ -1650,7 +1655,7 @@ $('gMap').onclick=stopGame;
  j.addEventListener('pointerdown',e=>{id=e.pointerId;j.setPointerCapture(id);set(e);e.preventDefault()});j.addEventListener('pointermove',e=>{if(e.pointerId===id)set(e)});
  const end=e=>{if(e.pointerId!==id)return;id=null;k.style.transform='';game.jx=game.jy=0;game.runBtn=false};j.addEventListener('pointerup',end);j.addEventListener('pointercancel',end)}
 // النظر: سحب الشاشة / الماوس / إصبعين للتقريب
-function look(dx,dy,k){game.yaw-=dx*k;game.pitch=Math.max(game.fp?-1.45:-.45,Math.min(game.fp?1.45:1.35,game.pitch+dy*k))}
+function look(dx,dy,k){game.yaw-=dx*k;game.pitch=Math.max(game.fp?-1.45:.12,Math.min(game.fp?1.45:1.3,game.pitch+dy*k))}
 {const el=renderer.domElement;const pts=new Map();let pinch=0;const fine=matchMedia('(pointer:fine)').matches;
  el.addEventListener('pointerdown',e=>{if(!game.on||inside)return;pts.set(e.pointerId,[e.clientX,e.clientY]);
   if(e.pointerType==='mouse'&&fine&&!document.pointerLockElement&&!game.chatOpen&&el.requestPointerLock){try{const r=el.requestPointerLock();if(r&&r.catch)r.catch(()=>{})}catch(er){}}
@@ -1663,7 +1668,7 @@ function look(dx,dy,k){game.yaw-=dx*k;game.pitch=Math.max(game.fp?-1.45:-.45,Mat
 // الأزرار والكيبورد
 function setFly(on,quiet){game.fly=on;if(on){game.vy=4.5;game.onG=false;if(!quiet)toast('🕊️ بساط الريح! طِر فوق المدينة',2200)}else game.vy=Math.min(game.vy,0);
  $('bFly').classList.toggle('on',on);$('bDown').style.visibility=on?'visible':'hidden';$('bJump').textContent=on?'⬆️':'⤒'}
-function toggleView(){game.fp=!game.fp;game.pitch=Math.max(-.45,Math.min(1.35,game.pitch));toast(game.fp?'👁️ منظور الشخص الأول':'🎥 المنظور من الخلف',1500)}
+function toggleView(){game.fp=!game.fp;game.pitch=game.fp?.1:.62;game.camP=null;toast(game.fp?'👁️ منظور الشخص الأول':'🎥 المنظور من الخلف',1500)}
 function interact(){if(game.talk){game.talk.i++;showLine();return}if(game.enter){$('gEnterB').click();return}if(game.near)$('gTalkB').click()}
 function jumpPress(){const n=performance.now();if(n-game.lastSpace<300)setFly(!game.fly);else if(!game.fly)game.jumpQ=true;game.lastSpace=n}
 addEventListener('keydown',e=>{if(!game.on||inside||e.target.tagName==='INPUT')return;const c=e.code;
@@ -1753,7 +1758,8 @@ function updateGame(t){const dt=Math.min(.05,(t-(game.last||t))/1000);game.last=
  // الكاميرا
  const tgt=new THREE.Vector3(P.x,P.y+(game.fp?1.62:1.7)+hov,P.z),o=camOffset();
  if(game.fp){camera.position.copy(tgt);controls.target.copy(tgt).sub(o)}
- else{camera.position.copy(tgt).addScaledVector(o,game.dist);const gy=groundY(camera.position.x,camera.position.z)+.35;if(camera.position.y<gy)camera.position.y=gy;controls.target.copy(tgt)}
+ else{const want=tgt.clone().addScaledVector(o,game.dist);const gy=groundY(want.x,want.z)+.35;if(want.y<gy)want.y=gy;
+  if(!game.camP)game.camP=want.clone();game.camP.lerp(want,1-Math.exp(-dt*12));camera.position.copy(game.camP);controls.target.copy(tgt)}
  camera.lookAt(controls.target);
  netTick(t,moving||!game.onG);
  // أقرب شخصية أو باب
@@ -1771,6 +1777,20 @@ const v=new THREE.Vector3();
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}
 addEventListener('resize',resize);resize();
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+// تسميات وضع اللعب: صغيرة، بدون تداخل، الأقرب والأهم أولًا
+const hideL=el=>{if(el._o!==0){el.style.opacity=0;el._o=0}};
+function gameLabels(W,H){const items=[];
+ const add=(el,pos,pri,maxD,live)=>{v.copy(pos);const d=camera.position.distanceTo(v);v.project(camera);if(v.z>1||d>maxD||Math.abs(v.x)>1.15||Math.abs(v.y)>1.15){hideL(el);return}items.push({el,x:(v.x+1)/2*W,y:(1-v.y)/2*H,d,pri,live})};
+ if(!game.fp)add(meTag,meTagPos,0,999,1);else hideL(meTag);
+ for(const p of NET.peers.values())add(p.tag,p.tpos,1,70,1);
+ for(const tg of TAGS)add(tg.el,tg.pos,2,48);
+ for(const h of houses){if(!h.vis||h.i===25){continue}v.copy(h.grp.position);v.y=h.top;add(h.el,v.clone(),3,30)}
+ items.sort((a,b)=>a.pri-b.pri||a.d-b.d);const placed=[];
+ for(const it of items){const el=it.el;if(it.live||el._gw===undefined){el._gw=el.offsetWidth||60;el._gh=el.offsetHeight||16}
+  const s=Math.max(.8,Math.min(1,16/it.d)),w=el._gw*s+6,h=el._gh*s+2,r=[it.x-w/2,it.y-h,it.x+w/2,it.y];
+  if(it.pri>0&&placed.some(q=>r[0]<q[2]&&r[2]>q[0]&&r[1]<q[3]&&r[3]>q[1])){hideL(el);continue}
+  placed.push(r);if(el._o!==1){el.style.opacity=1;el._o=1}
+  const tr=`translate(${Math.round(it.x)}px,${Math.round(it.y)}px) translate(-50%,-100%) scale(${s.toFixed(2)})`;if(el._t!==tr){el.style.transform=tr;el._t=tr;el.style.zIndex=String(3000-it.pri*500-Math.round(it.d))}}}
 function loop(t){
  {const ft=t-(PERF.lt||t);PERF.lt=t;if(ft>0&&ft<250){PERF.acc+=ft;PERF.n++}
   if(t-PERF.t0>1500&&PERF.n>20){const avg=PERF.acc/PERF.n;PERF.acc=PERF.n=0;PERF.t0=t;let np=PERF.pr;
@@ -1792,6 +1812,7 @@ function loop(t){
  if(window.__coin)window.__coin.position.y=1.05+Math.abs(Math.sin(t/260))*.5;
  renderer.render(inside?inScene:scene,camera);
  const W=innerWidth,H=innerHeight;
+ if(game.on&&!inside)gameLabels(W,H);else{
  for(const h of houses){if(!h.vis)continue;
   v.copy(h.grp.position);v.y=h.top;const dist=camera.position.distanceTo(v);v.project(camera);
   if(v.z>1||dist>(game.on?70:300)){if(h.el._o!==0){h.el.style.opacity=0;h.el._o=0}continue}
@@ -1803,6 +1824,7 @@ function loop(t){
  for(const p of NET.peers.values()){if(!game.on||inside){p.tag.style.opacity=0;continue}v.copy(p.tpos);const dist=camera.position.distanceTo(v);v.project(camera);if(v.z>1||dist>160){p.tag.style.opacity=0}else{p.tag.style.opacity=1;p.tag.style.transform=`translate(${(v.x+1)/2*W}px,${(1-v.y)/2*H}px) translate(-50%,-100%) scale(${Math.max(.5,Math.min(1.3,14/dist))})`;p.tag.style.zIndex='1999'}}
  for(const tg of TAGS){v.copy(tg.pos);const dist=camera.position.distanceTo(v);v.project(camera);
   if(v.z>1||dist>(game.on?110:320)){if(tg.el._o!==0){tg.el.style.opacity=0;tg.el._o=0}}else{const s=Math.max(.45,Math.min(1.7,70/dist));if(tg.el._o!==1){tg.el.style.opacity=1;tg.el._o=1}const tr=`translate(${Math.round((v.x+1)/2*W)}px,${Math.round((1-v.y)/2*H)}px) translate(-50%,-100%) scale(${s.toFixed(2)})`;if(tg.el._t!==tr){tg.el.style.transform=tr;tg.el._t=tr;tg.el.style.zIndex=String(1000-Math.round(dist))}}}
+ }
  requestAnimationFrame(loop);
 }
 $('loading').remove();requestAnimationFrame(loop);
