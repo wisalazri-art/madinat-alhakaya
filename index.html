@@ -17,7 +17,7 @@
 html,body{margin:0;height:100%;overflow:hidden;background:#0E1A2B;color:var(--ink);font:16px/1.5 'Amiri',serif}
 #scene{position:fixed;inset:0}
 #scene canvas{display:block;width:100%;height:100%;touch-action:none}
-#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+#vig{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,0) 55%,rgba(40,15,0,.38) 100%)}#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
 .lb{font-size:22px;position:absolute;left:0;top:0;transform-origin:50% 100%;white-space:nowrap;text-align:center;pointer-events:none;will-change:transform}
 .lb b{display:block;font-family:'Aref Ruqaa',serif;font-weight:700;color:var(--gold2);text-shadow:0 2px 6px rgba(0,0,0,.85),0 0 2px #000;line-height:1.1}
 .lb i{display:block;font-style:normal;font-size:.55em;color:var(--ink);opacity:.85;text-shadow:0 1px 4px #000}
@@ -116,14 +116,14 @@ const renderer=new THREE.WebGLRenderer({antialias:!TOUCH,powerPreference:'high-p
 const PERF={max:Math.min(devicePixelRatio,TOUCH?1.25:1.75),pr:0,acc:0,n:0,t0:0,fr:0,low:false};PERF.pr=PERF.max;
 renderer.setPixelRatio(PERF.pr);
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=TOUCH?THREE.PCFShadowMap:THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
-renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;
+renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
 // ستايل كرتوني: ظلال على ٣ درجات + ألوان أزهى + حدود سوداء في وضع اللعب
 const GRAD=(()=>{const d=new Uint8Array([110,110,110,255,185,185,185,255,255,255,255,255]);const t=new THREE.DataTexture(d,3,1,THREE.RGBAFormat);t.minFilter=t.magFilter=THREE.NearestFilter;t.generateMipmaps=false;t.needsUpdate=true;return t})();
-function TM(p){p=Object.assign({},p||{});delete p.metalness;delete p.roughness;delete p.envMapIntensity;delete p.flatShading;p.gradientMap=GRAD;const m=new THREE.MeshToonMaterial(p);
- if(m.color){const h={};m.color.getHSL(h);if(h.s>.08)m.color.setHSL(h.h,Math.min(1,h.s*1.25+.05),h.l)}
+// ستايل «الفيديو»: إضاءة ذهبية ناعمة بدون حدود كرتونية
+function TM(p){p=Object.assign({roughness:.85,metalness:0},p||{});delete p.gradientMap;p.metalness=Math.min(+p.metalness||0,.3);const m=new THREE.MeshStandardMaterial(p);
  if(m.transparent||m.side===THREE.BackSide)m.userData.outlineParameters={visible:false};else m.userData.outlineParameters={thickness:.0035,color:[.08,.05,.03],alpha:1};return m}
-let OUT=null;try{if(THREE.OutlineEffect)OUT=new THREE.OutlineEffect(renderer,{defaultThickness:.0035,defaultColor:[.08,.05,.03],defaultAlpha:1})}catch(e){OUT=null}
-host.appendChild(renderer.domElement);
+let OUT=null;
+host.appendChild(renderer.domElement);{const v=document.createElement('div');v.id='vig';host.after(v)}
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(42,1,0.5,1200);
 let fly=null;
@@ -136,8 +136,8 @@ controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
 controls.addEventListener('start',()=>{fly=null});
 controls.maxPolarAngle=Math.PI/2.15;controls.minDistance=18;controls.maxDistance=320;controls.autoRotateSpeed=.6;
 
-const hemi=new THREE.HemisphereLight(0xffeedd,0x5a6a80,.95);scene.add(hemi);
-const sun=new THREE.DirectionalLight(0xffd29a,1.35);sun.position.set(-90,110,60);sun.castShadow=true;
+const hemi=new THREE.HemisphereLight(0xb8cde6,0x8a7454,.95);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xffd29a,1.35);sun.position.set(-150,62,58);sun.castShadow=true;
 sun.shadow.mapSize.set(TOUCH?1024:2048,TOUCH?1024:2048);Object.assign(sun.shadow.camera,{left:-110,right:110,top:110,bottom:-110,near:10,far:400});sun.shadow.bias=-.0005;
 scene.add(sun);
 const M=(c,o={})=>new TM(Object.assign({color:c,roughness:.85,metalness:0},o));
@@ -1203,10 +1203,10 @@ const REAL={};
   const dt=new THREE.Mesh(new THREE.SphereGeometry(.35,8,6),M(0x8a4a1a));dt.position.y=-.2;top.add(dt);scene.add(g)};
  [[-70,62],[-60,68],[60,64],[72,58],[-90,20],[95,15],[-25,-70],[25,-72],[-110,-40],[115,-45],[40,110],[-45,112],[-8,104],[18,118],[-130,80],[135,75]].forEach(([x,z])=>palm(x,z,rnd(9,13)));
 }
-const updateSky=()=>{if(!REAL.sky)return;const bg=scene.background;REAL.sky.material.uniforms.hor.value.copy(bg);REAL.sky.material.uniforms.top.value.copy(bg).lerp(new THREE.Color(night?0x02060f:0x3f72b0),.72);REAL.sky.position.copy(camera.position);REAL.sky.scale.setScalar(Math.min(1,camera.far*.85/1000))};
+const updateSky=()=>{if(!REAL.sky)return;const bg=scene.background;REAL.sky.material.uniforms.hor.value.copy(bg);REAL.sky.material.uniforms.top.value.copy(bg).lerp(new THREE.Color(night?0x02060f:0x5b70a2),.85);REAL.sky.position.copy(camera.position);REAL.sky.scale.setScalar(Math.min(1,camera.far*.85/1000))};
 // الألوان: نهار / ليل
 let night=false,showNums=false;
-const DAY={bg:0xe8c9a0,fog:0xe8c9a0,hemi:.75,sun:1.35,sunC:0xffd29a,exp:1};
+const DAY={bg:0xf3b884,fog:0xf0bf92,hemi:.7,sun:2.1,sunC:0xffa868,exp:1};
 const NIGHT={bg:0x0b1626,fog:0x0b1626,hemi:.18,sun:.25,sunC:0x8fa8d8,exp:1};
 function applyTime(){const T=night?NIGHT:DAY;scene.background=new THREE.Color(T.bg);scene.fog=new THREE.Fog(T.fog,240,950);hemi.intensity=T.hemi;sun.intensity=T.sun;sun.color.set(T.sunC);
  mat.win.emissive=new THREE.Color(night?0xffa040:0);mat.win.emissiveIntensity=night?1.2:0;refresh()}
