@@ -713,6 +713,22 @@ SHOPS.forEach(sh=>{box(2.4,.7,.12,mat.plaque,sh.x,3.25,sh.z+.75);box(2.2,.5,.14,
  for(let i=0;i<6;i++){const cx=x-2.5+(i%3)*2.5,cz=z+.3+Math.floor(i/3)*1.4;const k=makeChar([0xf6f2ea,0xe9e2d2,0xf3eee2][i%3]);k.g.visible=true;k.g.position.set(cx,0,cz);k.g.rotation.y=Math.PI;k.g.scale.set(.55,.45,.55);k.arms[0].rotation.x=k.arms[1].rotation.x=-.9;
   const r=rh.clone();r.position.set(cx,0,cz-.45);scene.add(r);const bk=new THREE.Mesh(new THREE.BoxGeometry(.3,.03,.22),green);bk.position.set(cx,.4,cz-.45);bk.rotation.x=-.5;scene.add(bk)}
  const el=document.createElement('div');el.className='lb';el.innerHTML='<b>📖 معهد الإيمان لتعليم القرآن</b><i>الشيخ عبدالله</i>';document.getElementById('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(x,7.2,z)})}
+// ===== الجنرال العسكري قصي (koussay_bsf): خيمة القيادة وطاولة الخطط =====
+{const gx=-61,gz=-31;const g=new THREE.Group();const a=(geo,m,px,py,pz)=>{const o=new THREE.Mesh(geo,m);o.position.set(px,py,pz);o.castShadow=true;g.add(o);return o};
+ const cloth=M(0x7a1f1f),cloth2=M(0xe6d2a8),wood=M(0x5a3a22),gold=M(0xd4a640,{metalness:.8,roughness:.3}),steel=M(0xd8dde2,{metalness:.9,roughness:.2});
+ // خيمة مفتوحة من قدّام
+ a(new THREE.ConeGeometry(4.2,3.4,10,1,true,Math.PI*.25,Math.PI*1.5),cloth,0,3.4,-.6).material.side=THREE.DoubleSide;a(new THREE.CylinderGeometry(.12,.12,5.2,8),wood,0,2.6,-.6);a(new THREE.CylinderGeometry(4.2,4.2,1.7,10,1,true,Math.PI*.25,Math.PI*1.5),cloth2,0,.85,-.6).material.side=THREE.DoubleSide;
+ a(new THREE.SphereGeometry(.22,10,8),gold,0,5.25,-.6);
+ // طاولة الخطط عليها خريطة ورايات صغيرة
+ a(new THREE.BoxGeometry(2.4,.12,1.4),wood,0,.95,.2);[[-1.05,-.55],[1.05,-.55],[-1.05,.95],[1.05,.95]].forEach(([x,z])=>a(new THREE.BoxGeometry(.12,.9,.12),wood,x,.45,z));
+ a(new THREE.BoxGeometry(2.1,.02,1.15),M(0xd9c49a),0,1.02,.2);[[-.6,0,0x7a1f1f],[.2,.4,0x1f3a6b],[.7,-.1,0x7a1f1f],[-.2,.5,0x2f7a3a]].forEach(([x,z,c])=>{a(new THREE.CylinderGeometry(.015,.015,.3,6),wood,x,1.17,z+.2);a(new THREE.BoxGeometry(.16,.1,.01),M(c),x+.08,1.28,z+.2)});
+ // الجنرال واقف عند الطاولة
+ const ch=makeChar(0x14284a,{});ch.g.visible=true;ch.g.position.set(0,0,1.6);ch.g.rotation.y=Math.PI;g.add(ch.g);setWeapon(ch,'sword',true);ch.arms[1].rotation.x=-.9;
+ a(new THREE.BoxGeometry(.06,1.3,.9),cloth,.0,2.0,1.92).rotation.y=0;
+ // الراية
+ a(new THREE.CylinderGeometry(.07,.07,6,8),wood,2.8,3,1.2);a(new THREE.BoxGeometry(.04,1.2,1.8),cloth,2.8,5.2,2.1);a(new THREE.ConeGeometry(.12,.3,8),gold,2.8,6.1,1.2);
+ g.position.set(gx,0,gz);g.rotation.y=Math.atan2(-gx,-gz);scene.add(g);window.__qusay={arm:ch.arms[1]};
+ const el=document.createElement('div');el.className='lb';el.innerHTML='<b>🎖️ الجنرال العسكري قصي</b><i>خيمة القيادة · حُماة الحكايا</i>';document.getElementById('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(gx,6.8,gz)})}
 // ===== قائد الفرسان تيم (mjhwllhwy.x) في مقدّمة جيش حُماة الحكايا =====
 {const gx=-71,gz=-25;const g=new THREE.Group();const a=(geo,m,px,py,pz,par=g)=>{const o=new THREE.Mesh(geo,m);o.position.set(px,py,pz);o.castShadow=true;par.add(o);return o};
  const brown=M(0x6b3e1f),dark=M(0x2a1a10),red=M(0x7a1f1f),steel=M(0xd8dde2,{metalness:.9,roughness:.2});
@@ -1567,7 +1583,7 @@ renderer.domElement.addEventListener('pointerup',e=>{
 
 // ================= وضع اللعب: ادخل بشخصيتك =================
 const USERS={'95ql':['الوليد','صاحب المدينة 👑'],'ayoub.ba16':['أيوب','صاحب دكان السلاح ⚔️'],'jijou':['jijou','صاحب دكان السلاح ⚔️'],'almhmdylyhsynmhmd':['أحمد','وزير الاقتصاد 💼','أحمد',[-16.2,0,4.2]],'__0_ma_1_':[null,'حاكم الثغر 🏯','حاكم الثغر',[-92,0,-55]],'anoradoan2323':['محمد العدوي'],'karammustafa035':['كرم','قائد الرماة 🏹','كرم'],'ghosts_no1':[null,'وزير البريد والأخبار 🕊️','وزير البريد',[-83.8,0,40]],'abdallha1a':['عبدالله','شيخ معهد الإيمان 📖','الشيخ عبدالله'],'lnstgram_5679':['بكور'],'elbardouia':['elbardouia','صاحب دكان في السوق 🏪'],'zahara____wra':[null,'طبيبة المدينة 🩺','الطبيبة',[-72.6,0,9.4]],'mr.azrak':['محمد الأزرق'],'adam.salem01':['آدم','ولي العهد 👑','ولي العهد آدم'],'haythem_41_':['هيثم','جار أيوب وجيجو 🏠'],'moh_2008_amed':['محمد فلوس','أمين بيت المال 💰','محمد فلوس'],'bsngse':['حسين وعباس','أمين المكتبة 📚','حسين'],'ako__10f':['حسين وعباس','جندي في حُماة الحكايا ⚔️','عباس'],
- 'abw24085':['أحمد'],'med_abderrahman.314':['عبدالرحمن'],'koussay_bsf':['قصي'],'57691l':['شعيل'],'abdulqader_bek':['قدوري','صاحب مطعم قدوري البخاري 🍽️'],'nhwdgzh':['عمار'],'hamamm_sha_1':['الشهم','إمام الجامع الكبير 🕌','همام'],
+ 'abw24085':['أحمد'],'med_abderrahman.314':['عبدالرحمن'],'koussay_bsf':['قصي','الجنرال العسكري لحُماة الحكايا 🎖️','الجنرال قصي'],'57691l':['شعيل'],'abdulqader_bek':['قدوري','صاحب مطعم قدوري البخاري 🍽️'],'nhwdgzh':['عمار'],'hamamm_sha_1':['الشهم','إمام الجامع الكبير 🕌','همام'],
  'a________bh511':['إبراهيم'],'_10_mustafath_9_9':['_10_mustafath_9_9'],'_2465885642':['خطاب','قائد المدفعية 💣'],'ne___el0':['نضال','جندي في حُماة الحكايا ⚔️'],'abdelalim12027':['عبدالعليم','قائد حُماة الحكايا 👑'],
  '5t_r39a__':['علي','جندي في حُماة الحكايا ⚔️'],'alligator.92267767':['فهد','جندي في حُماة الحكايا ⚔️'],'husi_351':['husi_351','جندي في حُماة الحكايا ⚔️'],'rmhlyllwsh':['rmhlyllwsh','جندي في حُماة الحكايا ⚔️'],
  'mohamad_al_sbeeh':['محمد','جندي في حُماة الحكايا ⚔️'],'sbhyb.ry':['صبحي','جندي في حُماة الحكايا ⚔️'],'hn_4ll':['حسين'],'cr7_the_best97':['cr7_the_best97','جندي في حُماة الحكايا ⚔️'],'bileljl2008':['بلال','المحتسب ⚖️'],
@@ -1592,6 +1608,7 @@ const NPCS=[
  {id:'archers',name:'قائد الرماة كرم 🏹',pos:[-12,7,56.6],user:'karammustafa035',lines:n=>[`(من فوق السور) هلا يا ${n}! 🏹`,'رماة الحكايا الـ١٤ تحت أمري على السور الجنوبي','في الأندلس كان رماة الأسوار أول خط دفاع عن المدينة… وسهامنا جاهزة 🔥']},
  {id:'post',name:'وزير البريد والأخبار 🕊️',pos:[-83.8,0,41.6],user:'ghosts_no1',lines:n=>[`أهلًا يا ${n}! عندي لك رسالة… 📜`,'أنا وزير البريد: كل خبر في الحكايا يمرّ من ديواني، والحمام الزاجل يوصّله 🕊️','في الأندلس كان للدولة «ديوان البريد» ينقل الأخبار بين المدن بسرعة على الخيل والحمام ✨']},
  {id:'quran',name:'الشيخ عبدالله · معهد الإيمان 📖',pos:[-97,0,8.4],user:'abdallha1a',lines:n=>[`السلام عليكم يا ${n} 🤍`,'حيّاك في معهد الإيمان لتعليم القرآن… الطلاب يحفظون الحين 📖','في قرطبة كانت حلقات القرآن والعلم في الجامع الكبير يحضرها طلاب من كل البلاد ✨']},
+ {id:'qusay',name:'الجنرال العسكري قصي 🎖️',pos:[-58.6,0,-28.8],user:'koussay_bsf',lines:n=>[`استعد! 🫡 أهلًا يا ${n}`,'أنا الجنرال العسكري لحُماة الحكايا… أرسم خطط المعارك على هالطاولة 🗺️','القائد عبدالعليم يقود الجيش، والفرسان مع تيم، والرماة مع كرم… وأنا أنسّق بينهم ⚔️','في الأندلس اشتهر القائد «المنصور بن أبي عامر» بحملاته العسكرية الكثيرة، وكان يخطط لكل حملة بنفسه 📜']},
  {id:'cavalry',name:'قائد الفرسان تيم 🐎',pos:[-71,0,-23],user:'mjhwllhwy.x',lines:n=>[`(من فوق الفرس) هلا يا ${n}! 🐎`,'أنا في مقدّمة جيش حُماة الحكايا… أول من يهجم وآخر من يرجع ⚔️','في الأندلس كانت الخيل العربية سرّ قوة الفرسان، سريعة وصبورة 🔥']},
  {id:'furniture',name:'نجّار محل الأثاث 🪑',pos:[-42,0,-.9],lines:n=>[`هلا يا ${n}! تبي تأثّث بيتك؟ 🪑`,'عندنا مجالس ومخدات، ومناديس بمسامير نحاس، وسجاد ملفوف 🧵','نجّارين الأندلس اشتهروا بسقوف الخشب المنقوش المعشّق… بعضها باقي إلى اليوم في قصر الحمراء ✨','اضغط «🛒 تسوّق أثاث» واختار اللي يعجبك… ويوصل بيتك على طول 🏠']},
  {id:'caravan',name:'تاجر القافلة 🐪',pos:[87.5,0,47.5],lines:n=>[`أهلًا يا ${n}! وصلت القافلة من قرطبة 🐪`,'بقرار من وزير الاقتصاد أحمد صار للحكايا تجارة مع قرطبة وإشبيلية وغرناطة وطليطلة 💼','جبنا سجاد غرناطي وجرار فخّار من مالقة… تلقاها في محل الأثاث 🧶🏺','تبي تشتغل؟ اضغط «🐪 اشتغل مع القافلة» ووصّل البضاعة لسوق الحكايا… وخذ ٢٥ دينار 💰','في الأندلس كانت القوافل والسفن تربط قرطبة بالمشرق والمغرب… والحرير الأندلسي كان يوصل لأسواق بعيدة ✨']},
@@ -1956,7 +1973,7 @@ function knockout(byId,byName){game.hp=0;hpUI();toast('💫 انهزمت قدّ�
   game.p.set(p[0],0,p[2]);game.vx=game.vz=game.vy=0;game.camP=null;hpUI();toast('❤️ رجعت بكامل صحتك',1600);if(NET.ok)pubPos()},2600)}
 // ===== حُماة الحكايا: اللي يعتدي على جندي يسقط =====
 const isMil=u=>{const i=USERS[u];return !!(i&&i[1]&&/جندي|قائد|قنّاص|مدفعية|فرسان|رماة|حُماة/.test(i[1]))};
-const MIL_NPC=['commander','sniper','gunner','cavalry','archers','general'];
+const MIL_NPC=['qusay','commander','sniper','gunner','cavalry','archers','general'];
 const SK={on:false,t0:0,sq:[],name:''};
 function soldierStrike(victim){if(SK.on)return;SK.on=true;SK.t0=performance.now();SK.name=victim;if(game.fly)setFly(false,true);COP.on=false;if(COP.g)COP.g.g.visible=false;
  if(!SK.sq.length)for(let k=0;k<3;k++){const c=makeChar(0x7a1f1f);setWeapon(c,k===1?'sword':'spear',k!==1);const h=new THREE.Mesh(new THREE.ConeGeometry(.42,.5,10),M(0xc9ccd1,{metalness:.7}));h.position.y=2.15;c.body.add(h);SK.sq.push(c)}
@@ -2071,7 +2088,7 @@ const DESTS=[
  {n:'مطعم قدوري',e:'🍽️',p:[-6,0,-8.6]},{n:'دكان السلاح',e:'⚔️',p:[-34,0,.2]},{n:'محل الأثاث',e:'🪑',p:[-42,0,.2]},{n:'دار الحسبة',e:'⚖️',p:[-16.9,0,-2.8]},
  {n:'ديوان الاقتصاد',e:'💼',p:[-16.2,0,2.8]},{n:'خزانة الكتب',e:'📚',p:[2.4,0,-38.6]},{n:'معهد الإيمان',e:'📖',p:[-97,0,11]},{n:'دار العمدة',e:'🎖️',p:[10,0,45.8]},
  {n:'ديوان البريد',e:'🕊️',p:[-84,0,39]},{n:'البوابة والقنطرة',e:'🌉',p:[0,0,64]},{n:'السور الجنوبي',e:'🏹',p:[-10.5,7,56.6]},{n:'معسكر الجيش',e:'🛡️',p:[-74,0,-15]},
- {n:'برج القنّاص',e:'🎯',p:[-70,0,-30.5]},{n:'إمبراطورية فولكانور',e:'🌋',p:[76,2.4,-18]},{n:'حصن الثغر',e:'🏯',p:[-91,0,-55]},{n:'سجن المدينة',e:'🚔',p:[78,0,30.5]},{n:'حلبة النزال',e:'🤺',p:[30,0,56.6]},{n:'دار الشفاء',e:'🩺',p:[-73,0,11]},{n:'ساحة الدواوين',e:'⛲',p:[-85,0,25]},{n:'خان القوافل',e:'🐪',p:[86,0,50]}];
+ {n:'برج القنّاص',e:'🎯',p:[-70,0,-30.5]},{n:'إمبراطورية فولكانور',e:'🌋',p:[76,2.4,-18]},{n:'حصن الثغر',e:'🏯',p:[-91,0,-55]},{n:'سجن المدينة',e:'🚔',p:[78,0,30.5]},{n:'حلبة النزال',e:'🤺',p:[30,0,56.6]},{n:'دار الشفاء',e:'🩺',p:[-73,0,11]},{n:'ساحة الدواوين',e:'⛲',p:[-85,0,25]},{n:'خان القوافل',e:'🐪',p:[86,0,50]},{n:'خيمة الجنرال قصي',e:'🎖️',p:[-56.5,0,-27]}];
 {const st=document.createElement('style');st.textContent=`#gMapUI{position:fixed;inset:0;z-index:62;display:none;align-items:center;justify-content:center;background:rgba(6,8,14,.78);font-family:'Amiri',serif}
 #gMapUI .pn{width:min(560px,96vw);max-height:94vh;display:flex;flex-direction:column;background:#152238;border:2px solid #C9A45C;border-radius:18px;padding:12px;color:#F3EAD8;gap:10px}
 #gMapUI h3{margin:0;font-family:'Aref Ruqaa',serif;color:#E6C98A;font-size:24px;display:flex;justify-content:space-between;align-items:center}
@@ -2212,7 +2229,7 @@ function loop(t){
  F.spk.forEach(m=>{if(!m.visible)return;const k=(t-m.userData.t0)/1000;if(k>.5){m.visible=false;return}m.position.set(F.x+m.userData.vx*k,F.y+m.userData.vy*k-4.9*k*k,F.z+m.userData.vz*k)})}
  if(window.__pigeons){const Pg=window.__pigeons;Pg.birds.forEach(o=>{const a=t/1400+o.ph,r=3+Math.sin(a*1.3)*.8;o.b.position.set(Pg.x+Math.cos(a)*r,10.5+Math.sin(a*2)*.6,Pg.z+Math.sin(a)*r);o.b.rotation.y=-a;const f=Math.sin(t/70+o.ph*5)*.6;o.b.userData['w-1'].rotation.z=f;o.b.userData.w1.rotation.z=-f})}
  if(window.__thFlag)window.__thFlag.rotation.y=Math.sin(t/500)*.25;
- if(window.__cav)window.__cav.arm.rotation.z=Math.sin(t/700)*.25;
+ if(window.__cav)window.__cav.arm.rotation.z=Math.sin(t/700)*.25;if(window.__qusay)window.__qusay.arm.rotation.x=-.9+Math.sin(t/900)*.25;
  if(window.__saw)window.__saw.m.position.x=window.__saw.x+Math.sin(t/180)*.18;
  caravanTick(t);if(game.on)jobTick();
  if(window.__coin)window.__coin.position.y=1.05+Math.abs(Math.sin(t/260))*.5;
