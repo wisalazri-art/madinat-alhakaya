@@ -112,8 +112,9 @@ if(!window.THREE){$('loading').textContent='تعذّر تحميل المحرّك
 else{
 const host=$('scene');
 const TOUCH=matchMedia('(pointer: coarse)').matches;
-const renderer=new THREE.WebGLRenderer({antialias:!TOUCH,powerPreference:'high-performance'});
-const PERF={max:Math.min(devicePixelRatio,TOUCH?1.25:1.75),pr:0,acc:0,n:0,t0:0,fr:0,low:false};PERF.pr=PERF.max;
+const renderer=new THREE.WebGLRenderer({antialias:(()=>{try{return localStorage.getItem('hakaya-q')!=='low'}catch(e){return true}})(),powerPreference:'high-performance'});
+const QLV=(()=>{try{return localStorage.getItem('hakaya-q')||'high'}catch(e){return'high'}})();const QSET={high:{max:2,min:1,sh:2},mid:{max:1.5,min:.8,sh:6},low:{max:1,min:.6,sh:20}};
+const PERF={max:Math.min(devicePixelRatio,QSET[QLV].max),min:QSET[QLV].min,sh:QSET[QLV].sh,q:QLV,pr:0,acc:0,n:0,t0:0,fr:0,low:false};PERF.pr=PERF.max;
 renderer.setPixelRatio(PERF.pr);
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=TOUCH?THREE.PCFShadowMap:THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
 renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
@@ -138,7 +139,7 @@ controls.maxPolarAngle=Math.PI/2.15;controls.minDistance=18;controls.maxDistance
 
 const hemi=new THREE.HemisphereLight(0xb8cde6,0x8a7454,.95);scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffd29a,1.35);sun.position.set(-150,62,58);sun.castShadow=true;
-sun.shadow.mapSize.set(TOUCH?1024:2048,TOUCH?1024:2048);Object.assign(sun.shadow.camera,{left:-110,right:110,top:110,bottom:-110,near:10,far:400});sun.shadow.bias=-.0005;
+sun.shadow.mapSize.set(QLV==="low"?1024:2048,QLV==="low"?1024:2048);Object.assign(sun.shadow.camera,{left:-110,right:110,top:110,bottom:-110,near:10,far:400});sun.shadow.bias=-.0005;
 scene.add(sun);
 const M=(c,o={})=>new TM(Object.assign({color:c,roughness:.85,metalness:0},o));
 const mat={ground:M(0xb9a77e),pave:M(0xd9c6a2),street:M(0xc7ae84),wall:M(0xc89f6c),tower:M(0xbd9361),house:M(0xf1e7d6),house2:M(0xe8d9c0),roof:M(0xb5603a),door:M(0x5a3a22),plaque:M(0x7a5634),gold:M(0xC9A45C,{emissive:0x5a3e10,emissiveIntensity:.6,metalness:.4,roughness:.4}),water:M(0x2f6f99,{roughness:.25,metalness:.2}),leaf:M(0x3f6b3c),trunk:M(0x6b4a2e),dome:M(0xd8b26a,{metalness:.35,roughness:.45}),red:M(0xa8432e),win:M(0x2a1c10)};
@@ -2429,7 +2430,7 @@ NPCS.push(
 npcSpawn('crier',0x8e1b1b,[0,0,30]);npcSpawn('quests',0x1f3a6b,[0,0,30]);npcSpawn('mkt',0x6b4a2e,[-37,0,10]);npcSpawn('tribes',0x2a2228,[-85,0,25]);npcSpawn('party',0x4a1440,[-85,0,25]);npcSpawn('stable',0x5a3a22,[-18,0,75]);npcSpawn('sgen',0x14284a,[0,0,70],'spear');
 // أزرار الواجهة: المهمات، البريد، الركوب
 {const bar=$('gTop');const mk=(id,t,f)=>{const b=document.createElement('button');b.id=id;b.textContent=t;b.onclick=f;b.style.cssText='font-size:14px;padding:6px 10px;border-radius:10px;border:1px solid #C9A45C;background:rgba(14,26,43,.85);color:#F3EAD8;margin-inline:2px';bar.appendChild(b);return b};
- mk('gQB','📋',()=>questMenu());const mb=mk('gMailB','🕊️',()=>travel([-83.8,0,44.5],'ديوان البريد 🕊️'));mb.style.display='none';
+ mk('gQB','📋',()=>questMenu());{const L={high:'✨ عالية',mid:'⚖️ متوسطة',low:'🔋 موفّرة'},O=['high','mid','low'];const qb=mk('gQual','⚙️',()=>{const nx=O[(O.indexOf(PERF.q)+1)%3];PERF.q=nx;const c=QSET[nx];PERF.max=Math.min(devicePixelRatio,c.max);PERF.min=c.min;PERF.sh=c.sh;PERF.pr=PERF.max;renderer.setPixelRatio(PERF.pr);renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.needsUpdate=true;try{localStorage.setItem('hakaya-q',nx)}catch(e){}toast('⚙️ الجودة: '+L[nx]+(nx==='high'?' · أوضح صورة':nx==='low'?' · أسرع على الجوالات الضعيفة':''),2200)});qb.title='الجودة'}const mb=mk('gMailB','🕊️',()=>travel([-83.8,0,44.5],'ديوان البريد 🕊️'));mb.style.display='none';
  const rb=document.createElement('button');rb.className='gb';rb.id='bRide';rb.textContent='🐎';rb.style.opacity=.6;rb.onclick=()=>rideToggle();$('gBtns').appendChild(rb)}
 const DESTS=[
  {n:'بيتي',e:'🏠',home:1},{n:'قصر الملك',e:'👑',p:[0,0,-76.5]},{n:'ولي العهد',e:'🤴',p:[10,0,-69.5]},{n:'الجامع الكبير',e:'🕌',p:[0,0,9.2]},{n:'السوق',e:'🛒',p:[-30,0,0]},
@@ -2564,9 +2565,9 @@ function gameLabels(W,H){const items=[];
 function loop(t){
  {const ft=t-(PERF.lt||t);PERF.lt=t;if(ft>0&&ft<250){PERF.acc+=ft;PERF.n++}
   if(t-PERF.t0>1500&&PERF.n>20){const avg=PERF.acc/PERF.n;PERF.acc=PERF.n=0;PERF.t0=t;let np=PERF.pr;
-   if(avg>24)np=Math.max(.6,PERF.pr-.15);else if(avg<15)np=Math.min(PERF.max,PERF.pr+.1);
+   if(avg>24)np=Math.max(PERF.min,PERF.pr-.15);else if(avg<15)np=Math.min(PERF.max,PERF.pr+.1);
    if(Math.abs(np-PERF.pr)>.01){PERF.pr=np;renderer.setPixelRatio(np);renderer.setSize(innerWidth,innerHeight)}PERF.low=avg>30}
-  PERF.fr++;const every=PERF.low?24:(TOUCH?10:4);if(PERF.fr%every===0)renderer.shadowMap.needsUpdate=true}
+  PERF.fr++;const every=PERF.low?Math.max(PERF.sh,12):PERF.sh;if(PERF.fr%every===0)renderer.shadowMap.needsUpdate=true}
  if(fly){const k=Math.min(1,(t-fly.s)/1100),e=k<.5?2*k*k:1-((-2*k+2)**2)/2;camera.position.lerpVectors(fly.p0,fly.p,e);controls.target.lerpVectors(fly.t0,fly.t,e);if(k>=1)fly=null}
  updateGame(t);
  if(!(game.on&&!inside)){controls.enabled=true;controls.update()}
