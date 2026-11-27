@@ -2413,6 +2413,18 @@ function siegeBuild(start){for(const e of SIEGE.en)scene.remove(e.ch.g);SIEGE.en
  for(let i=0;i<30;i++){const ch=makeChar(0x9a1f1f);setWeapon(ch,i%3?'spear':'sword',i%2===0);const tc=new THREE.Mesh(new THREE.SphereGeometry(.16,8,6),new THREE.MeshBasicMaterial({color:0xff7a20}));tc.position.set(0,2.55,0);ch.g.add(tc);ch.g.visible=false;scene.add(ch.g);SIEGE.en.push({i,ch,hp:60,x:-40+r()*80,z:165+r()*15,at:start+i*20000,last:0})}
  if(game.on)sysMsg('⚔️ الحكايا تحت الهجوم! جيش الغزاة جاي من الجنوب… دافعوا عن البوابة مع القائد عبدالعليم!')}
 function siegeDie(e){SIEGE.dead.add(e.i);e.ch.g.visible=false;const r=Math.random();e.respawn=Date.now()+35000;e.gen=(e.gen||0)+1;e.hp=60;e.x=-40+r*80;e.z=165+Math.random()*15}
+// أسلحة أوتوماتيكية: سهام تنطلق لحالها من العساكر ومن أبراج السور
+const ARROWS=[];const ARW_G=new THREE.BoxGeometry(.06,.06,.9),ARW_M=new THREE.MeshBasicMaterial({color:0xffd36a});
+function fireArrow(x,y,z,e,dm,mine){const m=new THREE.Mesh(ARW_G,ARW_M);scene.add(m);ARROWS.push({m,x,y,z,e,dm,mine,t0:performance.now(),gen:e.gen||0})}
+function siegeDamage(e,dm,mine){if(SIEGE.dead.has(e.i)||(e.gen||0)!==(e.gen||0))return;e.hp-=dm;e.flash=Date.now();if(e.hp<=0){siegeDie(e);NET.ok&&NET.c.publish(NET.T+'siege',JSON.stringify({id:NET.id,s:SIEGE.start,k:e.i,g:(e.gen||1)-1,u:game.user?game.user.u:''}));if(mine){SIEGE.kills++;earn(5,'سهمك أسقط غازي 🏹');scoreSubmit('siege',SIEGE.kills,false)}}}
+const TOWERS=[[-14,8,57],[14,8,57],[-5,9,58],[5,9,58],[0,10,54]];
+function autoTick(){if(!SIEGE.start)return;const now=performance.now();
+ // أبراج السور ترمي كل ١.٤ث على أقرب غازي ضمن ٤٠ م
+ TOWERS.forEach((t,k)=>{if(now-(t.last||0)<1400+k*90)return;let best=null,bd=40;for(const e of SIEGE.en){if(!e.ch.g.visible)continue;const d=Math.hypot(e.x-t[0],e.z-t[2]);if(d<bd){bd=d;best=e}}if(best){t.last=now;fireArrow(t[0],t[1],t[2],best,25,false)}});
+ // العسكري يرمي لحاله كل ٠.٧ث على أقرب غازي ضمن ٩ م
+ if(game.on&&game.user&&(isMil(game.user.u)||HOMEF.equip==='gsword')&&game.hp>0&&now-(SIEGE.autoT||0)>700){let best=null,bd=9;const P=game.p;for(const e of SIEGE.en){if(!e.ch.g.visible)continue;const d=Math.hypot(e.x-P.x,e.z-P.z);if(d<bd){bd=d;best=e}}if(best){SIEGE.autoT=now;fireArrow(P.x,P.y+1.6,P.z,best,30,true);hero.arms[1].rotation.x=-1.6}}
+ for(let i=ARROWS.length-1;i>=0;i--){const a=ARROWS[i],k=(now-a.t0)/260;const ex=a.e.x,ez=a.e.z,ey=1.4;if(k>=1||!a.e.ch.g.visible){scene.remove(a.m);ARROWS.splice(i,1);if(k>=1&&a.e.ch.g.visible&&(a.e.gen||0)===a.gen)siegeDamage(a.e,a.dm,a.mine);continue}
+  a.m.position.set(a.x+(ex-a.x)*k,a.y+(ey-a.y)*k+Math.sin(k*Math.PI)*.8,a.z+(ez-a.z)*k);a.m.lookAt(ex,ey,ez)}}
 function onSiegeKill(m){if(m.s!==SIEGE.start)return;const e=SIEGE.en[m.k|0];if(e&&!SIEGE.dead.has(e.i)&&(m.g|0)===(e.gen||0))siegeDie(e)}
 const SIEGE_TAG=(()=>{const el=document.createElement('div');el.className='lb';el.innerHTML='<b>⚔️ جيش الغزاة</b><i>هنا المعركة!</i>';el.style.display='none';$('labels').appendChild(el);const o={el,pos:new THREE.Vector3(0,4,90)};TAGS.push(o);return o})();
 function siegeTick(dt){const w=siegeWindow();if(w!==SIEGE.start)siegeBuild(w);if(!SIEGE.start)return;const now=Date.now();if(now>SIEGE.start+SIEGE.len){SIEGE_TAG.el.style.display='none';if(game.on)sysMsg('🏆 انتهى الهجوم… الحكايا صامدة! قتلت '+AR(SIEGE.kills)+' من الغزاة');siegeBuild(0);SIEGE.fromAdmin=0;gameBar('');return}
@@ -2615,7 +2627,7 @@ function loop(t){
  if(window.__thFlag)window.__thFlag.rotation.y=Math.sin(t/500)*.25;
  if(window.__cav)window.__cav.arm.rotation.z=Math.sin(t/700)*.25;if(window.__defFlag)window.__defFlag.rotation.y=Math.sin(t/600)*.2;if(window.__qusay)window.__qusay.arm.rotation.x=-.9+Math.sin(t/900)*.25;
  if(window.__saw)window.__saw.m.position.x=window.__saw.x+Math.sin(t/180)*.18;
- caravanTick(t);{const sdt=Math.min(.1,(t-(window.__sgT||t))/1000);window.__sgT=t;siegeTick(sdt)}partyTick(t);if(t-(window.__nT||0)>60000){window.__nT=t;autoNight()}if(game.on){jobTick();landTick();gamesTick();dlvTick();if(t-(window.__trT||0)>3000){window.__trT=t;treRefresh()}if(t-(window.__hpT||0)>1000){window.__hpT=t;if(game.hp>0&&game.hp<100&&Date.now()-(game.lastHit||0)>8000){game.hp=Math.min(100,game.hp+2)}hpUI()}if($('gMapUI').style.display==='flex'&&t-(window.__mapT||0)>700){window.__mapT=t;drawMap()}}
+ caravanTick(t);{const sdt=Math.min(.1,(t-(window.__sgT||t))/1000);window.__sgT=t;siegeTick(sdt)}partyTick(t);autoTick();if(t-(window.__nT||0)>60000){window.__nT=t;autoNight()}if(game.on){jobTick();landTick();gamesTick();dlvTick();if(t-(window.__trT||0)>3000){window.__trT=t;treRefresh()}if(t-(window.__hpT||0)>1000){window.__hpT=t;if(game.hp>0&&game.hp<100&&Date.now()-(game.lastHit||0)>8000){game.hp=Math.min(100,game.hp+2)}hpUI()}if($('gMapUI').style.display==='flex'&&t-(window.__mapT||0)>700){window.__mapT=t;drawMap()}}
  if(window.__coin)window.__coin.position.y=1.05+Math.abs(Math.sin(t/260))*.5;
  if(OUT&&game.on&&!PERF.low){try{OUT.render(inside?inScene:scene,camera)}catch(e){OUT=null;renderer.render(inside?inScene:scene,camera)}}else renderer.render(inside?inScene:scene,camera);
  const W=innerWidth,H=innerHeight;
