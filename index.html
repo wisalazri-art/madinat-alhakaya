@@ -738,7 +738,7 @@ SHOPS.forEach(sh=>{box(2.4,.7,.12,mat.plaque,sh.x,3.25,sh.z+.75);box(2.2,.5,.14,
  box(1.8,.45,.9,wood,x-2.2,.23,z-1.4);box(1.7,.15,.85,M(0xffffff),x-2.2,.52,z-1.4);box(.5,.12,.6,M(0xbfe0d0),x-2.9,.65,z-1.4);
  box(2.2,1.6,.4,wood,x+2.4,.8,z-2.2);const jc=[0x2f7a5a,0xb5603a,0x1f3a6b,0xd4a640];for(let k=0;k<6;k++){const j=new THREE.Mesh(new THREE.CylinderGeometry(.12,.1,.28,10),M(jc[k%4]));j.position.set(x+1.6+(k%3)*.4,1.05+Math.floor(k/3)*.55,z-2.05);scene.add(j)}
  // الطبيبة: ثوب أخضر وغطاء رأس أبيض
- const dr=makeChar(0x2f7a5a);dr.g.visible=true;dr.g.position.set(x+.4,0,z+.6);dr.g.rotation.y=0;dr.arms[1].rotation.x=-.8;
+ const dr=makeChar(0xf6f2ea,{female:true,dress:0x2f7a5a,scarf:0xf6f2ea});dr.g.visible=true;dr.g.position.set(x+.4,0,z+.6);dr.g.rotation.y=0;dr.arms[1].rotation.x=-.8;
  const sc=new THREE.Mesh(new THREE.BoxGeometry(.3,.05,.22),M(0xf3ead8));sc.position.set(x+.75,1.1,z+.95);sc.rotation.x=-.5;scene.add(sc);
  const el=document.createElement('div');el.className='lb';el.innerHTML='<b>🩺 دار الشفاء</b><i>طبيبة المدينة</i>';document.getElementById('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(x,7,z)})}
 // قافلة الجمال
@@ -1656,20 +1656,25 @@ body.game .lb .bub{font-size:13px;max-width:170px;padding:2px 8px;border-radius:
 try{const u=localStorage.getItem('hakaya-user');if(u)$('gUser').value=u}catch(e){}
 const toast=(t,ms=3200)=>{const e=$('gToast');e.textContent=t;e.style.opacity=1;clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.opacity=0,ms)};
 // الشخصية
-function makeChar(col){const g=new THREE.Group();const a=(geo,m,x,y,z,par=g)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=true;par.add(o);return o};
- const robe=M(0xf6f2ea),skin=M(0xc99a6e);const body=new THREE.Group();g.add(body);
+function makeChar(col,o={}){const F=!!o.female;const g=new THREE.Group();const a=(geo,m,x,y,z,par=g)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=true;par.add(o);return o};
+ const robe=M(F?(o.dress||0x2f7a5a):0xf6f2ea),skin=M(F?0xd9a77e:0xc99a6e);const body=new THREE.Group();g.add(body);
  a(new THREE.CylinderGeometry(.3,.44,1.35,14),robe,0,.68,0,body);const bm=new TM({color:col||0x6b4a2e,side:THREE.DoubleSide,roughness:.7});const b=new THREE.Mesh(new THREE.CylinderGeometry(.36,.5,1.25,16,1,true,Math.PI*.15,Math.PI*1.7),bm);b.position.y=.72;body.add(b);
  // رأس كرتوني كبير بعيون واضحة
- a(new THREE.SphereGeometry(.36,18,14),skin,0,1.78,0,body);a(new THREE.SphereGeometry(.2,12,10),M(0x2a1c10),0,1.6,.17,body).scale.set(1.1,.9,.7);
+ a(new THREE.SphereGeometry(.36,18,14),skin,0,1.78,0,body);if(!F)a(new THREE.SphereGeometry(.2,12,10),M(0x2a1c10),0,1.6,.17,body).scale.set(1.1,.9,.7);
+ else{const ck=M(0xf08a8a);[-1,1].forEach(d=>a(new THREE.SphereGeometry(.05,8,6),ck,d*.2,1.7,.3,body).scale.set(1,.6,.4));a(new THREE.BoxGeometry(.1,.025,.02),M(0xb04a4a),0,1.64,.35,body)}
  [-1,1].forEach(d=>{a(new THREE.SphereGeometry(.085,12,10),M(0xffffff),d*.13,1.82,.3,body).scale.set(1,1.25,.6);a(new THREE.SphereGeometry(.045,10,8),M(0x111111),d*.13,1.81,.35,body)});
- a(new THREE.SphereGeometry(.4,18,12,0,Math.PI*2,0,Math.PI*.55),robe,0,1.86,-.02,body);a(new THREE.BoxGeometry(.66,.62,.05),robe,0,1.6,-.26,body);a(new THREE.TorusGeometry(.33,.05,8,22),M(0x111111),0,2.0,0,body).rotation.x=Math.PI/2;
+ if(!F){a(new THREE.SphereGeometry(.4,18,12,0,Math.PI*2,0,Math.PI*.55),robe,0,1.86,-.02,body);a(new THREE.BoxGeometry(.66,.62,.05),robe,0,1.6,-.26,body);a(new THREE.TorusGeometry(.33,.05,8,22),M(0x111111),0,2.0,0,body).rotation.x=Math.PI/2}
+ else{const sc=M(o.scarf||0xf6f2ea);// حجاب يلف الوجه ورداء طويل
+  a(new THREE.SphereGeometry(.41,18,14,0,Math.PI*2,0,Math.PI*.62),sc,0,1.82,-.03,body);const fr=new THREE.Mesh(new THREE.TorusGeometry(.34,.07,8,22,Math.PI*1.25),sc);fr.position.set(0,1.76,.05);fr.rotation.z=-Math.PI*.125;fr.castShadow=true;body.add(fr);
+  a(new THREE.CylinderGeometry(.3,.46,.55,16),sc,0,1.38,-.02,body);a(new THREE.BoxGeometry(.72,.75,.06),sc,0,1.5,-.3,body);
+  a(new THREE.CylinderGeometry(.46,.56,.3,16),robe,0,.15,0,body)}
  const arms=[-1,1].map(sd=>{const p=new THREE.Group();p.position.set(sd*.33,1.3,0);body.add(p);a(new THREE.CylinderGeometry(.07,.06,.62,8),robe,0,-.3,0,p);a(new THREE.SphereGeometry(.06,8,6),skin,0,-.62,0,p);return p});
  // بساط الريح
  const carpet=new THREE.Group();carpet.visible=false;g.add(carpet);
  a(new THREE.BoxGeometry(1.5,.05,2.1),M(0x8e1b1b),0,0,0,carpet);a(new THREE.BoxGeometry(1.62,.04,2.22),M(0xd4a640,{metalness:.5}),0,-.02,0,carpet);a(new THREE.BoxGeometry(.7,.06,1.1),M(0x1f3a6b),0,.01,0,carpet);
  for(const sx of[-.7,-.35,0,.35,.7])for(const sz of[-1.16,1.16])a(new THREE.BoxGeometry(.05,.03,.18),M(0xd4a640),sx,-.01,sz,carpet);
  g.visible=false;scene.add(g);return{g,body,arms,bm,carpet}}
-const hero=makeChar();
+let hero=makeChar();const FEMALE=['zahara____wra'];
 function mkTag(cls){const e=document.createElement('div');e.className='lb '+(cls||'');e.innerHTML='<em class="bub"></em><b></b><i></i>';$('labels').appendChild(e);return e}
 function bubble(tag,txt){const e=tag.querySelector('.bub');e.textContent=txt;clearTimeout(e._h);e._h=setTimeout(()=>e.textContent='',6500)}
 const meTag=mkTag('me');const meTagPos=new THREE.Vector3();
@@ -1691,8 +1696,10 @@ function startGame(){let u=$('gUser').value.trim().replace(/^@/,'').toLowerCase(
  if(!spawn){disp=u;spawn=new THREE.Vector3(0,0,66);hi='أهلًا بك يا زائر! اكتب اسمك في تعليقات @8istory ونبني لك بيت 🏠'}
  game.user={u,disp,title};game.obs=[];
  clickables.forEach(o=>{if(!o.visible||(o.parent&&!o.parent.visible))return;const bb=new THREE.Box3().setFromObject(o);if(!isFinite(bb.min.x))return;game.obs.push([bb.min.x-.35,bb.max.x+.35,bb.min.z-.35,bb.max.z+.35,bb.max.y])});
+ {const wantF=FEMALE.includes(u);if(!!hero.female!==wantF){scene.remove(hero.g);hero=makeChar(0x6b4a2e,wantF?{female:true,dress:0x2f7a5a}:{});hero.female=wantF}}
  game.p.copy(spawn);game.p.y=groundY(spawn.x,spawn.z);hero.g.position.copy(game.p);hero.g.visible=true;
  hero.bm.color.set(info?(info[1]&&info[1].includes('جندي')?0x4a1440:info[1]&&info[1].includes('إمام')?0x2a2a30:0x6b4a2e):0x3b4a6b);
+ if(hero.female&&info&&info[1]&&info[1].includes('طبيبة'))hero.bm.color.set(0xf6f2ea);
  meTag.querySelector('b').textContent=disp;meTag.querySelector('i').textContent=title;
  $('gWho').textContent=`${disp} · ${title}`;
  game.on=true;document.body.classList.add('game');$('gStart').style.display='none';$('card').style.display='none';fly=null;controls.autoRotate=false;controls.enabled=false;camera.far=420;camera.fov=50;camera.updateProjectionMatrix();scene.fog&&(scene.fog.near=140,scene.fog.far=430);
@@ -1751,10 +1758,10 @@ function netConnect(){try{const c=window.mqtt.connect('wss://broker.hivemq.com:8
  c.on('close',()=>{if(NET.ok)sysMsg('🔴 انقطع الشات… يعيد الاتصال');NET.ok=false});
  c.on('message',(tp,buf)=>{let m;try{m=JSON.parse(buf.toString())}catch(e){return}if(!m||typeof m!=='object'||m.id===NET.id)return;const k=tp.slice(NET.T.length);
   if(k==='pos')onPos(m);else if(k==='chat')onChat(m);else if(k==='hit')onHit(m);else if(k==='ko')onKO(m);else if(k.startsWith('sale/'))onSale(m);else if(k.startsWith('ledger/'))onLedger(k.slice(7),m);else if(k.startsWith('home/')){if(typeof m.u==='string'&&Array.isArray(m.items))NET.homes[m.u.toLowerCase()]=m.items.filter(x=>typeof x==='string'||(x&&typeof x.id==='string')).slice(0,8)}else if(k==='bye')dropPeer(m.id)})}catch(e){sysMsg('⚠️ الشات غير متاح')}}
-function pubPos(){if(!NET.ok||!game.on)return;const P=game.p;NET.c.publish(NET.T+'pos',JSON.stringify({id:NET.id,u:game.user.u,x:+P.x.toFixed(2),y:+P.y.toFixed(2),z:+P.z.toFixed(2),r:+hero.g.rotation.y.toFixed(2),f:game.fly?1:0,c:hero.bm.color.getHex(),w:hero.wid||'',s:hero.hasShield?1:0,a:performance.now()-ATK.t<500?1:0,h:Math.max(0,Math.round(game.hp))}))}
+function pubPos(){if(!NET.ok||!game.on)return;const P=game.p;NET.c.publish(NET.T+'pos',JSON.stringify({id:NET.id,u:game.user.u,x:+P.x.toFixed(2),y:+P.y.toFixed(2),z:+P.z.toFixed(2),r:+hero.g.rotation.y.toFixed(2),f:game.fly?1:0,c:hero.bm.color.getHex(),w:hero.wid||'',fm:hero.female?1:0,s:hero.hasShield?1:0,a:performance.now()-ATK.t<500?1:0,h:Math.max(0,Math.round(game.hp))}))}
 function netTick(t,act){if(!NET.ok||!game.on)return;if(t-NET.lastPub<(act?130:2500))return;NET.lastPub=t;pubPos()}
 function onPos(m){if(typeof m.u!=='string'||typeof m.id!=='string'||![m.x,m.y,m.z].every(isFinite))return;let p=NET.peers.get(m.id);
- if(!p){if(NET.peers.size>=40)return;const c=makeChar(m.c|0);const tag=mkTag('peer');const inf=peerInfo(m.u.slice(0,30).toLowerCase());tag.querySelector('b').textContent=inf.d;tag.querySelector('i').textContent=inf.ti;
+ if(!p){if(NET.peers.size>=40)return;const c=makeChar(m.c|0,m.fm?{female:true}:{});const tag=mkTag('peer');const inf=peerInfo(m.u.slice(0,30).toLowerCase());tag.querySelector('b').textContent=inf.d;tag.querySelector('i').textContent=inf.ti;
   p={c,tag,u:m.u.slice(0,30).toLowerCase(),d:inf.d,tp:new THREE.Vector3(m.x,m.y,m.z),pos:new THREE.Vector3(m.x,m.y,m.z),r:+m.r||0,step:0,tpos:new THREE.Vector3()};NET.peers.set(m.id,p);if(game.on)sysMsg(`👋 ${inf.d} دخل المدينة`)}
  p.tp.set(m.x,m.y,m.z);p.r=+m.r||0;p.f=!!m.f;p.last=performance.now();p.c.bm.color.setHex((m.c|0)&0xffffff);const w=['sword','spear','bow','axe'].includes(m.w)?m.w:'';if(w!==(p.c.wid||'')||!!m.s!==!!p.c.hasShield)setWeapon(p.c,w,!!m.s);p.atk=m.a?performance.now():p.atk;const hh=isFinite(m.h)?Math.max(0,Math.min(100,m.h|0)):100;if(hh!==p.hp){p.hp=hh;p.tag.querySelector('b').textContent=p.d+(hh<100?' ❤️'+AR(hh):'')}}
 function dropPeer(id){const p=NET.peers.get(id);if(!p)return;scene.remove(p.c.g);p.tag.remove();NET.peers.delete(id)}
