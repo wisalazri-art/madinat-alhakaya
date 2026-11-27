@@ -1668,7 +1668,7 @@ body.game .lb .bub{font-size:13px;max-width:170px;padding:2px 8px;border-radius:
 #gStart .ctl{font-size:14px;opacity:.75;margin-top:14px;line-height:1.7}`;document.head.appendChild(st);
  const d=document.createElement('div');d.innerHTML=`<div id="gStart"><div class="box"><h1>مدينة الحكايا</h1><p>ادخل المدينة بشخصيتك… وامشِ لين بيتك 🏰</p>
  <label for="gUser" style="display:block;margin-bottom:6px">يوزرك في إنستقرام</label><input id="gUser" placeholder="@username" autocomplete="off" autocapitalize="off">
- <button id="gGo">ادخل المدينة 🎮</button><button id="gView">تفرّج على الخريطة 👀</button><div id="gMsg"></div><div class="ctl">📱 الجويستك للمشي · اسحب الشاشة للنظر · ⤒ قفز · اضغطه مرتين أو 🕊️ للطيران<br>🖥️ WASD · الماوس · مسافة قفز (مرتين = طيران) · Shift ركض/نزول · E كلّم · Enter شات · V المنظور</div></div></div>
+ <div id="gPinBox" style="display:none;margin-top:12px"><label id="gPinL" for="gPin" style="display:block;margin-bottom:6px"></label><input id="gPin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••" style="letter-spacing:12px"><button id="gPinGo" style="background:#C9A45C;color:#1a1208;font-weight:700">تأكيد 🔓</button></div><button id="gGo">ادخل المدينة 🎮</button><button id="gView">تفرّج على الخريطة 👀</button><div id="gMsg"></div><div class="ctl">📱 الجويستك للمشي · اسحب الشاشة للنظر · ⤒ قفز · اضغطه مرتين أو 🕊️ للطيران<br>🖥️ WASD · الماوس · مسافة قفز (مرتين = طيران) · Shift ركض/نزول · E كلّم · Enter شات · V المنظور</div></div></div>
  <div id="gHud"><div id="gTop"><span id="gWho"></span><span id="gOn">⚪</span><button id="gMap">🗺️ الخريطة</button></div><div id="joy"><div id="knob"></div></div><div id="gBtns"><button class="gb" id="bChat" aria-label="الشات">💬</button><button class="gb" id="bView" aria-label="المنظور">👁️</button><button class="gb" id="bFly" aria-label="طيران">🕊️</button><button class="gb" id="bDown" aria-label="نزول" style="visibility:hidden">⬇️</button><button class="gb" id="bJump" aria-label="قفز">⤒</button></div><div id="gKeys">WASD حركة · الماوس نظر · مسافة×٢ طيران · E كلّم · Enter شات · V منظور · Esc الماوس</div><div id="gAct"><button id="gTalkB" style="display:none"></button><button id="gEnterB" style="display:none"></button></div></div>
  <div id="gTalk" role="dialog" aria-live="polite"><b id="gTalkN"></b><span id="gTalkT"></span><small>اضغط للمتابعة</small></div><div id="gToast"></div><div id="gLog" aria-live="polite"></div><div id="gChatBar"><input id="gChatIn" maxlength="140" placeholder="اكتب رسالة لأهل المدينة…" autocomplete="off" enterkeyhint="send"><button id="gSend">أرسل</button><button id="gChatX" aria-label="إغلاق">✕</button></div>`;document.body.appendChild(d)}
 try{const u=localStorage.getItem('hakaya-user');if(u)$('gUser').value=u}catch(e){}
@@ -1705,7 +1705,7 @@ function blocked(x,z,y=0){const r=Math.hypot(x,z);if(r>175)return true;if(y<WALL
  for(const b of game.obs)if(y+.45<b[4]&&x>b[0]&&x<b[1]&&z>b[2]&&z<b[3])return true;return false}
 function floorAt(x,z,y){let f=groundY(x,z);if(onWall(x,z)&&y>=WALLH-.6)f=Math.max(f,WALLH);
  for(const b of game.obs)if(b[4]<=y+.6&&b[4]>f&&x>b[0]+.3&&x<b[1]-.3&&z>b[2]+.3&&z<b[3]-.3)f=b[4];return f}
-function startGame(){let u=$('gUser').value.trim().replace(/^@/,'').toLowerCase();if(!u){$('gMsg').textContent='اكتب يوزرك أول 🙂';return}
+function enterGame(){let u=$('gUser').value.trim().replace(/^@/,'').toLowerCase();if(!u){$('gMsg').textContent='اكتب يوزرك أول 🙂';return}
  try{localStorage.setItem('hakaya-user',u)}catch(e){}
  const info=USERS[u];let spawn,disp,title='زائر للمدينة',hi;
  if(info){disp=info[2]||info[0]||u;title=info[1]||'من سكّان الحكايا 🏠';
@@ -1727,7 +1727,25 @@ function startGame(){let u=$('gUser').value.trim().replace(/^@/,'').toLowerCase(
 function stopGame(){if(NET.ok)NET.c.publish(NET.T+'bye',JSON.stringify({id:NET.id}));setFly(false,true);closeChat();if(document.pointerLockElement)document.exitPointerLock();
  game.on=false;document.body.classList.remove('game');hero.g.visible=false;meTag.style.opacity=0;$('gTalk').style.display='none';controls.enabled=true;
  camera.far=1200;camera.fov=42;camera.updateProjectionMatrix();applyTime();if(typeof applySeason==='function')applySeason();controls.minDistance=14;controls.maxDistance=420;controls.maxPolarAngle=Math.PI*.48;controls.update();$('gStart').style.display='flex'}
+// 🔐 حماية اليوزرات برمز سري من ٤ أرقام
+const PIN={u:null,h:null,ok:null};
+async function hashPin(u,p){const d=new TextEncoder().encode('hakaya8istory|'+u+'|'+p);const h=await crypto.subtle.digest('SHA-256',d);return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')}
+function fetchPin(u){return new Promise(res=>{netStart();const t0=Date.now();const tick=()=>{if(NET.ok){const tp=NET.T+'pin/'+u;let done=false;const h=(topic,buf)=>{if(topic!==tp)return;done=true;NET.c.removeListener('message',h);let m=null;try{m=JSON.parse(buf.toString())}catch(e){}res(m&&typeof m.h==='string'?m.h:'')};
+  NET.c.on('message',h);NET.c.unsubscribe(tp);NET.c.subscribe(tp,{qos:1});setTimeout(()=>{if(!done){NET.c.removeListener('message',h);res('')}},2600)}else if(Date.now()-t0>9000)res(null);else setTimeout(tick,200)};tick()})}
+async function startGame(){const u=$('gUser').value.trim().replace(/^@/,'').toLowerCase();if(!u){$('gMsg').textContent='اكتب يوزرك أول 🙂';return}
+ if(!window.crypto||!crypto.subtle){$('gMsg').textContent='⚠️ افتح الرابط في متصفح (Safari / Chrome) عشان الحماية تشتغل';return}
+ $('gGo').disabled=true;$('gMsg').textContent='⏳ نتأكد من يوزرك…';const h=await fetchPin(u);$('gGo').disabled=false;
+ if(h===null){$('gMsg').textContent='⚠️ ما قدرنا نتصل… تأكد من النت وحاول مرة ثانية';return}
+ let saved='';try{saved=localStorage.getItem('hakaya-auth')||''}catch(e){}
+ if(h&&saved===u+'|'+h){PIN.ok=u;$('gMsg').textContent='';enterGame();return}
+ PIN.u=u;PIN.h=h;$('gPinBox').style.display='block';$('gPinL').textContent=h?'🔒 هذا اليوزر محمي… اكتب رمزه السري':'🔐 أول مرة تدخل! اختر رمز سري من ٤ أرقام يحمي يوزرك… لا تعطيه أحد';$('gPin').value='';setTimeout(()=>$('gPin').focus(),50);$('gMsg').textContent=''}
+async function pinGo(){const p=$('gPin').value.trim();if(!/^\d{4}$/.test(p)){$('gMsg').textContent='الرمز لازم يكون ٤ أرقام';return}const hh=await hashPin(PIN.u,p);
+ if(PIN.h){if(hh!==PIN.h){$('gMsg').textContent='❌ الرمز غلط… إذا نسيته راسل @8istory';$('gPin').value='';return}}
+ else{if(!NET.ok){$('gMsg').textContent='⚠️ النت مقطوع';return}NET.c.publish(NET.T+'pin/'+PIN.u,JSON.stringify({h:hh,ts:Date.now()}),{retain:true,qos:1});setTimeout(()=>toast('🔐 يوزرك صار محمي برمزك… احفظه!',3000),900)}
+ try{localStorage.setItem('hakaya-auth',PIN.u+'|'+hh)}catch(e){}PIN.ok=PIN.u;$('gPinBox').style.display='none';$('gMsg').textContent='';enterGame()}
+$('gPinGo').onclick=pinGo;$('gPin').addEventListener('keydown',e=>{if(e.key==='Enter')pinGo()});
 $('gGo').onclick=startGame;$('gUser').addEventListener('keydown',e=>{if(e.key==='Enter')startGame()});
+$('gUser').addEventListener('input',()=>{$('gPinBox').style.display='none'});
 $('gView').onclick=()=>{$('gStart').style.display='none'};
 $('gMap').onclick=stopGame;
 // الجويستك
@@ -1791,7 +1809,7 @@ function updatePeers(dt){const now=performance.now();for(const[id,p]of NET.peers
  p.c.g.visible=game.on&&!inside;p.tpos.set(p.c.g.position.x,p.c.g.position.y+2.5,p.c.g.position.z)}
  const on=$('gOn');if(on)on.textContent=NET.ok?`🟢 ${NET.peers.size+1} في المدينة`:'⚪ غير متصل'}
 function onChat(m){if(typeof m.u!=='string')return;const txt=cleanTxt(m.txt);if(!txt)return;if(m.sys){sysMsg(txt);return}const inf=peerInfo(m.u.slice(0,30).toLowerCase());addLog(inf.d,txt);const p=NET.peers.get(m.id);if(p)bubble(p.tag,txt)}
-function sendChat(){const i=$('gChatIn');const txt=cleanTxt(i.value);i.value='';if(!txt||!game.on)return;const now=performance.now();if(now-NET.lastSent<1500){sysMsg('⏳ شوي شوي… انتظر ثانية');return}NET.lastSent=now;
+function sendChat(){const i=$('gChatIn');{const raw=i.value.trim();const m=raw.match(/^\/reset\s+@?(\S+)/);if(m&&game.user&&game.user.u==='95ql'&&PIN.ok==='95ql'&&NET.ok){const t=m[1].toLowerCase();NET.c.publish(NET.T+'pin/'+t,'',{retain:true,qos:1});i.value='';sysMsg('✅ انمسح الرمز السري حق '+t+'… يقدر يختار رمز جديد');return}}const txt=cleanTxt(i.value);i.value='';if(!txt||!game.on)return;const now=performance.now();if(now-NET.lastSent<1500){sysMsg('⏳ شوي شوي… انتظر ثانية');return}NET.lastSent=now;
  addLog(game.user.disp,txt,'mine');bubble(meTag,txt);
  if(NET.ok)NET.c.publish(NET.T+'chat',JSON.stringify({id:NET.id,u:game.user.u,txt}));else sysMsg('⚠️ الشات مو متصل الحين… رسالتك ظهرت عندك بس');
  const n=game.near;if(n)setTimeout(()=>{const L=n.lines(game.user.disp);const r=/سلام|هلا|مرحب/.test(txt)?`وعليكم السلام ورحمة الله يا ${game.user.disp} 🤍`:L[1+Math.floor(Math.random()*(L.length-1))];game.talk={n,L:[r],i:0};showLine()},700)}
