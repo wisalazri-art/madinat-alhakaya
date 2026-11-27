@@ -1911,6 +1911,65 @@ function openArms(){const G=$('gShopG');G.innerHTML='';$('gShop').style.display=
   G.appendChild(el)})}
 $('gArmsB').onclick=openArms;
 
+// ================= خريطة التنقّل: اضغط مكان وتوصله =================
+const DESTS=[
+ {n:'بيتي',e:'🏠',home:1},{n:'قصر الملك',e:'👑',p:[0,0,-76.5]},{n:'الجامع الكبير',e:'🕌',p:[0,0,9.2]},{n:'السوق',e:'🛒',p:[-30,0,0]},
+ {n:'مطعم قدوري',e:'🍽️',p:[-6,0,-8.6]},{n:'دكان السلاح',e:'⚔️',p:[-34,0,.2]},{n:'محل الأثاث',e:'🪑',p:[-42,0,.2]},{n:'دار الحسبة',e:'⚖️',p:[-16.9,0,-2.8]},
+ {n:'ديوان الاقتصاد',e:'💼',p:[-16.2,0,2.8]},{n:'خزانة الكتب',e:'📚',p:[2.4,0,-38.6]},{n:'معهد الإيمان',e:'📖',p:[15,0,-44]},{n:'دار العمدة',e:'🎖️',p:[10,0,45.8]},
+ {n:'ديوان البريد',e:'🕊️',p:[-14.8,0,42]},{n:'البوابة والقنطرة',e:'🌉',p:[0,0,64]},{n:'السور الجنوبي',e:'🏹',p:[-10.5,7,56.6]},{n:'معسكر الجيش',e:'🛡️',p:[-74,0,-15]},
+ {n:'برج القنّاص',e:'🎯',p:[-70,0,-30.5]},{n:'إمبراطورية فولكانور',e:'🌋',p:[76,2.4,-18]},{n:'حصن الثغر',e:'🏯',p:[-91,0,-55]},{n:'سجن المدينة',e:'🚔',p:[78,0,30.5]}];
+{const st=document.createElement('style');st.textContent=`#gMapUI{position:fixed;inset:0;z-index:62;display:none;align-items:center;justify-content:center;background:rgba(6,8,14,.78);font-family:'Amiri',serif}
+#gMapUI .pn{width:min(560px,96vw);max-height:94vh;display:flex;flex-direction:column;background:#152238;border:2px solid #C9A45C;border-radius:18px;padding:12px;color:#F3EAD8;gap:10px}
+#gMapUI h3{margin:0;font-family:'Aref Ruqaa',serif;color:#E6C98A;font-size:24px;display:flex;justify-content:space-between;align-items:center}
+#gMapUI canvas{width:100%;aspect-ratio:1;border-radius:14px;touch-action:none;cursor:pointer;background:#c8b48a}
+#gMapUI .ch{display:flex;flex-wrap:wrap;gap:6px;overflow:auto;max-height:22vh}
+#gMapUI .ch button{border:1px solid rgba(201,164,92,.6);background:rgba(255,255,255,.07);color:#F3EAD8;border-radius:999px;padding:6px 12px;font-family:'Amiri',serif;font-size:15px}
+#gMapUI .x{background:rgba(255,255,255,.12);border:0;color:#fff;border-radius:10px;padding:4px 12px;font-size:18px}
+#gFade{position:fixed;inset:0;background:#0b0f18;opacity:0;pointer-events:none;z-index:61;transition:opacity .22s}
+#gMapB{font-size:15px;padding:8px 12px;border-radius:10px;border:1px solid #C9A45C;background:rgba(201,164,92,.9);color:#1a1208;font-weight:700}`;document.head.appendChild(st);
+ const d=document.createElement('div');d.innerHTML=`<div id="gMapUI" role="dialog"><div class="pn"><h3><span>🧭 وين تبي تروح؟</span><button class="x" id="gMapX">✕</button></h3><canvas id="gMapC" width="720" height="720"></canvas><div class="ch" id="gMapL"></div></div></div><div id="gFade"></div>`;document.body.appendChild(d);
+ const b=document.createElement('button');b.id='gMapB';b.textContent='🧭 الخريطة';$('gTop').insertBefore(b,$('gCoins')||$('gMap'));$('gMap').textContent='🚪 خروج'}
+const MAPV={x0:-125,x1:125,z0:-118,z1:132};
+const m2c=(x,z)=>[(x-MAPV.x0)/(MAPV.x1-MAPV.x0)*720,(z-MAPV.z0)/(MAPV.z1-MAPV.z0)*720];
+const c2m=(u,v)=>[MAPV.x0+u/720*(MAPV.x1-MAPV.x0),MAPV.z0+v/720*(MAPV.z1-MAPV.z0)];
+function destPos(d){if(d.home){const h=myHouse();const i=h?names.indexOf(h):-1;if(i<0)return null;const p=houseDoor(i);return[p.x,0,p.z]}return d.p}
+function drawMap(){const c=$('gMapC'),g=c.getContext('2d');const S=720/(MAPV.x1-MAPV.x0);g.clearRect(0,0,720,720);
+ g.fillStyle='#cdb98c';g.fillRect(0,0,720,720);
+ // النهر
+ let [a,b]=m2c(MAPV.x0,74.5),[,b2]=m2c(0,97.5);g.fillStyle='#4f8fb5';g.fillRect(0,b,720,b2-b);
+ // التل الإمبراطوري
+ let [hx,hz]=m2c(84,-18);g.fillStyle='#b89a66';g.beginPath();g.arc(hx,hz,19*S,0,7);g.fill();g.fillStyle='#a8875a';g.beginPath();g.arc(hx,hz,7.6*S,0,7);g.fill();
+ // داخل السور
+ let [cx,cz]=m2c(0,0);g.fillStyle='#e6d6b0';g.beginPath();g.arc(cx,cz,57*S,0,7);g.fill();
+ // الشوارع
+ g.fillStyle='#d2b88c';g.fillRect(cx-2.75*S,m2c(0,-56)[1],5.5*S,113*S);g.fillRect(m2c(-56,0)[0],cz-2.75*S,112*S,5.5*S);g.fillRect(cx-3.2*S,m2c(0,56)[1],6.4*S,42*S);
+ // البيوت
+ for(const h of houses){const p=h.grp.position;const [u,v]=m2c(p.x,p.z);const nm=names[h.i];g.fillStyle=h.i===25?'#c0603a':nm?'#c9a45c':'#efe6d2';g.fillRect(u-2.4*S,v-2.4*S,4.8*S,4.8*S);if(nm&&nm===myHouse()){g.strokeStyle='#ff3b3b';g.lineWidth=3;g.strokeRect(u-3*S,v-3*S,6*S,6*S)}}
+ // القصر والجامع والمكتبة
+ g.fillStyle='#e9dcc0';let [px,pz]=m2c(-15,-101);g.fillRect(px,pz,30*S,18*S);let [mx,mz]=m2c(-7.5,-7.5);g.fillStyle='#d8c08a';g.fillRect(mx,mz,15*S,15*S);
+ g.fillStyle='#c9a45c';g.beginPath();g.arc(cx,cz,4.5*S,0,7);g.fill();let [lx,lz]=m2c(-7,-50.5);g.fillStyle='#d8c08a';g.fillRect(lx,lz,14*S,9*S);
+ // السور
+ g.strokeStyle='#8a6a44';g.lineWidth=5;g.beginPath();g.arc(cx,cz,58*S,0,7);g.stroke();
+ // الأماكن
+ g.textAlign='center';g.textBaseline='middle';
+ for(const d of DESTS){const p=destPos(d);if(!p)continue;const [u,v]=m2c(p[0],p[2]);d._uv=[u,v];g.fillStyle='rgba(14,26,43,.85)';g.beginPath();g.arc(u,v,19,0,7);g.fill();g.strokeStyle='#C9A45C';g.lineWidth=2;g.stroke();g.font='20px serif';g.fillText(d.e,u,v+1)}
+ // اللاعبين
+ for(const p of NET.peers.values()){const [u,v]=m2c(p.pos.x,p.pos.z);g.fillStyle='#6ac8ff';g.beginPath();g.arc(u,v,6,0,7);g.fill()}
+ const [ux,uz]=m2c(game.p.x,game.p.z);g.fillStyle='#ff3b3b';g.strokeStyle='#fff';g.lineWidth=3;g.beginPath();g.arc(ux,uz,10,0,7);g.fill();g.stroke();
+ g.font="bold 22px 'Amiri',serif";g.fillStyle='#fff';g.strokeStyle='#000';g.lineWidth=4;g.strokeText('أنت',ux,uz-22);g.fillText('أنت',ux,uz-22)}
+function openMap(){if(!game.on)return;if(document.pointerLockElement)document.exitPointerLock();$('gMapUI').style.display='flex';drawMap();
+ const L=$('gMapL');L.innerHTML='';for(const d of DESTS){const p=destPos(d);if(!p)continue;const b=document.createElement('button');b.textContent=d.e+' '+d.n;b.onclick=()=>travel(p,d.n);L.appendChild(b)}}
+function travel(p,name){if(Date.now()<COP.jailUntil){toast('🔒 أنت في السجن… ما تقدر تتنقّل',2000);return}if(COP.on){toast('🚨 الشرطة وراك! ما تقدر تهرب',2000);return}
+ $('gMapUI').style.display='none';const f=$('gFade');f.style.opacity=1;
+ setTimeout(()=>{game.p.set(p[0],p[1]||0,p[2]);const fl=floorAt(p[0],p[2],(p[1]||0)+.5);game.p.y=Math.max(fl,p[1]||0);game.vx=game.vz=game.vy=0;setFly(false,true);game.onG=true;
+  game.yaw=Math.atan2(p[0],p[2])+(Math.hypot(p[0],p[2])<1?0:0);game.camP=null;f.style.opacity=0;toast('📍 وصلت: '+name,1800);if(NET.ok)pubPos()},260)}
+$('gMapB').onclick=openMap;$('gMapX').onclick=()=>{$('gMapUI').style.display='none'};$('gMapUI').addEventListener('click',e=>{if(e.target.id==='gMapUI')$('gMapUI').style.display='none'});
+$('gMapC').addEventListener('pointerup',e=>{const c=$('gMapC'),r=c.getBoundingClientRect();const u=(e.clientX-r.left)/r.width*720,v=(e.clientY-r.top)/r.height*720;
+ let best=null,bd=30;for(const d of DESTS){if(!d._uv)continue;const dd=Math.hypot(d._uv[0]-u,d._uv[1]-v);if(dd<bd){bd=dd;best=d}}
+ if(best){travel(destPos(best),best.n);return}
+ const [x,z]=c2m(u,v);if(blocked(x,z,0)||(z>74.5&&z<97.5&&Math.abs(x)>3.2)){toast('ما تقدر تنزل هنا… اختر مكان ثاني',1600);return}travel([x,0,z],'المكان اللي اخترته')});
+addEventListener('keydown',e=>{if(game.on&&!inside&&e.code==='KeyM'&&e.target.tagName!=='INPUT'){$('gMapUI').style.display==='flex'?$('gMapUI').style.display='none':openMap()}});
+
 function camOffset(){const cp=Math.cos(game.pitch);return new THREE.Vector3(Math.sin(game.yaw)*cp,Math.sin(game.pitch),Math.cos(game.yaw)*cp)}
 function updateGame(t){const dt=Math.min(.05,(t-(game.last||t))/1000);game.last=t;updatePeers(dt);if(!game.on||inside)return;controls.enabled=false;if(scene.fog&&scene.fog.far>430){scene.fog.near=Math.min(scene.fog.near,140);scene.fog.far=430}
  const K=game.keys,k=c=>!game.chatOpen&&K[c];
