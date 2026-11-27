@@ -1520,9 +1520,11 @@ function enterPlace(){
  if(!selected)return;const r=selected.palace?buildPalace():selected.mosque?buildMosque():selected.restaurant?buildRestaurant():buildHouse(selected.name,selected.named);
  saved={p:camera.position.clone(),t:controls.target.clone(),min:controls.minDistance,max:controls.maxDistance,pol:controls.maxPolarAngle,ar:controls.autoRotate};
  fly=null;inside=true;document.body.classList.add('inside');$('bExit').style.display='block';$('inTitle').textContent=r.title;$('inTitle').style.display='block';
+ if(selected.named&&!selected.palace&&!selected.mosque&&!selected.restaurant)placeFurniture(selected.name);
+ $('gFurnB').style.display=(game.on&&selected.named&&selected.name===myHouse())?'block':'none';
  camera.position.copy(r.pos);controls.target.copy(r.target);controls.minDistance=.6;controls.maxDistance=r.maxD;controls.maxPolarAngle=Math.PI*.62;controls.autoRotate=false;controls.update();
 }
-function exitPlace(){if(!inside)return;inside=false;document.body.classList.remove('inside');$('bExit').style.display='none';$('inTitle').style.display='none';
+function exitPlace(){if(!inside)return;inside=false;$('gFurnB').style.display='none';document.body.classList.remove('inside');$('bExit').style.display='none';$('inTitle').style.display='none';
  camera.position.copy(saved.p);controls.target.copy(saved.t);controls.minDistance=saved.min;controls.maxDistance=saved.max;controls.maxPolarAngle=saved.pol;controls.autoRotate=saved.ar;controls.update();clearIn()}
 $('bEnter').onclick=enterPlace;
 $('bPeace').onclick=()=>{if(peace.on||atk.on)return;startPeace()};
@@ -1576,7 +1578,7 @@ const NPCS=[
  {id:'post',name:'وزير البريد والأخبار 🕊️',pos:[-14.8,0,43.4],user:'ghosts_no1',lines:n=>[`أهلًا يا ${n}! عندي لك رسالة… 📜`,'أنا وزير البريد: كل خبر في الحكايا يمرّ من ديواني، والحمام الزاجل يوصّله 🕊️','في الأندلس كان للدولة «ديوان البريد» ينقل الأخبار بين المدن بسرعة على الخيل والحمام ✨']},
  {id:'quran',name:'الشيخ عبدالله · معهد الإيمان 📖',pos:[15,0,-45.6],user:'abdallha1a',lines:n=>[`السلام عليكم يا ${n} 🤍`,'حيّاك في معهد الإيمان لتعليم القرآن… الطلاب يحفظون الحين 📖','في قرطبة كانت حلقات القرآن والعلم في الجامع الكبير يحضرها طلاب من كل البلاد ✨']},
  {id:'cavalry',name:'قائد الفرسان تيم 🐎',pos:[-71,0,-23],user:'mjhwllhwy.x',lines:n=>[`(من فوق الفرس) هلا يا ${n}! 🐎`,'أنا في مقدّمة جيش حُماة الحكايا… أول من يهجم وآخر من يرجع ⚔️','في الأندلس كانت الخيل العربية سرّ قوة الفرسان، سريعة وصبورة 🔥']},
- {id:'furniture',name:'نجّار محل الأثاث 🪑',pos:[-42,0,-.9],lines:n=>[`هلا يا ${n}! تبي تأثّث بيتك؟ 🪑`,'عندنا مجالس ومخدات، ومناديس بمسامير نحاس، وسجاد ملفوف 🧵','نجّارين الأندلس اشتهروا بسقوف الخشب المنقوش المعشّق… بعضها باقي إلى اليوم في قصر الحمراء ✨','المحل يدوّر صاحب! اللي يبيه يكتب «أبي محل الأثاث» في التعليقات 👇']},
+ {id:'furniture',name:'نجّار محل الأثاث 🪑',pos:[-42,0,-.9],lines:n=>[`هلا يا ${n}! تبي تأثّث بيتك؟ 🪑`,'عندنا مجالس ومخدات، ومناديس بمسامير نحاس، وسجاد ملفوف 🧵','نجّارين الأندلس اشتهروا بسقوف الخشب المنقوش المعشّق… بعضها باقي إلى اليوم في قصر الحمراء ✨','اضغط «🛒 تسوّق أثاث» واختار اللي يعجبك… ويوصل بيتك على طول 🏠']},
  {id:'treasurer',name:'أمين بيت المال محمد فلوس 💰',pos:[0,0,0],user:'moh_2008_amed',lines:n=>[`أهلًا يا ${n}! عدّ معي… ألف، ألفين… 💰`,'أنا أمين بيت المال، خزنة الحكايا بيدي ومفتاحها عندي 🗝️','في الأندلس كان الدينار القرطبي الذهبي يتعامل فيه التجّار من بغداد لين أوروبا ✨']},
  {id:'resto',name:'مطعم قدوري البخاري 🍽️',pos:[-6,0,-11],enter:'restaurant',user:'abdulqader_bek',lines:n=>[`تفضّل يا ${n}، مطعم قدوري البخاري مفتوح 🍽️`,'عندنا رز بخاري على الفحم، مدفون، مدني، مضغوط وشواية… وكل الشعبيات 🔥','ولائم الملك والجيش عندنا VIP 👑 ونبي طبّاخ ونادل… تبي تشتغل؟ اكتب «أبي أشتغل في المطعم» 👨‍🍳']}];
 ;{const ti=names.indexOf('محمد فلوس');const tn=NPCS.find(n=>n.id==='treasurer');if(ti>=0&&houses[ti]){const d=houseDoor(ti);const hp=houses[ti].grp.position;const sx=(d.x-hp.x),sz=(d.z-hp.z),L=Math.hypot(sx,sz)||1;tn.pos=[d.x+sz/L*1.6,0,d.z-sx/L*1.6];
@@ -1682,7 +1684,7 @@ function startGame(){let u=$('gUser').value.trim().replace(/^@/,'').toLowerCase(
  game.on=true;document.body.classList.add('game');$('gStart').style.display='none';$('card').style.display='none';fly=null;controls.autoRotate=false;controls.enabled=false;camera.far=420;camera.fov=50;camera.updateProjectionMatrix();scene.fog&&(scene.fog.near=140,scene.fog.far=430);
  const back=new THREE.Vector3(-spawn.x,0,-spawn.z).normalize();if(!isFinite(back.x))back.set(0,0,-1);
  game.yaw=Math.atan2(-back.x,-back.z);game.pitch=.62;game.dist=11;game.camP=null;game.fp=false;game.vx=game.vz=game.vy=0;game.onG=true;setFly(false,true);
- setTimeout(()=>toast(hi,4200),300);netStart();if(NET.ok)pubPos()}
+ setTimeout(()=>toast(hi,4200),300);homeLoad();netStart();if(NET.ok)pubPos()}
 function stopGame(){if(NET.ok)NET.c.publish(NET.T+'bye',JSON.stringify({id:NET.id}));setFly(false,true);closeChat();if(document.pointerLockElement)document.exitPointerLock();
  game.on=false;document.body.classList.remove('game');hero.g.visible=false;meTag.style.opacity=0;$('gTalk').style.display='none';controls.enabled=true;
  camera.far=1200;camera.fov=42;camera.updateProjectionMatrix();applyTime();if(typeof applySeason==='function')applySeason();controls.minDistance=14;controls.maxDistance=420;controls.maxPolarAngle=Math.PI*.48;controls.update();$('gStart').style.display='flex'}
@@ -1720,7 +1722,7 @@ addEventListener('keyup',e=>{game.keys[e.code]=false});addEventListener('blur',(
  hold('bJump',()=>{game.upBtn=true;jumpPress()},()=>game.upBtn=false);hold('bDown',()=>game.downBtn=true,()=>game.downBtn=false);
  hold('bFly',()=>setFly(!game.fly));hold('bView',toggleView);hold('bChat',()=>game.chatOpen?closeChat():openChat())}
 // الشات
-const NET={c:null,ok:false,loading:false,id:Math.random().toString(36).slice(2,10),peers:new Map(),lastPub:0,lastSent:0,T:'hakaya8istory/v1/'};
+const NET={homes:{},c:null,ok:false,loading:false,id:Math.random().toString(36).slice(2,10),peers:new Map(),lastPub:0,lastSent:0,T:'hakaya8istory/v1/'};
 const BAD=['كس','زب','شرموط','قحب','قحبة','منيوك','نيك','خول','عرص','fuck','shit','bitch','sex','porn','nude'];
 function cleanTxt(s){s=String(s||'').replace(/[\u0000-\u001f<>]/g,'').replace(/https?:\/\/\S+|www\.\S+|\S+\.(com|net|org|ly|me|io|gg)\S*/gi,'🔗').slice(0,140).trim();
  return s.split(/(\s+)/).map(w=>{const n=w.toLowerCase().replace(/[ً-ٟـ]/g,'').replace(/(.)\1+/g,'$1');return BAD.some(b=>n===b||n==='ال'+b||(b.length>3&&n.includes(b)))?'***':w}).join('')}
@@ -1731,10 +1733,10 @@ function peerInfo(u){const i=USERS[u];return i?{d:i[2]||i[0]||u,ti:i[1]||'من �
 function netStart(){if(NET.c||NET.loading)return;NET.loading=true;sysMsg('⏳ جاري الاتصال بشات المدينة…');const s=document.createElement('script');s.src='https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js';
  s.onload=netConnect;s.onerror=()=>{NET.loading=false;sysMsg('⚠️ الشات ما اشتغل… تأكد من النت')};document.head.appendChild(s)}
 function netConnect(){try{const c=window.mqtt.connect('wss://broker.hivemq.com:8884/mqtt',{clientId:'hk_'+NET.id,keepalive:30,clean:true,reconnectPeriod:4000,connectTimeout:9000,will:{topic:NET.T+'bye',payload:JSON.stringify({id:NET.id}),qos:0,retain:false}});NET.c=c;
- c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye']);if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
+ c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye',NET.T+'home/+']);homePub();if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
  c.on('close',()=>{if(NET.ok)sysMsg('🔴 انقطع الشات… يعيد الاتصال');NET.ok=false});
  c.on('message',(tp,buf)=>{let m;try{m=JSON.parse(buf.toString())}catch(e){return}if(!m||typeof m!=='object'||m.id===NET.id)return;const k=tp.slice(NET.T.length);
-  if(k==='pos')onPos(m);else if(k==='chat')onChat(m);else if(k==='bye')dropPeer(m.id)})}catch(e){sysMsg('⚠️ الشات غير متاح')}}
+  if(k==='pos')onPos(m);else if(k==='chat')onChat(m);else if(k.startsWith('home/')){if(typeof m.u==='string'&&Array.isArray(m.items))NET.homes[m.u.toLowerCase()]=m.items.filter(x=>typeof x==='string').slice(0,8)}else if(k==='bye')dropPeer(m.id)})}catch(e){sysMsg('⚠️ الشات غير متاح')}}
 function pubPos(){if(!NET.ok||!game.on)return;const P=game.p;NET.c.publish(NET.T+'pos',JSON.stringify({id:NET.id,u:game.user.u,x:+P.x.toFixed(2),y:+P.y.toFixed(2),z:+P.z.toFixed(2),r:+hero.g.rotation.y.toFixed(2),f:game.fly?1:0,c:hero.bm.color.getHex()}))}
 function netTick(t,act){if(!NET.ok||!game.on)return;if(t-NET.lastPub<(act?130:2500))return;NET.lastPub=t;pubPos()}
 function onPos(m){if(typeof m.u!=='string'||typeof m.id!=='string'||![m.x,m.y,m.z].every(isFinite))return;let p=NET.peers.get(m.id);
@@ -1759,10 +1761,73 @@ function closeChat(){game.chatOpen=false;$('gChatBar').style.display='none';$('g
 $('gChatIn').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();sendChat();if(matchMedia('(pointer:fine)').matches)closeChat()}else if(e.key==='Escape')closeChat()});
 $('gSend').onclick=()=>{sendChat();$('gChatIn').focus()};$('gChatX').onclick=closeChat;
 // الكلام والدخول
-$('gTalkB').onclick=()=>{const n=game.near;if(!n)return;const me=game.user;const own=n.user&&n.user===me.u;const L=own?[`هذا مكانك يا ${me.disp}! الناس يمرّون يسلّمون عليك 😄`,...n.lines(me.disp).slice(1)]:n.lines(me.disp);game.talk={n,L,i:0};showLine()};
+$('gTalkB').onclick=()=>{const n=game.near;if(!n)return;const me=game.user;const own=n.user&&n.user===me.u;const L=own?[`هذا مكانك يا ${me.disp}! الناس يمرّون يسلّمون عليك 😄`,...n.lines(me.disp).slice(1)]:n.lines(me.disp);game.talk={n,L,i:0};showLine();if(myHouse()&&!HOMEF.talked[n.id]){HOMEF.talked[n.id]=1;earn(5,'كلّمت '+n.name)}};
 function showLine(){const t=game.talk;if(!t)return;if(t.i>=t.L.length){$('gTalk').style.display='none';game.talk=null;return}$('gTalkN').textContent=t.n.name;$('gTalkT').textContent=t.L[t.i];$('gTalk').style.display='block'}
 $('gTalk').onclick=()=>{if(game.talk){game.talk.i++;showLine()}};
 $('gEnterB').onclick=()=>{const e=game.enter;if(!e)return;$('gTalk').style.display='none';game.talk=null;if(document.pointerLockElement)document.exitPointerLock();selected=e.sel;enterPlace()};
+// ================= الأثاث والدنانير =================
+const FURN=[
+ {id:'chest',n:'مندوس منقوش',e:'🧰',p:40},{id:'chair',n:'كرسي خشب',e:'🪑',p:25},{id:'table',n:'طاولة بفانوس',e:'🏮',p:35},
+ {id:'palm',n:'نخلة في أصيص',e:'🌴',p:30},{id:'roses',n:'أصيص ورد',e:'🌹',p:20},{id:'lamp',n:'مصباح نحاسي',e:'🕯️',p:30},
+ {id:'bed',n:'سرير خشب',e:'🛏️',p:70},{id:'ward',n:'خزانة ملابس',e:'🚪',p:60},{id:'fount',n:'نافورة أندلسية',e:'⛲',p:90},
+ {id:'gold',n:'صندوق ذهب',e:'💰',p:120},{id:'throne',n:'كرسي العرش',e:'👑',p:150},{id:'sword',n:'سيف معلّق على حامل',e:'⚔️',p:50}];
+const FSLOTS=[[-2.7,1.6,Math.PI/2],[-2.7,3.4,Math.PI/2],[3.3,1.4,-Math.PI/2],[3.3,3.3,-Math.PI/2],[-1.5,3.6,Math.PI],[1.5,3.6,Math.PI],[-1.6,1.2,0],[1.6,1.2,0]];
+const HOMEF={coins:150,items:[],daily:'',talked:{}};
+function homeKey(){return 'hakaya-home-'+(game.user?game.user.u:'')}
+function homeLoad(){Object.assign(HOMEF,{coins:150,items:[],daily:'',talked:{}});try{const s=JSON.parse(localStorage.getItem(homeKey())||'null');if(s)Object.assign(HOMEF,s)}catch(e){}
+ const today=new Date().toISOString().slice(0,10);if(HOMEF.daily!==today){const first=!HOMEF.daily;HOMEF.daily=today;HOMEF.talked={};if(!first){HOMEF.coins+=20;setTimeout(()=>toast('💰 مكافأة يومية: +٢٠ دينار',2600),4800)}homeSave()}coinsUI()}
+function homeSave(){try{localStorage.setItem(homeKey(),JSON.stringify(HOMEF))}catch(e){}coinsUI();homePub()}
+function homePub(){if(NET.ok&&game.user&&myHouse())NET.c.publish(NET.T+'home/'+game.user.u,JSON.stringify({u:game.user.u,items:HOMEF.items.slice(0,8)}),{retain:true,qos:0})}
+function coinsUI(){const e=$('gCoins');if(e)e.textContent='💰 '+AR(HOMEF.coins)}
+function myHouse(){const i=game.user&&USERS[game.user.u];return i&&i[0]&&names.indexOf(i[0])>=0?i[0]:null}
+function earn(n,why){HOMEF.coins+=n;homeSave();toast(`💰 +${AR(n)} دينار · ${why}`,2000)}
+// أشكال الأثاث داخل البيت
+function furnMesh(id){const g=new THREE.Group();const b=(w,h,d,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o};
+ const cy=(r1,r2,h,m,x,y,z,s=12)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,s),m);o.position.set(x,y,z);g.add(o);return o};const sp=(r,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(r,12,10),m);o.position.set(x,y,z);g.add(o);return o};
+ const wood=IM(0x7a4a24),dark=IM(0x4a2a14),gold=IM(0xd4a640,{emissive:0x5a3e10,emissiveIntensity:.3}),red=IM(0x8e1b1b),green=IM(0x2f7a3a),white=IM(0xf6f2ea);
+ if(id==='chest'){b(1,.6,.6,dark,0,.3,0);b(1.04,.08,.64,gold,0,.62,0);for(let k=0;k<4;k++)sp(.035,gold,-.36+k*.24,.34,.31)}
+ if(id==='chair'){b(.6,.07,.6,wood,0,.5,0);[[-.25,-.25],[.25,-.25],[-.25,.25],[.25,.25]].forEach(([x,z])=>b(.07,.5,.07,wood,x,.25,z));b(.6,.7,.07,wood,0,.88,-.27);b(.5,.06,.5,red,0,.56,0)}
+ if(id==='table'){cy(.5,.5,.06,wood,0,.6,0,18);cy(.07,.14,.58,dark,0,.29,0);const l=cy(.12,.09,.3,IM(0xffc060,{emissive:0xff9a30,emissiveIntensity:1.3}),0,.8,0,8)}
+ if(id==='palm'){cy(.3,.24,.5,IM(0xb5603a),0,.25,0);cy(.06,.08,1.4,IM(0x6b4a2e),0,1.1,0,8);for(let k=0;k<6;k++){const f=b(.9,.03,.22,green,Math.cos(k)*.4,1.85,Math.sin(k)*.4);f.rotation.y=-k;f.rotation.z=-.4}}
+ if(id==='roses'){cy(.2,.15,.35,IM(0x1f3a6b),0,.18,0);for(let k=0;k<7;k++)sp(.08,IM(k%2?0xc0182a:0xe8406a),Math.cos(k*.9)*.12,.5+(k%3)*.06,Math.sin(k*.9)*.12)}
+ if(id==='lamp'){cy(.22,.26,.06,gold,0,.03,0);cy(.03,.03,1.5,gold,0,.8,0,6);cy(.18,.12,.3,IM(0xffd07a,{emissive:0xffa840,emissiveIntensity:1.5}),0,1.6,0,8);const pl=new THREE.PointLight(0xffb45a,.6,5,2);pl.position.y=1.6;g.add(pl)}
+ if(id==='bed'){b(1.2,.4,2,wood,0,.2,0);b(1.1,.18,1.9,white,0,.49,0);b(1.1,.2,.6,IM(0x1f3a6b),0,.55,.6);b(.5,.14,.3,white,0,.62,-.7);b(1.2,.8,.08,dark,0,.5,-1)}
+ if(id==='ward'){b(1.2,2,.55,wood,0,1,0);b(.04,1.8,.02,dark,0,1,.28);sp(.04,gold,-.1,1,.3);sp(.04,gold,.1,1,.3)}
+ if(id==='fount'){cy(.8,.85,.3,IM(0xe8e0d0),0,.15,0,20);cy(.7,.7,.04,IM(0x3a8ab0,{emissive:0x0a3050,emissiveIntensity:.3}),0,.3,0,20);cy(.08,.1,.6,IM(0xe8e0d0),0,.55,0);cy(.25,.2,.08,IM(0xe8e0d0),0,.85,0);sp(.06,IM(0x9fd8f0),0,.95,0)}
+ if(id==='gold'){b(.8,.5,.5,dark,0,.25,0);b(.84,.08,.54,gold,0,.5,0);for(let k=0;k<8;k++)cy(.08,.08,.03,gold,-.25+(k%4)*.17,.56+Math.floor(k/4)*.03,-.1+Math.floor(k/4)*.15)}
+ if(id==='throne'){b(.9,.5,.8,IM(0x4a1440),0,.25,0);b(.9,1.4,.15,gold,0,1,-.35);b(.12,.4,.8,gold,-.45,.65,0);b(.12,.4,.8,gold,.45,.65,0);sp(.1,IM(0xc0182a),0,1.6,-.33)}
+ if(id==='sword'){b(.5,.08,.3,dark,0,.04,0);b(.06,1,.06,wood,0,.5,0);const s=b(.06,1.1,.02,IM(0xd8dde2),0,1.1,.06);b(.36,.06,.08,gold,0,.6,.06)}
+ g.traverse(o=>{o.castShadow=true});return g}
+function homeItemsFor(houseName){const own=myHouse()===houseName;if(own)return HOMEF.items;
+ for(const [u,inf] of Object.entries(USERS))if(inf[0]===houseName&&NET.homes[u])return NET.homes[u];return []}
+function placeFurniture(houseName){const items=homeItemsFor(houseName);items.slice(0,8).forEach((id,i)=>{if(!FURN.some(f=>f.id===id))return;const s=FSLOTS[i];const g=furnMesh(id);g.userData.furn=1;g.position.set(s[0],0,s[1]);g.rotation.y=s[2];inScene.add(g)})}
+function refreshFurn(name){inScene.children.filter(o=>o.userData&&o.userData.furn).forEach(o=>inScene.remove(o));placeFurniture(name)}
+// واجهة المتجر وأثاثي
+{const st=document.createElement('style');st.textContent=`#gShop{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(6,8,14,.72);font-family:'Amiri',serif}
+#gShop .pn{width:min(560px,94vw);max-height:86vh;overflow:auto;background:#152238;border:2px solid #C9A45C;border-radius:18px;padding:16px;color:#F3EAD8}
+#gShop h3{margin:0 0 4px;font-family:'Aref Ruqaa',serif;color:#E6C98A;font-size:26px;display:flex;justify-content:space-between;align-items:center}
+#gShop .sub{font-size:14px;opacity:.75;margin-bottom:10px}
+#gShop .gr{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+#gShop .it{background:rgba(255,255,255,.06);border:1px solid rgba(201,164,92,.5);border-radius:14px;padding:10px;text-align:center}
+#gShop .it .em{font-size:34px}#gShop .it b{display:block;font-size:15px;margin:2px 0}#gShop .it i{display:block;font-style:normal;color:#ffd36a;font-size:14px}
+#gShop .it button{margin-top:6px;width:100%;border:0;border-radius:10px;padding:7px;font-family:'Amiri',serif;font-size:15px;background:#C9A45C;color:#1a1208;font-weight:700}
+#gShop .it button:disabled{background:#555;color:#aaa}#gShop .x{background:rgba(255,255,255,.12);border:0;color:#fff;border-radius:10px;padding:4px 12px;font-size:18px}
+#gCoins{background:rgba(14,26,43,.8);border:1px solid #C9A45C;border-radius:12px;padding:6px 10px;color:#ffd36a;font-size:15px}
+#gFurnB{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:30;display:none;font-family:'Amiri',serif;font-size:18px;padding:12px 22px;border-radius:999px;border:2px solid #C9A45C;background:rgba(14,26,43,.9);color:#F3EAD8}`;document.head.appendChild(st);
+ const d=document.createElement('div');d.innerHTML=`<div id="gShop" role="dialog"><div class="pn"><h3><span id="gShopT">محل الأثاث 🪑</span><button class="x" id="gShopX">✕</button></h3><div class="sub" id="gShopS"></div><div class="gr" id="gShopG"></div></div></div><button id="gFurnB">🛋️ أثاثي</button><button id="gShopB" style="display:none"></button>`;document.body.appendChild(d);
+ $('gAct').appendChild($('gShopB'));$('gShopB').textContent='🛒 تسوّق أثاث';
+ const top=$('gTop');const c=document.createElement('span');c.id='gCoins';c.textContent='💰';top.insertBefore(c,$('gMap'))}
+function openShop(mode){const own=myHouse();const G=$('gShopG');G.innerHTML='';$('gShop').style.display='flex';if(document.pointerLockElement)document.exitPointerLock();
+ if(mode==='mine'){$('gShopT').textContent='🛋️ أثاث بيتك';$('gShopS').textContent=HOMEF.items.length?`عندك ${AR(HOMEF.items.length)} من ٨ قطع · البيع يرجّع لك نص السعر`:'بيتك فاضي… روح محل الأثاث في السوق 🪑';
+  HOMEF.items.forEach((id,i)=>{const f=FURN.find(x=>x.id===id);if(!f)return;const el=document.createElement('div');el.className='it';el.innerHTML=`<div class="em"></div><b></b><i></i><button>بيع</button>`;el.querySelector('.em').textContent=f.e;el.querySelector('b').textContent=f.n;el.querySelector('i').textContent='+'+AR(Math.floor(f.p/2))+' دينار';
+   el.querySelector('button').onclick=()=>{HOMEF.items.splice(i,1);HOMEF.coins+=Math.floor(f.p/2);homeSave();openShop('mine');if(inside&&selected&&selected.name===own){refreshFurn(own)}};G.appendChild(el)});return}
+ $('gShopT').textContent='محل الأثاث 🪑';$('gShopS').textContent=own?`رصيدك ${AR(HOMEF.coins)} دينار · بيتك فيه ${AR(HOMEF.items.length)} من ٨ قطع · تكسب دنانير لما تكلّم أهل المدينة`:'لازم يكون لك بيت أول! اكتب اسمك في تعليقات @8istory ونبني لك بيت 🏠';
+ FURN.forEach(f=>{const el=document.createElement('div');el.className='it';el.innerHTML=`<div class="em"></div><b></b><i></i><button>اشترِ</button>`;el.querySelector('.em').textContent=f.e;el.querySelector('b').textContent=f.n;el.querySelector('i').textContent=AR(f.p)+' دينار';
+  const bt=el.querySelector('button');bt.disabled=!own||HOMEF.coins<f.p||HOMEF.items.length>=8;if(own&&HOMEF.coins<f.p)bt.textContent='رصيدك ما يكفي';if(own&&HOMEF.items.length>=8)bt.textContent='بيتك مليان';
+  bt.onclick=()=>{if(bt.disabled)return;HOMEF.coins-=f.p;HOMEF.items.push(f.id);homeSave();toast(`${f.e} «${f.n}» انضاف لدار ${own}! ادخل بيتك وشوفه 🏠`,3200);openShop()};G.appendChild(el)})}
+$('gShopX').onclick=()=>{$('gShop').style.display='none'};$('gShop').onclick=e=>{if(e.target.id==='gShop')$('gShop').style.display='none'};
+$('gShopB').onclick=()=>openShop();$('gFurnB').onclick=()=>openShop('mine');
+
 function camOffset(){const cp=Math.cos(game.pitch);return new THREE.Vector3(Math.sin(game.yaw)*cp,Math.sin(game.pitch),Math.cos(game.yaw)*cp)}
 function updateGame(t){const dt=Math.min(.05,(t-(game.last||t))/1000);game.last=t;updatePeers(dt);if(!game.on||inside)return;controls.enabled=false;if(scene.fog&&scene.fog.far>430){scene.fog.near=Math.min(scene.fog.near,140);scene.fog.far=430}
  const K=game.keys,k=c=>!game.chatOpen&&K[c];
@@ -1803,6 +1868,7 @@ function updateGame(t){const dt=Math.min(.05,(t-(game.last||t))/1000);game.last=
  netTick(t,moving||!game.onG);
  // أقرب شخصية أو باب
  let best=null,bd=4.2;for(const n of NPCS){const d=Math.hypot(n.pos[0]-P.x,n.pos[2]-P.z);if(d<bd&&Math.abs((n.pos[1]||0)-P.y)<3){bd=d;best=n}}
+ $('gShopB').style.display=(best&&best.id==='furniture')?'block':'none';
  if(best!==game.near){game.near=best;$('gTalkB').style.display=best?'block':'none';if(best)$('gTalkB').textContent='💬 كلّم '+best.name;if(!best&&game.talk){game.talk=null;$('gTalk').style.display='none'}}
  let en=null;if(P.y<2){const md=Math.hypot(P.x,P.z);if(md<10.5&&md>7)en={sel:{mosque:true},t:'🚪 ادخل الجامع'};
  if(Math.hypot(P.x,P.z+82)<5.5)en={sel:{palace:true},t:'🚪 ادخل القصر'};
