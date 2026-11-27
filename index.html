@@ -713,6 +713,23 @@ SHOPS.forEach(sh=>{box(2.4,.7,.12,mat.plaque,sh.x,3.25,sh.z+.75);box(2.2,.5,.14,
  const arm=new THREE.Group();arm.position.set(-.1,3.05,-.35);g.add(arm);a(new THREE.CylinderGeometry(.07,.06,.6,8),M(0xf6f2ea),0,.25,0,arm).rotation.z=-.3;a(new THREE.BoxGeometry(.06,1.1,.08),steel,-.12,.95,0,arm);
  g.position.set(gx,0,gz);g.rotation.y=Math.PI;g.scale.setScalar(1.25);scene.add(g);window.__cav={g,arm};
  const el=document.createElement('div');el.className='lb';el.innerHTML='<b>🐎 قائد الفرسان تيم</b><i>مقدّمة حُماة الحكايا</i>';document.getElementById('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(gx,6.2,gz)})}
+// ===== محل الأثاث الأندلسي (آخر صف السوق الجنوبي) =====
+{const x=-42,z=-2.75;const wood=M(0x7a4a24),dark=M(0x4a2a14),gold=M(0xd4a640,{metalness:.7,roughness:.3}),red=M(0x8e1b1b),blue=M(0x1f3a6b),green=M(0x1f5c3a),cream=M(0xf1e2c6);
+ // جلسة مجلس: مسند وفرشة ومخدات
+ box(2.2,.3,.8,red,x-.2,.15,z-.9);box(2.2,.6,.18,red,x-.2,.45,z-1.25);[-.9,-.2,.5].forEach((dx,i)=>{const c=new THREE.Mesh(new THREE.BoxGeometry(.5,.4,.14),[gold,blue,green][i]);c.position.set(x+dx,.55,z-1.08);c.rotation.x=-.25;c.castShadow=true;scene.add(c)});
+ // مندوس منقوش بمسامير نحاس
+ box(.9,.55,.55,dark,x+1.6,.28,z-.6);box(.94,.08,.59,gold,x+1.6,.57,z-.6);for(let k=0;k<4;k++){const n=new THREE.Mesh(new THREE.SphereGeometry(.035,6,4),gold);n.position.set(x+1.25+k*.23,.32,z-.32);scene.add(n)}
+ // كرسي خشب وطاولة دائرية
+ box(.5,.06,.5,wood,x+1.7,.5,z+.5);[[-.2,-.2],[.2,-.2],[-.2,.2],[.2,.2]].forEach(([a,b])=>box(.06,.5,.06,wood,x+1.7+a,.25,z+.5+b));box(.5,.6,.06,wood,x+1.7,.8,z+.27);
+ const tb=new THREE.Mesh(new THREE.CylinderGeometry(.45,.45,.06,18),wood);tb.position.set(x+.6,.55,z+.5);scene.add(tb);const tl=new THREE.Mesh(new THREE.CylinderGeometry(.06,.12,.52,10),dark);tl.position.set(x+.6,.26,z+.5);scene.add(tl);
+ const lamp=new THREE.Mesh(new THREE.ConeGeometry(.12,.3,8),new TM({color:0xffc060,emissive:0xff9a30,emissiveIntensity:1.2}));lamp.position.set(x+.6,.75,z+.5);scene.add(lamp);
+ // سجاد ملفوف
+ [[0,red],[.22,blue],[.44,green]].forEach(([dz,m])=>{const r=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,1.4,10),m);r.rotation.z=Math.PI/2;r.position.set(x-1.4,.12+dz*.0,z+.3+dz);r.castShadow=true;scene.add(r)});
+ // النجّار ومنشاره
+ const cp=makeChar(0x8a5a2b);cp.g.visible=true;cp.g.position.set(x-.6,0,z+1.1);cp.g.rotation.y=Math.PI*.85;cp.arms[1].rotation.x=-1;
+ const bench=new THREE.Mesh(new THREE.BoxGeometry(1.2,.12,.5),wood);bench.position.set(x-.9,.75,z+1.75);scene.add(bench);[[-.5],[.5]].forEach(([a])=>box(.08,.7,.4,dark,x-.9+a,.37,z+1.75));
+ const saw=new THREE.Mesh(new THREE.BoxGeometry(.5,.12,.02),M(0xd5d8dd,{metalness:.9,roughness:.2}));saw.position.set(x-.9,.9,z+1.75);scene.add(saw);window.__saw={m:saw,x:x-.9};
+ const el=document.createElement('div');el.className='lb';el.innerHTML='<b>🪑 محل الأثاث</b><i>مجالس · مناديس · سجاد</i>';document.getElementById('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(x,4.1,z)})}
 // قافلة الجمال
 amb.camels=[];
 {
@@ -1559,6 +1576,7 @@ const NPCS=[
  {id:'post',name:'وزير البريد والأخبار 🕊️',pos:[-14.8,0,43.4],user:'ghosts_no1',lines:n=>[`أهلًا يا ${n}! عندي لك رسالة… 📜`,'أنا وزير البريد: كل خبر في الحكايا يمرّ من ديواني، والحمام الزاجل يوصّله 🕊️','في الأندلس كان للدولة «ديوان البريد» ينقل الأخبار بين المدن بسرعة على الخيل والحمام ✨']},
  {id:'quran',name:'الشيخ عبدالله · معهد الإيمان 📖',pos:[15,0,-45.6],user:'abdallha1a',lines:n=>[`السلام عليكم يا ${n} 🤍`,'حيّاك في معهد الإيمان لتعليم القرآن… الطلاب يحفظون الحين 📖','في قرطبة كانت حلقات القرآن والعلم في الجامع الكبير يحضرها طلاب من كل البلاد ✨']},
  {id:'cavalry',name:'قائد الفرسان تيم 🐎',pos:[-71,0,-23],user:'mjhwllhwy.x',lines:n=>[`(من فوق الفرس) هلا يا ${n}! 🐎`,'أنا في مقدّمة جيش حُماة الحكايا… أول من يهجم وآخر من يرجع ⚔️','في الأندلس كانت الخيل العربية سرّ قوة الفرسان، سريعة وصبورة 🔥']},
+ {id:'furniture',name:'نجّار محل الأثاث 🪑',pos:[-42,0,-.9],lines:n=>[`هلا يا ${n}! تبي تأثّث بيتك؟ 🪑`,'عندنا مجالس ومخدات، ومناديس بمسامير نحاس، وسجاد ملفوف 🧵','نجّارين الأندلس اشتهروا بسقوف الخشب المنقوش المعشّق… بعضها باقي إلى اليوم في قصر الحمراء ✨','المحل يدوّر صاحب! اللي يبيه يكتب «أبي محل الأثاث» في التعليقات 👇']},
  {id:'treasurer',name:'أمين بيت المال محمد فلوس 💰',pos:[0,0,0],user:'moh_2008_amed',lines:n=>[`أهلًا يا ${n}! عدّ معي… ألف، ألفين… 💰`,'أنا أمين بيت المال، خزنة الحكايا بيدي ومفتاحها عندي 🗝️','في الأندلس كان الدينار القرطبي الذهبي يتعامل فيه التجّار من بغداد لين أوروبا ✨']},
  {id:'resto',name:'مطعم قدوري البخاري 🍽️',pos:[-6,0,-11],enter:'restaurant',user:'abdulqader_bek',lines:n=>[`تفضّل يا ${n}، مطعم قدوري البخاري مفتوح 🍽️`,'عندنا رز بخاري على الفحم، مدفون، مدني، مضغوط وشواية… وكل الشعبيات 🔥','ولائم الملك والجيش عندنا VIP 👑 ونبي طبّاخ ونادل… تبي تشتغل؟ اكتب «أبي أشتغل في المطعم» 👨‍🍳']}];
 ;{const ti=names.indexOf('محمد فلوس');const tn=NPCS.find(n=>n.id==='treasurer');if(ti>=0&&houses[ti]){const d=houseDoor(ti);const hp=houses[ti].grp.position;const sx=(d.x-hp.x),sz=(d.z-hp.z),L=Math.hypot(sx,sz)||1;tn.pos=[d.x+sz/L*1.6,0,d.z-sx/L*1.6];
@@ -1831,6 +1849,7 @@ function loop(t){
  if(window.__pigeons){const Pg=window.__pigeons;Pg.birds.forEach(o=>{const a=t/1400+o.ph,r=3+Math.sin(a*1.3)*.8;o.b.position.set(Pg.x+Math.cos(a)*r,10.5+Math.sin(a*2)*.6,Pg.z+Math.sin(a)*r);o.b.rotation.y=-a;const f=Math.sin(t/70+o.ph*5)*.6;o.b.userData['w-1'].rotation.z=f;o.b.userData.w1.rotation.z=-f})}
  if(window.__thFlag)window.__thFlag.rotation.y=Math.sin(t/500)*.25;
  if(window.__cav)window.__cav.arm.rotation.z=Math.sin(t/700)*.25;
+ if(window.__saw)window.__saw.m.position.x=window.__saw.x+Math.sin(t/180)*.18;
  if(window.__coin)window.__coin.position.y=1.05+Math.abs(Math.sin(t/260))*.5;
  if(OUT&&game.on&&!PERF.low){try{OUT.render(inside?inScene:scene,camera)}catch(e){OUT=null;renderer.render(inside?inScene:scene,camera)}}else renderer.render(inside?inScene:scene,camera);
  const W=innerWidth,H=innerHeight;
