@@ -1625,6 +1625,10 @@ const NPCS=[
  {id:'furniture',name:'نجّار محل الأثاث 🪑',pos:[-42,0,-.9],lines:n=>[`هلا يا ${n}! تبي تأثّث بيتك؟ 🪑`,'عندنا مجالس ومخدات، ومناديس بمسامير نحاس، وسجاد ملفوف 🧵','نجّارين الأندلس اشتهروا بسقوف الخشب المنقوش المعشّق… بعضها باقي إلى اليوم في قصر الحمراء ✨','اضغط «🛒 تسوّق أثاث» واختار اللي يعجبك… ويوصل بيتك على طول 🏠']},
  {id:'caravan',name:'تاجر القافلة 🐪',pos:[87.5,0,47.5],lines:n=>[`أهلًا يا ${n}! وصلت القافلة من قرطبة 🐪`,'بقرار من وزير الاقتصاد أحمد صار للحكايا تجارة مع قرطبة وإشبيلية وغرناطة وطليطلة 💼','جبنا سجاد غرناطي وجرار فخّار من مالقة… تلقاها في محل الأثاث 🧶🏺','تبي تشتغل؟ اضغط «🐪 اشتغل مع القافلة» ووصّل البضاعة لسوق الحكايا… وخذ ٢٥ دينار 💰','في الأندلس كانت القوافل والسفن تربط قرطبة بالمشرق والمغرب… والحرير الأندلسي كان يوصل لأسواق بعيدة ✨']},
  {id:'dalal',name:'دلّال الأراضي 🏗️',pos:[60,0,-45.5],lines:n=>[`حيّاك يا ${n}! تبي أرض؟ 🏗️`,'ورا ظهري ٢٠ أرض… كل وحدة ١٠×١٠ متر، والأرض بـ٢٠٠ دينار','ادخل أي أرض مكتوب عليها «للبيع» واضغط «🏷️ اشترِ»… أرض وحدة لكل لاعب','البناء لفوق بدون حد… ابنِ برج يوصل السحاب ☁️','بعدها اضغط «🧱 ابنِ» واختار المادة: حجر، طوب، خشب، جص، قرميد، زجاج، ذهب، زليج… المكعب بدينار وترجع لك إذا هدمته','في الأندلس بنوا قصر الحمراء طبقة فوق طبقة… وإنت ابنِ قصرك مكعب مكعب 🧱✨']},
+ {id:'racer',name:'حكَم السباق 🏇',pos:[7,0,105],act:['🏁 ابدأ السباق',()=>raceStart()],lines:n=>[`حيّاك يا ${n}! جاهز للسباق؟ 🏇`,'لف المضمار كامل ومرّ من الأقواس الثمانية بالترتيب… بدون طيران','أسرع ٥ ينكتبون في «لوحة أبطال الحكايا» 🏆 والفائز ياخذ ١٥ دينار','في الأندلس اشتهرت الخيول العربية الأصيلة… وكانت سباقاتها جزء من احتفالات قرطبة 🐎']},
+ {id:'ringer',name:'معلّم الطيران 🪁',pos:[-6,0,104],act:['🪁 ابدأ تحدي الحلقات',()=>ringsStart()],lines:n=>[`يا هلا ${n}! تعرف تطير؟ 🪁`,'فوق الساحة ٨ حلقات ذهبية… طِر من داخلها بالترتيب بأسرع وقت','الحلقة الخضرا هي اللي عليك الحين 🟢','عباس بن فرناس في قرطبة كان من أوائل اللي حاولوا الطيران بجناحين قبل أكثر من ألف سنة ✨']},
+ {id:'archer',name:'شيخ الرماة 🎯',pos:[14,0,123],act:['🎯 العب الرماية',()=>archeryStart()],lines:n=>[`أهلًا يا ${n}! عينك حادة؟ 🎯`,'عندك ٢٠ ثانية… اضغط على الأهداف قبل ما تختفي، والنص الذهبي يعطيك ٥ نقاط','كل نقطتين = دينار، والأبطال ينكتبون في اللوحة 🏆']},
+ {id:'hakawati',name:'الحكواتي 📜',pos:[0,0,119.5],act:['📜 العب المسابقة',()=>quizStart()],lines:n=>[`اجلس يا ${n}… خلّني أسألك عن تاريخ الأندلس 📜`,'٥ أسئلة كل يوم، وكل جواب صح بـ٥ دنانير','وعندي سر: في المدينة ٨ كنوز ذهبية مخبّاة… تتغيّر كل يوم 💰 دوّر عليها!']},
  {id:'shurta',name:'صاحب الشرطة 🚔',pos:[78,0,28.6],lines:n=>[`أهلًا يا ${n}، أنا صاحب الشرطة 🚔`,'في قرطبة كان «صاحب الشرطة» منصب كبير يحفظ الأمن في المدينة… وأنا على نفس الطريق','السلاح للدفاع بس… اللي يعتدي على أحد مكانه هنا في السجن 🔒','وأصحاب المناصب والشخصيات الاعتبارية محميين… واللي يقرّب منهم الحرس يردّونه 🛡️']},
  {id:'arena',name:'حكَم حلبة النزال 🤺',pos:[30,0,57.2],lines:n=>[`حيّاك يا ${n}! هذي حلبة النزال ⚔️`,'داخل الحلبة القتال مسموح… بدون شرطة ولا سجن','كل واحد عنده ١٠٠ ❤️، واللي يهزم خصمه ياخذ ١٠ دنانير 💰 والدرع يخفّف الضربة نص 🛡️']},
  {id:'doctor',name:'طبيبة المدينة 🩺',pos:[-72.6,0,7.4],user:'zahara____wra',lines:n=>[`أهلًا يا ${n}… خلّني أشوفك 🩺`,'دار الشفاء مفتوحة لكل أهل الحكايا… وإذا تعوّرت في الحلبة تعال لي ❤️‍🩹','في قرطبة عاش «الزهراوي»، أبو الجراحة، وكتابه «التصريف» درّسوه في أوروبا قرون طويلة ✨']},
@@ -1808,9 +1812,9 @@ function peerInfo(u){const i=USERS[u];return i?{d:i[2]||i[0]||u,ti:i[1]||'من �
 function netStart(){if(NET.c||NET.loading)return;NET.loading=true;sysMsg('⏳ جاري الاتصال بشات المدينة…');const s=document.createElement('script');s.src='https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js';
  s.onload=netConnect;s.onerror=()=>{NET.loading=false;sysMsg('⚠️ الشات ما اشتغل… تأكد من النت')};document.head.appendChild(s)}
 function netConnect(){try{const c=window.mqtt.connect('wss://broker.hivemq.com:8884/mqtt',{clientId:'hk_'+NET.id,keepalive:30,clean:true,reconnectPeriod:4000,connectTimeout:9000,will:{topic:NET.T+'bye',payload:JSON.stringify({id:NET.id}),qos:0,retain:false}});NET.c=c;
- c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye',NET.T+'hit',NET.T+'ko',NET.T+'sale/+',NET.T+'ledger/+',NET.T+'home/+',NET.T+'land/+',NET.T+'build/+']);CLOUD.sub=null;cloudSub();if(game.user)setTimeout(()=>{if(!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants();paySalary();setTimeout(landRestore,2500)}},3500);homePub();if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
+ c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye',NET.T+'hit',NET.T+'ko',NET.T+'sale/+',NET.T+'ledger/+',NET.T+'home/+',NET.T+'land/+',NET.T+'build/+',NET.T+'score/+']);CLOUD.sub=null;cloudSub();if(game.user)setTimeout(()=>{if(!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants();paySalary();setTimeout(landRestore,2500)}},3500);homePub();if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
  c.on('close',()=>{if(NET.ok)sysMsg('🔴 انقطع الشات… يعيد الاتصال');NET.ok=false});
- c.on('message',(tp,buf)=>{let m;try{m=JSON.parse(buf.toString())}catch(e){return}if(!m||typeof m!=='object')return;const k=tp.slice(NET.T.length);if(k.startsWith('land/')){onLand(+k.slice(5),m);return}if(k.startsWith('build/')){onBuild(+k.slice(6),m);return}if(m.id===NET.id)return;
+ c.on('message',(tp,buf)=>{let m;try{m=JSON.parse(buf.toString())}catch(e){return}if(!m||typeof m!=='object')return;const k=tp.slice(NET.T.length);if(k.startsWith('land/')){onLand(+k.slice(5),m);return}if(k.startsWith('build/')){onBuild(+k.slice(6),m);return}if(k.startsWith('score/')){onScore(k.slice(6),m);return}if(m.id===NET.id)return;
   if(k==='pos')onPos(m);else if(k==='chat')onChat(m);else if(k.startsWith('save/'))onCloud(m);else if(k==='hit')onHit(m);else if(k==='ko')onKO(m);else if(k.startsWith('sale/'))onSale(m);else if(k.startsWith('ledger/'))onLedger(k.slice(7),m);else if(k.startsWith('home/')){if(typeof m.u==='string'&&Array.isArray(m.items))NET.homes[m.u.toLowerCase()]=m.items.filter(x=>typeof x==='string'||(x&&typeof x.id==='string')).slice(0,8)}else if(k==='bye')dropPeer(m.id)})}catch(e){sysMsg('⚠️ الشات غير متاح')}}
 function pubPos(){if(!NET.ok||!game.on)return;const P=game.p;NET.c.publish(NET.T+'pos',JSON.stringify({id:NET.id,u:game.user.u,x:+P.x.toFixed(2),y:+P.y.toFixed(2),z:+P.z.toFixed(2),r:+hero.g.rotation.y.toFixed(2),f:game.fly?1:0,c:hero.bm.color.getHex(),w:hero.wid||'',fm:hero.female?1:0,s:hero.hasShield?1:0,a:performance.now()-ATK.t<500?1:0,h:Math.max(0,Math.round(game.hp))}))}
 function netTick(t,act){if(!NET.ok||!game.on)return;if(t-NET.lastPub<(act?130:2500))return;NET.lastPub=t;pubPos()}
@@ -2202,12 +2206,104 @@ function landTick(){if(!game.on)return;const P=game.p;const p=plotAt(P.x,P.z);co
  $('gBuyB').style.display=(p&&!p.owner&&!BS.on)?'block':'none';if(p&&!p.owner)$('gBuyB').textContent='🏷️ اشترِ الأرض رقم '+AR(p.i+1)+' ('+AR(LAND.price)+' دينار)';
  $('gBuildB').style.display=(mine&&!BS.on)?'block':'none';$('bCross').style.display=(BS.on&&document.pointerLockElement)?'block':'none';
  if(BS.on&&(!p||p!==BS.plot)&&Math.hypot(P.x-(BS.plot.x+5),P.z-(BS.plot.z+5))>22){buildEnd();toast('✅ حفظنا بناءك',1400)}}
+// ===== ساحة الألعاب جنوب النهر: سباق، حلقات طيران، برج التحدي، رماية، مسابقة الحكواتي، كنوز الحكايا =====
+const GAMES={cx:0,cz:128,rx:44,rz:20};
+const TODAY=()=>new Date().toISOString().slice(0,10);
+const SCORES={race:[],rings:[],arch:[]};
+function scoreName(k){return{race:'🏇 سباق الحلبة',rings:'🪁 حلقات الطيران',arch:'🎯 الرماية'}[k]}
+function scoreSubmit(k,v,lowBetter){if(!game.user)return false;const L=SCORES[k].filter(e=>e.u!==game.user.u);const mine=SCORES[k].find(e=>e.u===game.user.u);
+ if(mine&&(lowBetter?mine.v<=v:mine.v>=v))return false;L.push({u:game.user.u,d:game.user.disp,v});L.sort((a,b)=>lowBetter?a.v-b.v:b.v-a.v);SCORES[k]=L.slice(0,5);
+ if(NET.ok)NET.c.publish(NET.T+'score/'+k,JSON.stringify({l:SCORES[k],ts:Date.now()}),{retain:true,qos:1});boardUI();return SCORES[k][0].u===game.user.u}
+function onScore(k,m){if(!SCORES[k]||!Array.isArray(m.l))return;SCORES[k]=m.l.filter(e=>e&&typeof e.u==='string'&&isFinite(e.v)).slice(0,5).map(e=>({u:e.u.slice(0,30),d:String(e.d||e.u).slice(0,24),v:+e.v}));boardUI()}
+let BOARD=null;
+function boardUI(){if(!BOARD)return;const f=(k,u)=>{const L=SCORES[k];return L.length?L.slice(0,3).map((e,i)=>['🥇','🥈','🥉'][i]+' '+e.d+' '+(u==='s'?AR(e.v.toFixed(1))+'ث':AR(e.v))).join(' · '):'— ما أحد لعب للحين —'};
+ BOARD.querySelector('i').innerHTML='🏇 '+f('race','s')+'<br>🪁 '+f('rings','s')+'<br>🎯 '+f('arch','n')}
+// الحلبة والمعالم
+const RACE_CP=[];for(let k=0;k<8;k++){const a=Math.PI/2+k/8*Math.PI*2;RACE_CP.push([GAMES.cx+Math.cos(a)*GAMES.rx,GAMES.cz-Math.sin(a)*GAMES.rz])}
+const RINGS=[];for(let k=0;k<8;k++){const a=-Math.PI/2+k/8*Math.PI*2;RINGS.push([GAMES.cx+Math.cos(a)*30,14+Math.sin(k*1.3)*5+k*1.6,GAMES.cz+Math.sin(a)*16])}
+const PK=[];{const X=-20,Z=128;for(let i=0;i<26;i++){const a=i*.62,x=Math.round(X+Math.cos(a)*5),z=Math.round(Z+Math.sin(a)*5);PK.push([x,i,z])}}
+let RACE_MARK=null,RING_M=[],PK_CHEST=null,TRE=[];
+{const sand=M(0xcaa46a),wood=M(0x6b4a2e),red=M(0x8e1b1b),gold=M(0xd4a640,{emissive:0x5a3e10,emissiveIntensity:.5}),cream=M(0xf1e7d6),green=M(0x2f7a3a),blue=M(0x1f3a6b);
+ // مضمار بيضاوي
+ for(let k=0;k<72;k++){const a=k/72*Math.PI*2,a2=(k+1)/72*Math.PI*2;const x1=GAMES.cx+Math.cos(a)*GAMES.rx,z1=GAMES.cz+Math.sin(a)*GAMES.rz,x2=GAMES.cx+Math.cos(a2)*GAMES.rx,z2=GAMES.cz+Math.sin(a2)*GAMES.rz;
+  const seg=new THREE.Mesh(new THREE.BoxGeometry(Math.hypot(x2-x1,z2-z1)+.3,.06,6),sand);seg.position.set((x1+x2)/2,.04,(z1+z2)/2);seg.rotation.y=-Math.atan2(z2-z1,x2-x1);seg.receiveShadow=true;scene.add(seg)}
+ // أقواس نقاط التفتيش
+ RACE_CP.forEach(([x,z],k)=>{const a=Math.atan2(-(z-GAMES.cz)/GAMES.rz,(x-GAMES.cx)/GAMES.rx);const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=Math.atan2(Math.sin(a)*GAMES.rx,Math.cos(a)*GAMES.rz);
+  [-3.4,3.4].forEach(dx=>{const p=new THREE.Mesh(new THREE.BoxGeometry(.4,4.2,.4),k===0?gold:cream);p.position.set(dx,2.1,0);p.castShadow=true;g.add(p)});const t=new THREE.Mesh(new THREE.BoxGeometry(7.4,.6,.5),k===0?red:wood);t.position.y=4.3;g.add(t);scene.add(g)});
+ RACE_MARK=new THREE.Mesh(new THREE.TorusGeometry(3.6,.18,8,28),new THREE.MeshBasicMaterial({color:0xffd36a}));RACE_MARK.rotation.x=Math.PI/2;RACE_MARK.visible=false;scene.add(RACE_MARK);
+ // حلقات الطيران
+ RINGS.forEach(([x,y,z],k)=>{const r=new THREE.Mesh(new THREE.TorusGeometry(3,.22,8,28),new TM({color:0xd4a640,emissive:0x3a2a08,emissiveIntensity:.4}));r.position.set(x,y,z);r.rotation.y=Math.atan2(x-GAMES.cx,z-GAMES.cz)+Math.PI/2;scene.add(r);RING_M.push(r)});
+ // برج التحدي (مكعبات يمشى عليها)
+ const pkM=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),new TM({color:0xffffff}),PK.length*4);const m4=new THREE.Matrix4();let n=0;const col=new THREE.Color();
+ PK.forEach(([x,y,z],i)=>{for(const [dx,dz] of [[0,0],[1,0],[0,1],[1,1]]){m4.makeTranslation(x+dx+.5,y+.5,z+dz+.5);pkM.setMatrixAt(n,m4);col.setHSL(.08+i/PK.length*.6,.55,.55);pkM.setColorAt(n,col);n++;VOX.set(vk(x+dx,y,z+dz),{p:-1,k:'',t:0})}});
+ pkM.castShadow=pkM.receiveShadow=true;pkM.instanceMatrix.needsUpdate=true;if(pkM.instanceColor)pkM.instanceColor.needsUpdate=true;scene.add(pkM);
+ {const L=PK[PK.length-1];PK_CHEST=new THREE.Group();const b1=new THREE.Mesh(new THREE.BoxGeometry(.9,.6,.6),M(0x4a2a14));b1.position.y=.3;PK_CHEST.add(b1);const b2=new THREE.Mesh(new THREE.BoxGeometry(.94,.1,.64),gold);b2.position.y=.62;PK_CHEST.add(b2);PK_CHEST.position.set(L[0]+1,L[1]+1,L[2]+1);scene.add(PK_CHEST)}
+ // ميدان الرماية (ديكور)
+ [[22,122],[25,126],[22,130]].forEach(([x,z])=>{const st=new THREE.Mesh(new THREE.BoxGeometry(.2,1.6,.2),wood);st.position.set(x,.8,z);scene.add(st);[[1.1,0xf6f2ea],[.8,0x8e1b1b],[.5,0xf6f2ea],[.22,0xd4a640]].forEach(([r,c],i)=>{const d=new THREE.Mesh(new THREE.CylinderGeometry(r,r,.08,20),M(c));d.rotation.z=Math.PI/2;d.position.set(x-.12-i*.02,1.9,z);scene.add(d)})});
+ box(.3,1,8,wood,13,.5,126);
+ // خيمة الحكواتي
+ {const t=new THREE.Mesh(new THREE.ConeGeometry(3.6,3,8,1,true),M(0x7a1f1f));t.material.side=THREE.DoubleSide;t.position.set(0,2.6,117);scene.add(t);box(5,.04,4,M(0x8e1b1b),0,.03,118);[[-1.4,0x1f3a6b],[1.4,0x2f7a3a]].forEach(([x,c])=>box(1.2,.4,.6,M(c),x,.2,116.8))}
+ // لوحة الأبطال
+ {const p1=box(.25,4,.25,wood,-15,2,103),p2=box(.25,4,.25,wood,-9,2,103);box(6.6,2.4,.2,M(0x14284a),-12,3.2,103);
+  const el=document.createElement('div');el.className='lb';el.innerHTML='<b>🏆 لوحة أبطال الحكايا</b><i></i>';$('labels').appendChild(el);BOARD=el;TAGS.push({el,pos:new THREE.Vector3(-12,5.6,103)});boardUI()}
+ const el=document.createElement('div');el.className='lb';el.innerHTML='<b>🎮 ساحة الألعاب</b><i>سباق · حلقات · برج · رماية · مسابقة</i>';$('labels').appendChild(el);TAGS.push({el,pos:new THREE.Vector3(0,9,128)});
+ [['🧗 برج التحدي','ابنِ طريقك لفوق… بدون طيران!',-19,27,130],['🎯 ميدان الرماية','',20,4.5,126],['📜 خيمة الحكواتي','مسابقة تاريخ الأندلس',0,5.4,117]].forEach(([b,i,x,y,z])=>{const e=document.createElement('div');e.className='lb';e.innerHTML='<b></b><i></i>';e.firstChild.textContent=b;e.lastChild.textContent=i;$('labels').appendChild(e);TAGS.push({el:e,pos:new THREE.Vector3(x,y,z)})});
+ if(renderer.shadowMap)renderer.shadowMap.needsUpdate=true}
+// شخصيات ساحة الألعاب ودلّال الأراضي
+[['dalal',0x6b4a2e,[60,0,-38],''],['racer',0x8e1b1b,[0,0,100],''],['ringer',0x1f5a8a,[0,0,100],''],['archer',0x2f5a2a,[22,0,126],'bow'],['hakawati',0x4a1440,[0,0,112],'']].forEach(([id,c,look,w])=>{const n=NPCS.find(x=>x.id===id);if(!n)return;const ch=makeChar(c);ch.g.visible=true;ch.g.position.set(n.pos[0],n.pos[1]||0,n.pos[2]);ch.g.rotation.y=Math.atan2(look[0]-n.pos[0],look[2]-n.pos[2]);scene.add(ch.g);if(w)setWeapon(ch,w,false)});
+// كنوز الحكايا اليومية
+const TRE_SPOTS=[[0,22],[0,-24],[0,40],[0,-62],[24,0],[44,1],[-48,1],[-85,17],[-79,33],[-91,31],[95,45],[101,55],[42,62],[60,-42],[0,104],[22,142],[-22,142],[-56,-40],[70,12],[0,66],[-12,66],[12,66],[-60,40],[110,10],[-110,-30],[30,-60],[-30,-62],[100,-40],[-100,48],[48,108]];
+function rngDay(seed){let h=0;for(const c of seed)h=(h*31+c.charCodeAt(0))|0;return()=>{h=(h*1103515245+12345)|0;return((h>>>8)&0xffff)/65536}}
+function treasureInit(){for(const t of TRE)scene.remove(t.g);TRE.length=0;const r=rngDay('hk'+TODAY());const pool=TRE_SPOTS.slice();const gold=M(0xd4a640,{emissive:0x5a3e10,emissiveIntensity:.6});
+ for(let i=0;i<8&&pool.length;i++){const [x,z]=pool.splice(Math.floor(r()*pool.length),1)[0];const g=new THREE.Group();const b1=new THREE.Mesh(new THREE.BoxGeometry(.8,.5,.5),M(0x4a2a14));b1.position.y=.25;g.add(b1);const b2=new THREE.Mesh(new THREE.BoxGeometry(.84,.1,.54),gold);b2.position.y=.52;g.add(b2);const s=new THREE.Mesh(new THREE.OctahedronGeometry(.22),gold);s.position.y=1.2;g.add(s);g.position.set(x,groundY(x,z),z);scene.add(g);TRE.push({g,s,id:i,x,z})}}
+treasureInit();
+function treRefresh(){const d=TODAY();if(!HOMEF.tre||HOMEF.tre.d!==d)HOMEF.tre={d,got:[]};if(TRE.day!==d){TRE.day=d;treasureInit()}for(const t of TRE)t.g.visible=!HOMEF.tre.got.includes(t.id)}
+// واجهة الألعاب
+const GM={mode:'',t0:0,i:0,lastFly:0};
+{const d=document.createElement('div');d.innerHTML='<div id="gGame" style="display:none;position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:40;background:rgba(20,30,48,.92);border:2px solid #C9A45C;border-radius:12px;padding:6px 14px;color:#F3EAD8;font-family:Amiri,serif;font-size:16px;white-space:nowrap"></div><button id="gActB" style="display:none"></button><div id="gPop" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(6,8,14,.8);align-items:center;justify-content:center;font-family:Amiri,serif"><div style="width:min(520px,94vw);background:#152238;border:2px solid #C9A45C;border-radius:18px;padding:14px;color:#F3EAD8;text-align:center"><h3 id="gPopT" style="margin:0 0 8px;color:#E6C98A;font-family:\'Aref Ruqaa\',serif"></h3><div id="gPopB"></div></div></div>';document.body.appendChild(d);
+ $('gAct').appendChild($('gActB'));$('gActB').className=$('gArmsB').className;$('gActB').style.cssText=$('gArmsB').style.cssText;$('gActB').style.display='none'}
+function popOpen(t){if(document.pointerLockElement)document.exitPointerLock();$('gPopT').textContent=t;$('gPop').style.display='flex';return $('gPopB')}
+function popClose(){$('gPop').style.display='none'}
+function gameBar(tx){const b=$('gGame');if(tx){b.style.display='block';if(b.textContent!==tx)b.textContent=tx}else b.style.display='none'}
+function gameStop(msg){GM.mode='';gameBar('');RACE_MARK.visible=false;RING_M.forEach(r=>r.material.color.setHex(0xd4a640));if(msg)toast(msg,2200)}
+function raceStart(){if(GM.mode)return;if(game.fly)setFly(false,true);GM.mode='race';GM.i=1;GM.t0=performance.now();game.p.set(RACE_CP[0][0],0,RACE_CP[0][1]);game.vx=game.vz=0;toast('🏁 انطلق! مرّ من كل الأقواس بالترتيب… بدون طيران',2600)}
+function ringsStart(){if(GM.mode)return;GM.mode='rings';GM.i=0;GM.t0=performance.now();game.p.set(RINGS[0][0],RINGS[0][1]-6,RINGS[0][2]+10);setFly(true,true);toast('🪁 طِر من داخل الحلقات الذهبية بالترتيب!',2600)}
+function gamesTick(){if(!game.on)return;if(game.fly)GM.lastFly=performance.now();const P=game.p,now=performance.now();
+ if(GM.mode==='race'){if(game.fly){gameStop('🚫 انلغى السباق… الطيران ممنوع');return}const tgt=GM.i<RACE_CP.length?RACE_CP[GM.i]:RACE_CP[0];RACE_MARK.visible=true;RACE_MARK.position.set(tgt[0],.3,tgt[1]);
+  const el=(now-GM.t0)/1000;gameBar('🏇 السباق · '+AR(Math.min(GM.i,8))+'/٨ · '+AR(el.toFixed(1))+'ث');if(Math.hypot(P.x-tgt[0],P.z-tgt[1])<4.5){if(GM.i>=RACE_CP.length){const best=scoreSubmit('race',+el.toFixed(1),true);gameStop('🏁 وصلت! وقتك '+AR(el.toFixed(1))+' ثانية'+(best?' · 🥇 رقم قياسي!':''));gameReward('race',15)}else GM.i++}
+  if(el>180)gameStop('⌛ خلص الوقت')}
+ if(GM.mode==='rings'){const r=RINGS[GM.i];RING_M.forEach((m,k)=>m.material.color.setHex(k===GM.i?0x6fe08a:k<GM.i?0x6a6a6a:0xd4a640));const el=(now-GM.t0)/1000;gameBar('🪁 الحلقات · '+AR(GM.i)+'/٨ · '+AR(el.toFixed(1))+'ث');
+  if(Math.hypot(P.x-r[0],P.y+.9-r[1],P.z-r[2])<3.2){GM.i++;if(GM.i>=RINGS.length){const best=scoreSubmit('rings',+el.toFixed(1),true);gameStop('🪁 خلّصت الحلقات في '+AR(el.toFixed(1))+' ثانية'+(best?' · 🥇 رقم قياسي!':''));gameReward('rings',15)}}if(el>150)gameStop('⌛ خلص الوقت')}
+ // برج التحدي
+ const L=PK[PK.length-1];if(PK_CHEST)PK_CHEST.rotation.y+=.02;if(Math.hypot(P.x-(L[0]+1),P.z-(L[2]+1))<1.6&&P.y>=L[1]+.6&&HOMEF.pkDay!==TODAY()){if(now-GM.lastFly<15000){toast('🧗 بدون طيران! انزل وابدأ من تحت',2200)}else{HOMEF.pkDay=TODAY();earn(40,'وصلت قمة برج التحدي 🧗');NET.ok&&NET.c.publish(NET.T+'chat',JSON.stringify({id:NET.id,u:game.user.u,sys:1,txt:'🧗 '+game.user.disp+' وصل قمة برج التحدي!'}))}}
+ // الكنوز
+ for(const t of TRE){if(!t.g.visible)continue;t.s.rotation.y+=.04;if(Math.hypot(P.x-t.x,P.z-t.z)<2&&P.y<3){HOMEF.tre.got.push(t.id);t.g.visible=false;earn(10,'لقيت كنز! ('+AR(HOMEF.tre.got.length)+'/٨) 💰');if(HOMEF.tre.got.length===8)setTimeout(()=>{earn(30,'جمعت كل كنوز اليوم 🏆')},1500)}}}
+function gameReward(k,n){HOMEF.gr=HOMEF.gr||{};const last=HOMEF.gr[k]||0;if(Date.now()-last<120000){toast('💰 الجائزة كل دقيقتين… بس رقمك انحسب 🏆',2000);return}HOMEF.gr[k]=Date.now();earn(n,scoreName(k))}
+// الرماية: لعبة على الشاشة ٢٠ ثانية
+function archeryStart(){if(GM.mode)return;const B=popOpen('🎯 ميدان الرماية');B.innerHTML='<div style="margin-bottom:6px">اضغط على الأهداف قبل ما تختفي! <b id="arS">٠</b> · <b id="arT">٢٠</b>ث</div><canvas id="arC" width="480" height="480" style="width:100%;aspect-ratio:1;background:linear-gradient(#8fb8d8,#e8d2a8);border-radius:12px;touch-action:none"></canvas><button id="arX" style="margin-top:8px;padding:6px 16px;border-radius:10px;border:1px solid #C9A45C;background:#0e1a2b;color:#F3EAD8;font-family:Amiri,serif">✕ إغلاق</button>';
+ const c=$('arC'),g=c.getContext('2d');let score=0,tg=[],t0=performance.now(),run=true,last=0;
+ const draw=()=>{if(!run)return;const now=performance.now(),el=(now-t0)/1000;if(now-last>650-Math.min(350,el*15)){last=now;tg.push({x:50+Math.random()*380,y:50+Math.random()*380,b:now,life:1400-Math.min(700,el*30)})}
+  g.clearRect(0,0,480,480);tg=tg.filter(t=>now-t.b<t.life);for(const t of tg){const k=1-(now-t.b)/t.life,r=34*Math.max(.35,k);[[r,'#f6f2ea'],[r*.72,'#8e1b1b'],[r*.45,'#f6f2ea'],[r*.2,'#d4a640']].forEach(([rr,cl])=>{g.fillStyle=cl;g.beginPath();g.arc(t.x,t.y,rr,0,7);g.fill()})}
+  $('arS').textContent=AR(score);$('arT').textContent=AR(Math.max(0,Math.ceil(20-el)));if(el>=20){run=false;end();return}requestAnimationFrame(draw)};
+ const end=()=>{const best=scoreSubmit('arch',score,false);B.querySelector('div').innerHTML='🎯 نتيجتك: <b>'+AR(score)+'</b>'+(best?' · 🥇 رقم قياسي!':'');const n=Math.min(30,Math.floor(score/2));if(n>0)gameReward('arch',n)};
+ c.addEventListener('pointerdown',e=>{if(!run)return;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*480,y=(e.clientY-r.top)/r.height*480;for(let i=tg.length-1;i>=0;i--){const t=tg[i],now=performance.now(),k=1-(now-t.b)/t.life,rr=34*Math.max(.35,k);const d=Math.hypot(x-t.x,y-t.y);if(d<rr){score+=d<rr*.2?5:d<rr*.45?3:1;tg.splice(i,1);break}}});
+ $('arX').onclick=()=>{run=false;popClose()};requestAnimationFrame(draw)}
+// مسابقة الحكواتي
+const QUIZ=[['من فتح الأندلس سنة ٧١١م؟','طارق بن زياد','خالد بن الوليد','صلاح الدين'],['عاصمة الدولة الأموية في الأندلس؟','قرطبة','غرناطة','بلنسية'],['من بنى قصر الحمراء في غرناطة؟','بنو نصر','العباسيون','الفاطميون'],['آخر مملكة إسلامية سقطت في الأندلس؟','غرناطة','طليطلة','سرقسطة'],['في أي سنة سقطت غرناطة؟','١٤٩٢م','١٢٩٢م','١٥٩٢م'],
+ ['من أسّس الدولة الأموية في الأندلس؟','عبد الرحمن الداخل','المنصور بن أبي عامر','هارون الرشيد'],['وش لقب عبد الرحمن الداخل؟','صقر قريش','سيف الدولة','أسد الله'],['من هو «أبو الجراحة» الأندلسي؟','الزهراوي','ابن سينا','الرازي'],['الفيلسوف القرطبي اللي شرح كتب أرسطو؟','ابن رشد','الفارابي','الكندي'],['مدينة الخلافة اللي بناها عبد الرحمن الناصر قرب قرطبة؟','مدينة الزهراء','سامراء','الرصافة'],
+ ['من حاول الطيران بجناحين في قرطبة؟','عباس بن فرناس','ابن الهيثم','جابر بن حيان'],['المضيق اللي تسمّى باسم فاتح الأندلس؟','جبل طارق','باب المندب','هرمز'],['النهر الكبير اللي يمر بقرطبة وإشبيلية؟','الوادي الكبير','دجلة','النيل'],['أول حاكم أندلسي تلقّب بالخليفة؟','عبد الرحمن الناصر','عبد الرحمن الداخل','هشام الأول'],['الموسيقار اللي جاء من بغداد لقرطبة وأضاف للعود وتر؟','زرياب','إسحاق الموصلي','الفارابي'],
+ ['من قاد المسلمين في معركة الزلاقة ١٠٨٦م؟','يوسف بن تاشفين','صلاح الدين','قطز'],['الحاجب الأندلسي المشهور بحملاته العسكرية الكثيرة؟','المنصور بن أبي عامر','طارق بن زياد','ابن تومرت'],['في أي قرن ميلادي فُتحت الأندلس؟','الثامن','العاشر','السادس'],['وش اسم المسجد الكبير الشهير في قرطبة؟','جامع قرطبة','الجامع الأزهر','جامع الزيتونة'],['المؤرخ صاحب «المقدمة» وأصل أسرته من إشبيلية؟','ابن خلدون','الطبري','ابن كثير']];
+function quizStart(){if(HOMEF.qzDay===TODAY()){toast('📜 لعبت مسابقة اليوم… تعال بكرة لأسئلة جديدة',2400);return}const r=rngDay('qz'+TODAY()+game.user.u);const pool=QUIZ.slice();const Q=[];for(let i=0;i<5;i++)Q.push(pool.splice(Math.floor(r()*pool.length),1)[0]);let i=0,ok=0;const B=popOpen('📜 مسابقة الحكواتي');
+ const show=()=>{if(i>=Q.length){HOMEF.qzDay=TODAY();homeSave();B.innerHTML='<p style="font-size:20px">جاوبت صح على <b>'+AR(ok)+'</b> من ٥ 🎉</p><button id="qzX" style="padding:6px 16px;border-radius:10px;border:1px solid #C9A45C;background:#0e1a2b;color:#F3EAD8;font-family:Amiri,serif">تمام</button>';$('qzX').onclick=popClose;if(ok)earn(ok*5,'مسابقة الحكواتي 📜');return}
+  const q=Q[i];const opts=[q[1],q[2],q[3]].sort(()=>r()-.5);B.innerHTML='<p style="font-size:14px;color:#C9A45C">سؤال '+AR(i+1)+' من ٥</p><p style="font-size:20px;margin:6px 0 12px">'+q[0]+'</p>';
+  opts.forEach(o=>{const b=document.createElement('button');b.textContent=o;b.style.cssText='display:block;width:100%;margin:6px 0;padding:10px;border-radius:12px;border:1px solid #C9A45C;background:rgba(255,255,255,.07);color:#F3EAD8;font-family:Amiri,serif;font-size:18px';
+   b.onclick=()=>{const good=o===q[1];if(good)ok++;[...B.querySelectorAll('button')].forEach(x=>{x.disabled=true;if(x.textContent===q[1])x.style.background='#2f7a3a';else if(x===b)x.style.background='#8e1b1b'});setTimeout(()=>{i++;show()},900)};B.appendChild(b)})};show()}
 const DESTS=[
  {n:'بيتي',e:'🏠',home:1},{n:'قصر الملك',e:'👑',p:[0,0,-76.5]},{n:'ولي العهد',e:'🤴',p:[10,0,-69.5]},{n:'الجامع الكبير',e:'🕌',p:[0,0,9.2]},{n:'السوق',e:'🛒',p:[-30,0,0]},
  {n:'مطعم قدوري',e:'🍽️',p:[-6,0,-8.6]},{n:'دكان السلاح',e:'⚔️',p:[-34,0,.2]},{n:'محل الأثاث',e:'🪑',p:[-42,0,.2]},{n:'دار الحسبة',e:'⚖️',p:[-16.9,0,-2.8]},
  {n:'ديوان الاقتصاد',e:'💼',p:[-16.2,0,2.8]},{n:'خزانة الكتب',e:'📚',p:[2.4,0,-38.6]},{n:'معهد الإيمان',e:'📖',p:[-97,0,11]},{n:'دار العمدة',e:'🎖️',p:[10,0,45.8]},
  {n:'ديوان البريد',e:'🕊️',p:[-84,0,39]},{n:'البوابة والقنطرة',e:'🌉',p:[0,0,64]},{n:'السور الجنوبي',e:'🏹',p:[-10.5,7,56.6]},{n:'معسكر الجيش',e:'🛡️',p:[-74,0,-15]},
- {n:'برج القنّاص',e:'🎯',p:[-70,0,-30.5]},{n:'إمبراطورية فولكانور',e:'🌋',p:[76,2.4,-18]},{n:'حصن الثغر',e:'🏯',p:[-91,0,-55]},{n:'سجن المدينة',e:'🚔',p:[78,0,30.5]},{n:'حلبة النزال',e:'🤺',p:[30,0,56.6]},{n:'دار الشفاء',e:'🩺',p:[-73,0,11]},{n:'ساحة الدواوين',e:'⛲',p:[-85,0,25]},{n:'خان القوافل',e:'🐪',p:[86,0,50]},{n:'خيمة الجنرال قصي',e:'🎖️',p:[-56.5,0,-27]},{n:'أراضي البناء',e:'🏗️',p:[60,0,-44]},{n:'ديوان الدفاع',e:'🛡️',p:[-96,0,36]}];
+ {n:'برج القنّاص',e:'🎯',p:[-70,0,-30.5]},{n:'إمبراطورية فولكانور',e:'🌋',p:[76,2.4,-18]},{n:'حصن الثغر',e:'🏯',p:[-91,0,-55]},{n:'سجن المدينة',e:'🚔',p:[78,0,30.5]},{n:'حلبة النزال',e:'🤺',p:[30,0,56.6]},{n:'دار الشفاء',e:'🩺',p:[-73,0,11]},{n:'ساحة الدواوين',e:'⛲',p:[-85,0,25]},{n:'خان القوافل',e:'🐪',p:[86,0,50]},{n:'خيمة الجنرال قصي',e:'🎖️',p:[-56.5,0,-27]},{n:'أراضي البناء',e:'🏗️',p:[60,0,-44]},{n:'ديوان الدفاع',e:'🛡️',p:[-96,0,36]},{n:'ساحة الألعاب',e:'🎮',p:[0,0,104]},{n:'برج التحدي',e:'🧗',p:[-14,0,124]}];
 {const st=document.createElement('style');st.textContent=`#gMapUI{position:fixed;inset:0;z-index:62;display:none;align-items:center;justify-content:center;background:rgba(6,8,14,.78);font-family:'Amiri',serif}
 #gMapUI .pn{width:min(560px,96vw);max-height:94vh;display:flex;flex-direction:column;background:#152238;border:2px solid #C9A45C;border-radius:18px;padding:12px;color:#F3EAD8;gap:10px}
 #gMapUI h3{margin:0;font-family:'Aref Ruqaa',serif;color:#E6C98A;font-size:24px;display:flex;justify-content:space-between;align-items:center}
@@ -2250,7 +2346,7 @@ function drawMap(){const c=$('gMapC'),g=c.getContext('2d');const S=720/(MAPV.x1-
 function goPeer(p){if(!p||!p.pos)return;const a=Math.random()*6.28;const x=p.pos.x+Math.cos(a)*1.6,z=p.pos.z+Math.sin(a)*1.6;travel([x,Math.max(0,p.pos.y),z],'عند '+(p.d||p.u)+' 👋')}
 function openMap(){if(!game.on)return;if(document.pointerLockElement)document.exitPointerLock();$('gMapUI').style.display='flex';drawMap();
  const L=$('gMapL');L.innerHTML='';for(const p of NET.peers.values()){const b=document.createElement('button');b.style.background='rgba(43,140,255,.35)';b.textContent='👤 '+(p.d||p.u);b.onclick=()=>goPeer(p);L.appendChild(b)}for(const d of DESTS){const p=destPos(d);if(!p)continue;const b=document.createElement('button');b.textContent=d.e+' '+d.n;b.onclick=()=>travel(p,d.n);L.appendChild(b)}}
-function travel(p,name){if(SK.on)return;if(BS.on)buildEnd();if(JOB.on){toast('📦 البضاعة ما تنقل بالخريطة… امشِ للسوق!',2200);return}if(Date.now()<COP.jailUntil){toast('🔒 أنت في السجن… ما تقدر تتنقّل',2000);return}if(COP.on){toast('🚨 الشرطة وراك! ما تقدر تهرب',2000);return}
+function travel(p,name){if(SK.on)return;if(BS.on)buildEnd();if(GM.mode)gameStop('🚫 انلغت اللعبة');if(JOB.on){toast('📦 البضاعة ما تنقل بالخريطة… امشِ للسوق!',2200);return}if(Date.now()<COP.jailUntil){toast('🔒 أنت في السجن… ما تقدر تتنقّل',2000);return}if(COP.on){toast('🚨 الشرطة وراك! ما تقدر تهرب',2000);return}
  $('gMapUI').style.display='none';const f=$('gFade');f.style.opacity=1;
  setTimeout(()=>{game.p.set(p[0],p[1]||0,p[2]);const fl=floorAt(p[0],p[2],(p[1]||0)+.5);game.p.y=Math.max(fl,p[1]||0);game.vx=game.vz=game.vy=0;setFly(false,true);game.onG=true;
   game.yaw=Math.atan2(p[0],p[2])+(Math.hypot(p[0],p[2])<1?0:0);game.camP=null;f.style.opacity=0;toast('📍 وصلت: '+name,1800);if(NET.ok)pubPos()},260)}
@@ -2304,7 +2400,7 @@ function updateGame(t){const dt=Math.min(.05,(t-(game.last||t))/1000);game.last=
  netTick(t,moving||!game.onG);
  // أقرب شخصية أو باب
  let best=null,bd=4.2;for(const n of NPCS){const d=Math.hypot(n.pos[0]-P.x,n.pos[2]-P.z);if(d<bd&&Math.abs((n.pos[1]||0)-P.y)<3){bd=d;best=n}}
- $('gShopB').style.display=(best&&best.id==='furniture')?'block':'none';$('gArmsB').style.display=(best&&best.id==='armory')?'block':'none';$('gJobB').style.display=(best&&best.id==='caravan')?'block':'none';
+ $('gShopB').style.display=(best&&best.id==='furniture')?'block':'none';$('gArmsB').style.display=(best&&best.id==='armory')?'block':'none';$('gJobB').style.display=(best&&best.id==='caravan')?'block':'none';$('gActB').style.display=(best&&best.act)?'block':'none';if(best&&best.act&&$('gActB').textContent!==best.act[0]){$('gActB').textContent=best.act[0];$('gActB').onclick=()=>best.act[1]()}
  if(best!==game.near){game.near=best;$('gTalkB').style.display=best?'block':'none';if(best)$('gTalkB').textContent='💬 كلّم '+best.name;if(!best&&game.talk){game.talk=null;$('gTalk').style.display='none'}}
  let en=null;if(P.y<2){const md=Math.hypot(P.x,P.z);if(md<10.5&&md>7)en={sel:{mosque:true},t:'🚪 ادخل الجامع'};
  if(Math.hypot(P.x,P.z+82)<5.5)en={sel:{palace:true},t:'🚪 ادخل القصر'};
@@ -2352,7 +2448,7 @@ function loop(t){
  if(window.__thFlag)window.__thFlag.rotation.y=Math.sin(t/500)*.25;
  if(window.__cav)window.__cav.arm.rotation.z=Math.sin(t/700)*.25;if(window.__defFlag)window.__defFlag.rotation.y=Math.sin(t/600)*.2;if(window.__qusay)window.__qusay.arm.rotation.x=-.9+Math.sin(t/900)*.25;
  if(window.__saw)window.__saw.m.position.x=window.__saw.x+Math.sin(t/180)*.18;
- caravanTick(t);if(game.on){jobTick();landTick();if(t-(window.__hpT||0)>1000){window.__hpT=t;if(game.hp>0&&game.hp<100&&Date.now()-(game.lastHit||0)>8000){game.hp=Math.min(100,game.hp+2)}hpUI()}if($('gMapUI').style.display==='flex'&&t-(window.__mapT||0)>700){window.__mapT=t;drawMap()}}
+ caravanTick(t);if(game.on){jobTick();landTick();gamesTick();if(t-(window.__trT||0)>3000){window.__trT=t;treRefresh()}if(t-(window.__hpT||0)>1000){window.__hpT=t;if(game.hp>0&&game.hp<100&&Date.now()-(game.lastHit||0)>8000){game.hp=Math.min(100,game.hp+2)}hpUI()}if($('gMapUI').style.display==='flex'&&t-(window.__mapT||0)>700){window.__mapT=t;drawMap()}}
  if(window.__coin)window.__coin.position.y=1.05+Math.abs(Math.sin(t/260))*.5;
  if(OUT&&game.on&&!PERF.low){try{OUT.render(inside?inScene:scene,camera)}catch(e){OUT=null;renderer.render(inside?inScene:scene,camera)}}else renderer.render(inside?inScene:scene,camera);
  const W=innerWidth,H=innerHeight;
