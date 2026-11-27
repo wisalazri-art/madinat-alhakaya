@@ -1796,7 +1796,7 @@ function peerInfo(u){const i=USERS[u];return i?{d:i[2]||i[0]||u,ti:i[1]||'من �
 function netStart(){if(NET.c||NET.loading)return;NET.loading=true;sysMsg('⏳ جاري الاتصال بشات المدينة…');const s=document.createElement('script');s.src='https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js';
  s.onload=netConnect;s.onerror=()=>{NET.loading=false;sysMsg('⚠️ الشات ما اشتغل… تأكد من النت')};document.head.appendChild(s)}
 function netConnect(){try{const c=window.mqtt.connect('wss://broker.hivemq.com:8884/mqtt',{clientId:'hk_'+NET.id,keepalive:30,clean:true,reconnectPeriod:4000,connectTimeout:9000,will:{topic:NET.T+'bye',payload:JSON.stringify({id:NET.id}),qos:0,retain:false}});NET.c=c;
- c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye',NET.T+'hit',NET.T+'ko',NET.T+'sale/+',NET.T+'ledger/+',NET.T+'home/+',NET.T+'land/+',NET.T+'build/+']);CLOUD.sub=null;cloudSub();if(game.user)setTimeout(()=>{if(!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants();paySalary()}},3500);homePub();if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
+ c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye',NET.T+'hit',NET.T+'ko',NET.T+'sale/+',NET.T+'ledger/+',NET.T+'home/+',NET.T+'land/+',NET.T+'build/+']);CLOUD.sub=null;cloudSub();if(game.user)setTimeout(()=>{if(!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants();paySalary();setTimeout(landRestore,2500)}},3500);homePub();if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
  c.on('close',()=>{if(NET.ok)sysMsg('🔴 انقطع الشات… يعيد الاتصال');NET.ok=false});
  c.on('message',(tp,buf)=>{let m;try{m=JSON.parse(buf.toString())}catch(e){return}if(!m||typeof m!=='object')return;const k=tp.slice(NET.T.length);if(k.startsWith('land/')){onLand(+k.slice(5),m);return}if(k.startsWith('build/')){onBuild(+k.slice(6),m);return}if(m.id===NET.id)return;
   if(k==='pos')onPos(m);else if(k==='chat')onChat(m);else if(k.startsWith('save/'))onCloud(m);else if(k==='hit')onHit(m);else if(k==='ko')onKO(m);else if(k.startsWith('sale/'))onSale(m);else if(k.startsWith('ledger/'))onLedger(k.slice(7),m);else if(k.startsWith('home/')){if(typeof m.u==='string'&&Array.isArray(m.items))NET.homes[m.u.toLowerCase()]=m.items.filter(x=>typeof x==='string'||(x&&typeof x.id==='string')).slice(0,8)}else if(k==='bye')dropPeer(m.id)})}catch(e){sysMsg('⚠️ الشات غير متاح')}}
@@ -1858,14 +1858,14 @@ const GRANTS={'95ql':[{id:'g20261127a',n:1000,why:'منحة من خزانة ال
 function applyGrants(){if(!game.user||!CLOUD.ready)return;const L=GRANTS[game.user.u];if(!L)return;HOMEF.grants=HOMEF.grants||[];let ch=false;for(const g of L){if(HOMEF.grants.includes(g.id))continue;HOMEF.grants.push(g.id);HOMEF.coins+=g.n;ch=true;setTimeout(()=>toast('💰 +'+AR(g.n)+' دينار · '+g.why,3600),1200)}if(ch){homeSave();coinsUI()}}
 function cloudSave(){if(!game.user||!CLOUD.ready)return;clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>{if(!NET.ok||!game.user)return;const d={};['coins','items','daily','arms','equip','shield','armsClaimed','wanted','crimes','grants','payP'].forEach(k=>{if(HOMEF[k]!==undefined)d[k]=HOMEF[k]});
  NET.c.publish(NET.T+'save/'+game.user.u,JSON.stringify({u:game.user.u,ts:HOMEF.ts||Date.now(),d}),{retain:true,qos:1})},800)}
-function cloudSub(){if(!NET.ok||!game.user)return;const t=NET.T+'save/'+game.user.u;if(CLOUD.sub===t)return;if(CLOUD.sub)NET.c.unsubscribe(CLOUD.sub);CLOUD.sub=t;CLOUD.got=false;CLOUD.ready=false;NET.c.subscribe(t,{qos:1});setTimeout(()=>{if(CLOUD.sub===t&&!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants();paySalary()}},3500)}
+function cloudSub(){if(!NET.ok||!game.user)return;const t=NET.T+'save/'+game.user.u;if(CLOUD.sub===t)return;if(CLOUD.sub)NET.c.unsubscribe(CLOUD.sub);CLOUD.sub=t;CLOUD.got=false;CLOUD.ready=false;NET.c.subscribe(t,{qos:1});setTimeout(()=>{if(CLOUD.sub===t&&!CLOUD.got){CLOUD.ready=true;cloudSave();applyGrants();paySalary();setTimeout(landRestore,2500)}},3500)}
 function onCloud(m){if(!game.user||typeof m.u!=='string'||m.u!==game.user.u||!m.d||typeof m.d!=='object')return;const first=!CLOUD.got;CLOUD.got=true;CLOUD.ready=true;const ts=+m.ts||0;
- if(ts<=CLOUD.base||(!first&&ts<=(HOMEF.ts||0))){if(first){cloudSave();setTimeout(()=>{applyGrants();paySalary()},300)}return}CLOUD.base=ts;const d=m.d;
+ if(ts<=CLOUD.base||(!first&&ts<=(HOMEF.ts||0))){if(first){cloudSave();setTimeout(()=>{applyGrants();paySalary();setTimeout(landRestore,2500)},300)}return}CLOUD.base=ts;const d=m.d;
  const okItem=x=>(typeof x==='string'&&FURN.some(f=>f.id===x))||(x&&typeof x.id==='string'&&FURN.some(f=>f.id===x.id));
  HOMEF.coins=Math.max(0,Math.min(1e6,Math.floor(+d.coins||0)));HOMEF.items=Array.isArray(d.items)?d.items.filter(okItem).slice(0,8):[];
  HOMEF.arms=Array.isArray(d.arms)?d.arms.filter(x=>ARMS.some(a=>a.id===x)):[];HOMEF.equip=ARMS.some(a=>a.id===d.equip)?d.equip:'';HOMEF.shield=!!d.shield;
  HOMEF.armsClaimed=Math.max(0,+d.armsClaimed||0);HOMEF.wanted=d.wanted?1:0;HOMEF.crimes=Math.max(0,+d.crimes||0);if(typeof d.daily==='string')HOMEF.daily=d.daily;HOMEF.grants=Array.isArray(d.grants)?d.grants.filter(x=>typeof x==='string').slice(0,50):[];HOMEF.payP=Number.isInteger(d.payP)?d.payP:(Number.isInteger(HOMEF.payP)?HOMEF.payP:-1);HOMEF.ts=ts;
- try{localStorage.setItem(homeKey(),JSON.stringify(HOMEF))}catch(e){}coinsUI();armsUI();homePub();setTimeout(()=>{applyGrants();paySalary()},300);
+ try{localStorage.setItem(homeKey(),JSON.stringify(HOMEF))}catch(e){}coinsUI();armsUI();homePub();setTimeout(()=>{applyGrants();paySalary();setTimeout(landRestore,2500)},300);
  if(inside&&selected&&selected.name===myHouse())refreshFurn(selected.name);toast('☁️ رجعت أغراضك: '+AR(HOMEF.coins)+' دينار · '+AR(HOMEF.items.length)+' قطعة أثاث'+(HOMEF.arms.length?' · '+AR(HOMEF.arms.length)+' سلاح':''),3200)}
 function homePub(){if(NET.ok&&game.user&&myHouse())NET.c.publish(NET.T+'home/'+game.user.u,JSON.stringify({u:game.user.u,items:HOMEF.items.slice(0,8)}),{retain:true,qos:0})}
 function coinsUI(){const e=$('gCoins');if(e)e.textContent='💰 '+AR(HOMEF.coins)}
@@ -2142,15 +2142,20 @@ function voxAt(x,y,z){const e=VOX.get(vk(Math.floor(x),Math.floor(y),Math.floor(
 function voxBlocked(x,z,y){if(!VOX.size)return false;for(const [ox,oz] of [[.28,.28],[-.28,.28],[.28,-.28],[-.28,-.28]]){for(let h=Math.floor(y+.08);h<=Math.floor(y+1.5);h++){const e=voxAt(x+ox,h,z+oz);if(e&&y+bStep(e.t)<h+bH(e.t))return true}}return false}
 function voxFloor(x,z,y){if(!VOX.size)return -1;let f=-1;for(const [ox,oz] of [[0,0],[.25,.25],[-.25,.25],[.25,-.25],[-.25,-.25]]){for(let h=Math.min(LAND.maxH-1,Math.floor(y+1.1));h>=0;h--){const e=voxAt(x+ox,h,z+oz);if(e){const top=h+bH(e.t);if(top<=y+Math.max(.6,bStep(e.t))){f=Math.max(f,top);break}}}}return f}
 function plotStr(p){return [...p.blocks].map(([k,v])=>k+','+(v&31)+((v>>5)?','+(v>>5):'')).join(';')}
-function plotPub(p){if(!NET.ok)return;NET.c.publish(NET.T+'build/'+p.i,JSON.stringify({u:p.owner,b:plotStr(p),ts:Date.now()}),{retain:true,qos:1})}
+function plotDirty(p){try{localStorage.setItem('hakaya-build-'+p.i,JSON.stringify({u:p.owner,b:plotStr(p)}))}catch(e){}clearTimeout(p.pt);p.pt=setTimeout(()=>plotPub(p),1200)}
+function landRestore(){const me=game.user&&game.user.u;if(!me||!NET.ok)return;let p=myPlot();
+ if(!p&&Number.isInteger(HOMEF.plot)&&PLOTS[HOMEF.plot]&&!PLOTS[HOMEF.plot].owner){p=PLOTS[HOMEF.plot];p.owner=me;p.ts=Date.now();NET.c.publish(NET.T+'land/'+p.i,JSON.stringify({u:me,ts:p.ts}),{retain:true,qos:1});plotLabel(p)}
+ if(!p)return;if(HOMEF.plot!==p.i){HOMEF.plot=p.i;homeSave()}let loc=null;try{loc=JSON.parse(localStorage.getItem('hakaya-build-'+p.i)||'null')}catch(e){}
+ if(loc&&loc.u===me&&typeof loc.b==='string'&&loc.b&&!p.blocks.size){onBuild(p.i,{u:me,b:loc.b});plotPub(p);toast('🏗️ رجّعنا بناءك',2000)}}
+function plotPub(p){if(!NET.ok){clearTimeout(p.pt);p.pt=setTimeout(()=>plotPub(p),3000);return}NET.c.publish(NET.T+'build/'+p.i,JSON.stringify({u:p.owner,b:plotStr(p),ts:Date.now()}),{retain:true,qos:1})}
 function onLand(i,m){const p=PLOTS[i];if(!p)return;const u=typeof m.u==='string'?m.u.slice(0,30).toLowerCase():'';if(p.owner&&p.owner!==u&&m.ts&&p.ts&&m.ts>p.ts)return;p.owner=u;p.ts=+m.ts||0;plotLabel(p)}
-function onBuild(i,m){const p=PLOTS[i];if(!p||typeof m.b!=='string'||typeof m.u!=='string'||m.u.toLowerCase()!==p.owner)return;if(BS.on&&BS.plot===p)return;
+function onBuild(i,m){const p=PLOTS[i];if(!p||typeof m.b!=='string'||typeof m.u!=='string')return;if(!p.owner){p.owner=m.u.slice(0,30).toLowerCase();plotLabel(p)}if(m.u.toLowerCase()!==p.owner)return;p.got=true;if(BS.on&&BS.plot===p)return;
  const mp=new Map();for(const e of m.b.split(';').slice(0,LAND.maxB)){const a=e.split(',').map(Number);if((a.length!==4&&a.length!==5)||!a.every(Number.isInteger))continue;const [x,y,z,t]=a;const r=a[4]||0;if(x<0||x>=LAND.size||z<0||z>=LAND.size||y<0||y>=LAND.maxH||t<0||t>=BLK.length||r<0||r>3)continue;mp.set(x+','+y+','+z,t|(r<<5))}
  p.blocks=mp;plotRebuild(p)}
 function buyPlot(){const p=plotAt(game.p.x,game.p.z);if(!p||!game.on)return;if(!NET.ok){toast('⚠️ لازم تكون متصل عشان تشتري',2000);return}
  if(p.owner){toast('هذي الأرض لها صاحب 🙂',1600);return}if(myPlot()){toast('عندك أرض من قبل… أرض وحدة لكل لاعب 🏗️',2200);return}
  if(HOMEF.coins<LAND.price){toast('💰 تحتاج '+AR(LAND.price)+' دينار… معك '+AR(HOMEF.coins),2400);return}
- HOMEF.coins-=LAND.price;HOMEF.plot=p.i;homeSave();coinsUI();p.owner=game.user.u;p.ts=Date.now();NET.c.publish(NET.T+'land/'+p.i,JSON.stringify({u:p.owner,ts:p.ts}),{retain:true,qos:1});plotLabel(p);
+ HOMEF.coins-=LAND.price;HOMEF.plot=p.i;homeSave();try{localStorage.removeItem('hakaya-build-'+p.i)}catch(e){}coinsUI();p.owner=game.user.u;p.ts=Date.now();NET.c.publish(NET.T+'land/'+p.i,JSON.stringify({u:p.owner,ts:p.ts}),{retain:true,qos:1});plotLabel(p);
  NET.c.publish(NET.T+'chat',JSON.stringify({id:NET.id,u:game.user.u,sys:1,txt:'🏗️ '+game.user.disp+' اشترى الأرض رقم '+AR(p.i+1)+' في حي البنّائين!'}));toast('🎉 الأرض صارت لك! اضغط «🧱 ابنِ» وابدأ',3000)}
 // واجهة البناء
 {const st=document.createElement('style');st.textContent=`#bBar{position:fixed;left:50%;top:52px;transform:translateX(-50%);z-index:45;display:none;flex-direction:column;align-items:center;gap:6px;font-family:'Amiri',serif}
@@ -2165,17 +2170,18 @@ function buyPlot(){const p=plotAt(game.p.x,game.p.z);if(!p||!game.on)return;if(!
 function bUI(){[...$('bPal').children].forEach((e,i)=>e.classList.toggle('on',i===BS.t&&BS.tool==='put'));$('bPut').classList.toggle('on',BS.tool==='put');$('bDig').classList.toggle('on',BS.tool==='dig');
  const p=BS.plot;$('bInfo').textContent=(BS.tool==='put'?'🧱 '+BLK[BS.t].n+' · ':'⛏️ هدم · ')+(p?AR(p.blocks.size)+'/'+AR(LAND.maxB)+' مكعب':'')+' · 💰 '+AR(HOMEF.coins)+' · المكعب بدينار'}
 function buildStart(){const p=myPlot();if(!p)return;BS.on=true;BS.plot=p;$('bBar').style.display='flex';$('gBuildB').style.display='none';bUI();toast(matchMedia('(pointer:fine)').matches?'🧱 اضغط بالماوس عشان تحط مكعب · كليك يمين يهدم':'🧱 المس الأرض أو أي مكعب عشان تبني فوقه',3200)}
+addEventListener('pagehide',()=>{if(BS.on&&BS.plot)plotPub(BS.plot)});document.addEventListener('visibilitychange',()=>{if(document.hidden&&BS.on&&BS.plot)plotPub(BS.plot)});
 function buildEnd(){if(!BS.on)return;BS.on=false;$('bBar').style.display='none';$('bCross').style.display='none';const p=BS.plot;BS.plot=null;if(p){plotPub(p);plotLabel(p)}homeSave()}
 const BRAY=new THREE.Raycaster(),BV=new THREE.Vector2();
 function buildAct(cx,cy,dig){const p=BS.plot;if(!BS.on||!p)return;if(document.pointerLockElement)BV.set(0,0);else{const r=renderer.domElement.getBoundingClientRect();BV.set((cx-r.left)/r.width*2-1,-(cy-r.top)/r.height*2+1)}
  BRAY.setFromCamera(BV,camera);BRAY.far=40;const hits=p.grp?BRAY.intersectObjects(p.grp.children,false):[];let cell=null,place=null;
  if(hits.length&&hits[0].instanceId!==undefined){const h=hits[0];const c=h.object.userData.cells[h.instanceId];cell=c;const n=h.face.normal.clone().applyAxisAngle(new THREE.Vector3(0,1,0),c[3]*Math.PI/2);const ax=Math.abs(n.x),ay=Math.abs(n.y),az=Math.abs(n.z);const d=ay>=ax&&ay>=az?[0,Math.sign(n.y),0]:ax>=az?[Math.sign(n.x),0,0]:[0,0,Math.sign(n.z)];place=[c[0]+d[0],c[1]+d[1],c[2]+d[2]]}
  else{const t=-BRAY.ray.origin.y/BRAY.ray.direction.y;if(t>0&&t<60){const hx=BRAY.ray.origin.x+BRAY.ray.direction.x*t,hz=BRAY.ray.origin.z+BRAY.ray.direction.z*t;place=[Math.floor(hx-p.x),0,Math.floor(hz-p.z)]}}
- if(dig||BS.tool==='dig'){if(!cell)return;p.blocks.delete(cell.slice(0,3).join(','));HOMEF.coins+=1;plotRebuild(p);bUI();return}
+ if(dig||BS.tool==='dig'){if(!cell)return;p.blocks.delete(cell.slice(0,3).join(','));HOMEF.coins+=1;plotRebuild(p);plotDirty(p);bUI();return}
  if(!place)return;const [x,y,z]=place;if(x<0||x>=LAND.size||z<0||z>=LAND.size||y<0||y>=LAND.maxH){toast('🚧 خارج حدود أرضك',1200);return}
  const P=game.p;if(bSolid(BS.t)&&Math.floor(P.x)===p.x+x&&Math.floor(P.z)===p.z+z&&y>=Math.floor(P.y)-0&&y<=Math.floor(P.y+1.6)){toast('تحرّك شوي… لا تبني فوق راسك 😄',1200);return}
  if(p.blocks.size>=LAND.maxB){toast('وصلت الحد ('+AR(LAND.maxB)+' مكعب)',1600);return}if(HOMEF.coins<1){toast('💰 خلصت دنانيرك',1400);return}
- const k=x+','+y+','+z;if(p.blocks.has(k))return;const r=BLK[BS.t].rot?((Math.round(game.yaw/(Math.PI/2))+BS.rot)%4+4)%4:0;p.blocks.set(k,BS.t|(r<<5));HOMEF.coins-=1;plotRebuild(p);bUI()}
+ const k=x+','+y+','+z;if(p.blocks.has(k))return;const r=BLK[BS.t].rot?((Math.round(game.yaw/(Math.PI/2))+BS.rot)%4+4)%4:0;p.blocks.set(k,BS.t|(r<<5));HOMEF.coins-=1;plotRebuild(p);plotDirty(p);bUI()}
 {const el=renderer.domElement;let d0=null;el.addEventListener('pointerdown',e=>{if(!BS.on)return;d0=[e.clientX,e.clientY,performance.now(),e.button]});
  el.addEventListener('pointerup',e=>{if(!BS.on||!d0)return;const mv=Math.hypot(e.clientX-d0[0],e.clientY-d0[1]),dt=performance.now()-d0[2];const btn=d0[3];d0=null;if(document.pointerLockElement||(mv<10&&dt<450))buildAct(e.clientX,e.clientY,btn===2)});
  el.addEventListener('contextmenu',e=>{if(BS.on)e.preventDefault()})}
