@@ -1320,25 +1320,11 @@ function buildHouse(name,isNamed){
  inScene.add(new THREE.HemisphereLight(0xfff1dc,0x3a2a1c,.55));const lp=new THREE.PointLight(0xffc27a,1.4,22,2);lp.position.set(0,3.4,0);inScene.add(lp);
  const sunL=new THREE.DirectionalLight(0xffe0b0,.6);sunL.position.set(6,8,4);inScene.add(sunL);
  const fl=new THREE.Mesh(new THREE.PlaneGeometry(W,D),IM(0x9b7650));fl.rotation.x=-Math.PI/2;inScene.add(fl);
- const rug=new THREE.Mesh(new THREE.PlaneGeometry(6,4.4),IM(0xffffff,{map:rugTex()}));rug.rotation.x=-Math.PI/2;rug.position.y=.01;inScene.add(rug);
  ib(W,H,.2,plaster,0,H/2,-D/2);ib(W,H,.2,plaster,0,H/2,D/2);ib(.2,H,D,plaster,-W/2,H/2,0);ib(.2,H,D,plaster,W/2,H/2,0);ib(W,.2,D,IM(0xe8d9c0),0,H,0);
  for(let x=-4;x<=4;x+=2)ib(.25,.3,D,wood,x,H-.2,0);
  const glow=IM(0xfff0c8,{emissive:0xffe2a8,emissiveIntensity:.9});[-2.5,2.5].forEach(z=>ia(1.2,2,glow,W/2-.12,1.3,z,-Math.PI/2));ia(1.2,2,glow,-W/2+.12,1.3,2.5,Math.PI/2);
  ia(1.6,2.8,IM(0x4a2e18),0,0,D/2-.12,Math.PI);
- // مجلس
- const red=IM(0x8a2a24),cush=[0x1f3a5c,0xC9A45C,0x8a2a24,0x1f5c3a].map(c=>IM(c));
- ib(8.6,.35,1,red,0,.18,-D/2+.7);for(let i=0;i<7;i++)ib(1,.75,.28,cush[i%4],-3.6+i*1.2,.75,-D/2+.32);
- ib(1,.35,6,red,-W/2+.7,.18,0);for(let i=0;i<4;i++)ib(.28,.75,1,cush[(i+1)%4],-W/2+.32,.75,-1.8+i*1.2);
- // طاولة ودلة وتمر
- const tb=new THREE.Mesh(new THREE.CylinderGeometry(.75,.75,.3,20),wood);tb.position.set(0,.3,-1.4);inScene.add(tb);
- const gold=IM(0xC9A45C,{metalness:.7,roughness:.3});const dl=new THREE.Mesh(new THREE.CylinderGeometry(.16,.22,.42,14),gold);dl.position.set(-.3,.66,-1.4);inScene.add(dl);const dl2=new THREE.Mesh(new THREE.ConeGeometry(.16,.25,14),gold);dl2.position.set(-.3,.99,-1.4);inScene.add(dl2);
- for(let i=0;i<3;i++){const c=new THREE.Mesh(new THREE.CylinderGeometry(.06,.045,.09,10),IM(0xf6f2ea));c.position.set(.15+i*.18,.5,-1.2);inScene.add(c)}
- for(let i=0;i<6;i++){const d=new THREE.Mesh(new THREE.SphereGeometry(.06,8,6),IM(0x4a2a14));d.position.set(.3+Math.cos(i)*.12,.5,-1.62+Math.sin(i)*.1);inScene.add(d)}
- // ركن الورّاق: مكتب وكتاب ورف كتب
- ib(1.6,.5,.8,wood,3.6,.25,-1);const pg=IM(0xf3eee2);const b1=ib(.5,.02,.6,pg,3.37,.52,-1);b1.rotation.z=.12;const b2=ib(.5,.02,.6,pg,3.83,.52,-1);b2.rotation.z=-.12;
- ib(.25,1.8,3.2,wood,W/2-.25,2.4,-1);const bc=[0x7a1f22,0x1f3a5c,0x1f5c3a,0x8a5a2b,0xC9A45C];for(let r=0;r<3;r++)for(let k=0;k<9;k++)ib(.2,.45,.22,IM(bc[(k+r)%5]),W/2-.3,1.75+r*.6,-2.3+k*.3);
- // فانوس معلق
- const ch=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,.9,6),gold);ch.position.set(0,3.95,0);inScene.add(ch);const ln=new THREE.Mesh(new THREE.CylinderGeometry(.22,.16,.5,8),IM(0xffd07a,{emissive:0xffa840,emissiveIntensity:1.4}));ln.position.set(0,3.3,0);inScene.add(ln);
+ // البيت يجي فاضي… صاحبه يأثّثه من محل الأثاث 🪑
  // لوحة الاسم
  const pl=new THREE.Mesh(new THREE.PlaneGeometry(3,.75),new THREE.MeshBasicMaterial({map:plaqueTex(isNamed?'دار '+name:name)}));pl.position.set(0,2.6,-D/2+.12);inScene.add(pl);
  // أهل البيت جالسين في المجلس
