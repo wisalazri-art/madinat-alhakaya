@@ -1521,10 +1521,10 @@ function enterPlace(){
  saved={p:camera.position.clone(),t:controls.target.clone(),min:controls.minDistance,max:controls.maxDistance,pol:controls.maxPolarAngle,ar:controls.autoRotate};
  fly=null;inside=true;document.body.classList.add('inside');$('bExit').style.display='block';$('inTitle').textContent=r.title;$('inTitle').style.display='block';
  if(selected.named&&!selected.palace&&!selected.mosque&&!selected.restaurant)placeFurniture(selected.name);
- $('gFurnB').style.display=(game.on&&selected.named&&selected.name===myHouse())?'block':'none';
+ $('gFurnBar').style.display=(game.on&&selected.named&&selected.name===myHouse())?'flex':'none';FE.on=false;$('gFurnBar').classList.remove('edit');
  camera.position.copy(r.pos);controls.target.copy(r.target);controls.minDistance=.6;controls.maxDistance=r.maxD;controls.maxPolarAngle=Math.PI*.62;controls.autoRotate=false;controls.update();
 }
-function exitPlace(){if(!inside)return;inside=false;$('gFurnB').style.display='none';document.body.classList.remove('inside');$('bExit').style.display='none';$('inTitle').style.display='none';
+function exitPlace(){if(!inside)return;if(FE.on)feDone();inside=false;$('gFurnBar').style.display='none';document.body.classList.remove('inside');$('bExit').style.display='none';$('inTitle').style.display='none';
  camera.position.copy(saved.p);controls.target.copy(saved.t);controls.minDistance=saved.min;controls.maxDistance=saved.max;controls.maxPolarAngle=saved.pol;controls.autoRotate=saved.ar;controls.update();clearIn()}
 $('bEnter').onclick=enterPlace;
 $('bPeace').onclick=()=>{if(peace.on||atk.on)return;startPeace()};
@@ -1736,7 +1736,7 @@ function netConnect(){try{const c=window.mqtt.connect('wss://broker.hivemq.com:8
  c.on('connect',()=>{const first=!NET.ok;NET.ok=true;c.subscribe([NET.T+'chat',NET.T+'pos',NET.T+'bye',NET.T+'home/+']);homePub();if(first)sysMsg('🟢 متصل… اكتب وسلّم على أهل المدينة 👋');pubPos()});
  c.on('close',()=>{if(NET.ok)sysMsg('🔴 انقطع الشات… يعيد الاتصال');NET.ok=false});
  c.on('message',(tp,buf)=>{let m;try{m=JSON.parse(buf.toString())}catch(e){return}if(!m||typeof m!=='object'||m.id===NET.id)return;const k=tp.slice(NET.T.length);
-  if(k==='pos')onPos(m);else if(k==='chat')onChat(m);else if(k.startsWith('home/')){if(typeof m.u==='string'&&Array.isArray(m.items))NET.homes[m.u.toLowerCase()]=m.items.filter(x=>typeof x==='string').slice(0,8)}else if(k==='bye')dropPeer(m.id)})}catch(e){sysMsg('⚠️ الشات غير متاح')}}
+  if(k==='pos')onPos(m);else if(k==='chat')onChat(m);else if(k.startsWith('home/')){if(typeof m.u==='string'&&Array.isArray(m.items))NET.homes[m.u.toLowerCase()]=m.items.filter(x=>typeof x==='string'||(x&&typeof x.id==='string')).slice(0,8)}else if(k==='bye')dropPeer(m.id)})}catch(e){sysMsg('⚠️ الشات غير متاح')}}
 function pubPos(){if(!NET.ok||!game.on)return;const P=game.p;NET.c.publish(NET.T+'pos',JSON.stringify({id:NET.id,u:game.user.u,x:+P.x.toFixed(2),y:+P.y.toFixed(2),z:+P.z.toFixed(2),r:+hero.g.rotation.y.toFixed(2),f:game.fly?1:0,c:hero.bm.color.getHex()}))}
 function netTick(t,act){if(!NET.ok||!game.on)return;if(t-NET.lastPub<(act?130:2500))return;NET.lastPub=t;pubPos()}
 function onPos(m){if(typeof m.u!=='string'||typeof m.id!=='string'||![m.x,m.y,m.z].every(isFinite))return;let p=NET.peers.get(m.id);
@@ -1798,9 +1798,12 @@ function furnMesh(id){const g=new THREE.Group();const b=(w,h,d,m,x,y,z)=>{const 
  if(id==='throne'){b(.9,.5,.8,IM(0x4a1440),0,.25,0);b(.9,1.4,.15,gold,0,1,-.35);b(.12,.4,.8,gold,-.45,.65,0);b(.12,.4,.8,gold,.45,.65,0);sp(.1,IM(0xc0182a),0,1.6,-.33)}
  if(id==='sword'){b(.5,.08,.3,dark,0,.04,0);b(.06,1,.06,wood,0,.5,0);const s=b(.06,1.1,.02,IM(0xd8dde2),0,1.1,.06);b(.36,.06,.08,gold,0,.6,.06)}
  g.traverse(o=>{o.castShadow=true});return g}
+const FCL=v=>Math.max(-4.3,Math.min(4.3,+v||0));
+function fi(it,i){const s=FSLOTS[i%FSLOTS.length];if(typeof it==='string')return{id:it,x:s[0],z:s[1],r:s[2]};return{id:String(it.id),x:FCL(isFinite(it.x)?it.x:s[0]),z:FCL(isFinite(it.z)?it.z:s[1]),r:isFinite(it.r)?+it.r:s[2]}}
+function nextSpot(id){const cur=HOMEF.items.map(fi);for(const s of FSLOTS){if(!cur.some(c=>Math.hypot(c.x-s[0],c.z-s[1])<1))return{id,x:s[0],z:s[1],r:s[2]}}return{id,x:0,z:2.4,r:Math.PI}}
 function homeItemsFor(houseName){const own=myHouse()===houseName;if(own)return HOMEF.items;
  for(const [u,inf] of Object.entries(USERS))if(inf[0]===houseName&&NET.homes[u])return NET.homes[u];return []}
-function placeFurniture(houseName){const items=homeItemsFor(houseName);items.slice(0,8).forEach((id,i)=>{if(!FURN.some(f=>f.id===id))return;const s=FSLOTS[i];const g=furnMesh(id);g.userData.furn=1;g.position.set(s[0],0,s[1]);g.rotation.y=s[2];inScene.add(g)})}
+function placeFurniture(houseName){const items=homeItemsFor(houseName);items.slice(0,8).forEach((it,i)=>{const q=fi(it,i);if(!FURN.some(f=>f.id===q.id))return;const g=furnMesh(q.id);g.userData.furn=1;g.userData.idx=i;g.position.set(q.x,0,q.z);g.rotation.y=q.r;inScene.add(g)})}
 function refreshFurn(name){inScene.children.filter(o=>o.userData&&o.userData.furn).forEach(o=>inScene.remove(o));placeFurniture(name)}
 // واجهة المتجر وأثاثي
 {const st=document.createElement('style');st.textContent=`#gShop{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(6,8,14,.72);font-family:'Amiri',serif}
@@ -1813,20 +1816,36 @@ function refreshFurn(name){inScene.children.filter(o=>o.userData&&o.userData.fur
 #gShop .it button{margin-top:6px;width:100%;border:0;border-radius:10px;padding:7px;font-family:'Amiri',serif;font-size:15px;background:#C9A45C;color:#1a1208;font-weight:700}
 #gShop .it button:disabled{background:#555;color:#aaa}#gShop .x{background:rgba(255,255,255,.12);border:0;color:#fff;border-radius:10px;padding:4px 12px;font-size:18px}
 #gCoins{background:rgba(14,26,43,.8);border:1px solid #C9A45C;border-radius:12px;padding:6px 10px;color:#ffd36a;font-size:15px}
-#gFurnB{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:30;display:none;font-family:'Amiri',serif;font-size:18px;padding:12px 22px;border-radius:999px;border:2px solid #C9A45C;background:rgba(14,26,43,.9);color:#F3EAD8}`;document.head.appendChild(st);
- const d=document.createElement('div');d.innerHTML=`<div id="gShop" role="dialog"><div class="pn"><h3><span id="gShopT">محل الأثاث 🪑</span><button class="x" id="gShopX">✕</button></h3><div class="sub" id="gShopS"></div><div class="gr" id="gShopG"></div></div></div><button id="gFurnB">🛋️ أثاثي</button><button id="gShopB" style="display:none"></button>`;document.body.appendChild(d);
+#gFurnBar{position:fixed;left:0;right:0;bottom:24px;z-index:30;display:none;justify-content:center;gap:10px;flex-wrap:wrap}#gFurnBar.edit #gFurnB,#gFurnBar.edit #gArrB,#gFurnBar:not(.edit) #gRotB,#gFurnBar:not(.edit) #gDoneB{display:none}
+#gFurnBar button{font-family:'Amiri',serif;font-size:18px;padding:12px 22px;border-radius:999px;border:2px solid #C9A45C;background:rgba(14,26,43,.9);color:#F3EAD8}`;document.head.appendChild(st);
+ const d=document.createElement('div');d.innerHTML=`<div id="gShop" role="dialog"><div class="pn"><h3><span id="gShopT">محل الأثاث 🪑</span><button class="x" id="gShopX">✕</button></h3><div class="sub" id="gShopS"></div><div class="gr" id="gShopG"></div></div></div><div id="gFurnBar"><button id="gFurnB">🛋️ أثاثي</button><button id="gArrB">✋ رتّب الأثاث</button><button id="gRotB">↻ لِف</button><button id="gDoneB">✅ خلاص</button></div><button id="gShopB" style="display:none"></button>`;document.body.appendChild(d);
  $('gAct').appendChild($('gShopB'));$('gShopB').textContent='🛒 تسوّق أثاث';
  const top=$('gTop');const c=document.createElement('span');c.id='gCoins';c.textContent='💰';top.insertBefore(c,$('gMap'))}
 function openShop(mode){const own=myHouse();const G=$('gShopG');G.innerHTML='';$('gShop').style.display='flex';if(document.pointerLockElement)document.exitPointerLock();
  if(mode==='mine'){$('gShopT').textContent='🛋️ أثاث بيتك';$('gShopS').textContent=HOMEF.items.length?`عندك ${AR(HOMEF.items.length)} من ٨ قطع · البيع يرجّع لك نص السعر`:'بيتك فاضي… روح محل الأثاث في السوق 🪑';
-  HOMEF.items.forEach((id,i)=>{const f=FURN.find(x=>x.id===id);if(!f)return;const el=document.createElement('div');el.className='it';el.innerHTML=`<div class="em"></div><b></b><i></i><button>بيع</button>`;el.querySelector('.em').textContent=f.e;el.querySelector('b').textContent=f.n;el.querySelector('i').textContent='+'+AR(Math.floor(f.p/2))+' دينار';
+  HOMEF.items.forEach((it,i)=>{const id=fi(it,i).id;const f=FURN.find(x=>x.id===id);if(!f)return;const el=document.createElement('div');el.className='it';el.innerHTML=`<div class="em"></div><b></b><i></i><button>بيع</button>`;el.querySelector('.em').textContent=f.e;el.querySelector('b').textContent=f.n;el.querySelector('i').textContent='+'+AR(Math.floor(f.p/2))+' دينار';
    el.querySelector('button').onclick=()=>{HOMEF.items.splice(i,1);HOMEF.coins+=Math.floor(f.p/2);homeSave();openShop('mine');if(inside&&selected&&selected.name===own){refreshFurn(own)}};G.appendChild(el)});return}
  $('gShopT').textContent='محل الأثاث 🪑';$('gShopS').textContent=own?`رصيدك ${AR(HOMEF.coins)} دينار · بيتك فيه ${AR(HOMEF.items.length)} من ٨ قطع · تكسب دنانير لما تكلّم أهل المدينة`:'لازم يكون لك بيت أول! اكتب اسمك في تعليقات @8istory ونبني لك بيت 🏠';
  FURN.forEach(f=>{const el=document.createElement('div');el.className='it';el.innerHTML=`<div class="em"></div><b></b><i></i><button>اشترِ</button>`;el.querySelector('.em').textContent=f.e;el.querySelector('b').textContent=f.n;el.querySelector('i').textContent=AR(f.p)+' دينار';
   const bt=el.querySelector('button');bt.disabled=!own||HOMEF.coins<f.p||HOMEF.items.length>=8;if(own&&HOMEF.coins<f.p)bt.textContent='رصيدك ما يكفي';if(own&&HOMEF.items.length>=8)bt.textContent='بيتك مليان';
-  bt.onclick=()=>{if(bt.disabled)return;HOMEF.coins-=f.p;HOMEF.items.push(f.id);homeSave();toast(`${f.e} «${f.n}» انضاف لدار ${own}! ادخل بيتك وشوفه 🏠`,3200);openShop()};G.appendChild(el)})}
+  bt.onclick=()=>{if(bt.disabled)return;HOMEF.coins-=f.p;HOMEF.items.push(nextSpot(f.id));homeSave();toast(`${f.e} «${f.n}» انضاف لدار ${own}! ادخل بيتك وشوفه 🏠`,3200);openShop()};G.appendChild(el)})}
 $('gShopX').onclick=()=>{$('gShop').style.display='none'};$('gShop').onclick=e=>{if(e.target.id==='gShop')$('gShop').style.display='none'};
 $('gShopB').onclick=()=>openShop();$('gFurnB').onclick=()=>openShop('mine');
+// ترتيب الأثاث: اختر قطعة واسحبها لأي مكان في البيت
+const FE={on:false,sel:null,drag:false,ring:null,ray:new THREE.Raycaster(),pl:new THREE.Plane(new THREE.Vector3(0,1,0),0),v:new THREE.Vector2(),p:new THREE.Vector3()};
+function feSelect(g){FE.sel=g;if(!FE.ring){FE.ring=new THREE.Mesh(new THREE.RingGeometry(.7,.85,32),new THREE.MeshBasicMaterial({color:0xffd36a,transparent:true,opacity:.9,side:THREE.DoubleSide,depthWrite:false}));FE.ring.rotation.x=-Math.PI/2}
+ if(g){inScene.add(FE.ring);FE.ring.position.set(g.position.x,.03,g.position.z)}else inScene.remove(FE.ring)}
+function feSave(){const gs=inScene.children.filter(o=>o.userData&&o.userData.furn);gs.forEach(g=>{const i=g.userData.idx;const q=fi(HOMEF.items[i],i);HOMEF.items[i]={id:q.id,x:+g.position.x.toFixed(2),z:+g.position.z.toFixed(2),r:+g.rotation.y.toFixed(3)}});homeSave()}
+function feDone(){feSave();FE.on=false;feSelect(null);controls.enabled=true;$('gFurnBar').classList.remove('edit');toast('✅ انحفظ ترتيب بيتك',1800)}
+$('gArrB').onclick=()=>{if(!HOMEF.items.length){toast('بيتك فاضي… اشترِ أثاث من السوق أول 🪑',2400);return}FE.on=true;$('gFurnBar').classList.add('edit');toast('✋ اضغط على أي قطعة واسحبها لمكانها الجديد',2600)};
+$('gRotB').onclick=()=>{if(!FE.sel){toast('اختر قطعة أول 👆',1500);return}FE.sel.rotation.y+=Math.PI/4};
+$('gDoneB').onclick=feDone;
+{const el=renderer.domElement;const toFloor=e=>{const r=el.getBoundingClientRect();FE.v.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);FE.ray.setFromCamera(FE.v,camera);return FE.ray.ray.intersectPlane(FE.pl,FE.p)};
+ el.addEventListener('pointerdown',e=>{if(!FE.on||!inside)return;const r=el.getBoundingClientRect();FE.v.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);FE.ray.setFromCamera(FE.v,camera);
+  const gs=inScene.children.filter(o=>o.userData&&o.userData.furn);const hit=FE.ray.intersectObjects(gs,true)[0];
+  if(hit){let o=hit.object;while(o&&!(o.userData&&o.userData.furn))o=o.parent;feSelect(o);FE.drag=true;controls.enabled=false;try{el.setPointerCapture(e.pointerId)}catch(er){}e.stopPropagation()}},true);
+ el.addEventListener('pointermove',e=>{if(!FE.on||!FE.drag||!FE.sel)return;const p=toFloor(e);if(!p)return;FE.sel.position.x=FCL(p.x);FE.sel.position.z=FCL(p.z);FE.ring.position.set(FE.sel.position.x,.03,FE.sel.position.z)},true);
+ const up=()=>{if(!FE.drag)return;FE.drag=false;controls.enabled=true};el.addEventListener('pointerup',up,true);el.addEventListener('pointercancel',up,true)}
 
 function camOffset(){const cp=Math.cos(game.pitch);return new THREE.Vector3(Math.sin(game.yaw)*cp,Math.sin(game.pitch),Math.cos(game.yaw)*cp)}
 function updateGame(t){const dt=Math.min(.05,(t-(game.last||t))/1000);game.last=t;updatePeers(dt);if(!game.on||inside)return;controls.enabled=false;if(scene.fog&&scene.fog.far>430){scene.fog.near=Math.min(scene.fog.near,140);scene.fog.far=430}
