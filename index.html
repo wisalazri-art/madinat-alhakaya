@@ -1876,7 +1876,7 @@ function arrest(){COP.on=false;HOMEF.wanted=0;const fine=Math.min(HOMEF.coins,30
  game.p.set(JAIL.x,0,JAIL.z);game.vx=game.vz=game.vy=0;setFly(false,true);COP.g.g.position.set(JAIL.x+1.5,0,JAIL.z+JAIL.d/2+1.2);COP.g.g.rotation.y=Math.PI;
  $('gJail').style.display='block';toast(`🚔 صاحب الشرطة قبض عليك! غرامة ${AR(fine)} دينار و${AR(secs)} ثانية في السجن`,3800);
  if(NET.ok)NET.c.publish(NET.T+'chat',JSON.stringify({id:NET.id,u:game.user.u,sys:1,txt:'🚔 الشرطة قبضت على '+game.user.disp+' بتهمة الاعتداء… وهو الحين في سجن المدينة'}))}
-function updateCop(dt,P){if((updateCop.f=(updateCop.f||0)+1)%10===0)hpUI();if(COP.on&&COP.g){const g=COP.g.g;const dx=P.x-g.position.x,dz=P.z-g.position.z,L=Math.hypot(dx,dz);const ch=(performance.now()-COP.t0)/1000;const sp=HOMEF.wanted?9.2:8.4;
+function updateCop(dt,P){updateStrike(dt);if((updateCop.f=(updateCop.f||0)+1)%10===0)hpUI();if(COP.on&&COP.g){const g=COP.g.g;const dx=P.x-g.position.x,dz=P.z-g.position.z,L=Math.hypot(dx,dz);const ch=(performance.now()-COP.t0)/1000;const sp=HOMEF.wanted?9.2:8.4;
   if(L>45||ch>30){COP.on=false;g.visible=false;HOMEF.wanted=1;homeSave();toast('😮‍💨 هربت من الشرطة… بس صرت مطلوب! المرة الجاية الشرطة أسرع 🕵️',3600);if(NET.ok)NET.c.publish(NET.T+'chat',JSON.stringify({id:NET.id,u:game.user.u,sys:1,txt:'🕵️ '+game.user.disp+' هرب من الشرطة وصار مطلوب للعدالة!'}))}
   else if(L>1.3){g.position.x+=dx/L*sp*dt;g.position.z+=dz/L*sp*dt;g.position.y=P.y>3?P.y:groundY(g.position.x,g.position.z);g.rotation.y=Math.atan2(dx,dz);const s=Math.sin(performance.now()/70)*.6;COP.g.arms[0].rotation.x=s}else arrest()}
  const left=COP.jailUntil-Date.now();if(left>0){P.x=Math.max(JAIL.x-JAIL.w/2+.6,Math.min(JAIL.x+JAIL.w/2-.6,P.x));P.z=Math.max(JAIL.z-JAIL.d/2+.6,Math.min(JAIL.z+JAIL.d/2-.4,P.z));P.y=0;if(game.fly)setFly(false,true);$('gJailT').textContent=AR(Math.ceil(left/1000))}
@@ -1893,6 +1893,22 @@ function hpUI(){const e=$('gHP');if(!e)return;e.style.display=game.hp<100||inAre
 function knockout(byId,byName){game.hp=0;hpUI();toast('💫 انهزمت قدّام '+byName+'!',2600);if(NET.ok)NET.c.publish(NET.T+'ko',JSON.stringify({id:NET.id,by:byId,u:game.user.u}));
  const ar=inArena(game.p.x,game.p.z);setTimeout(()=>{game.hp=100;let p;if(ar)p=[ARENA.x,0,ARENA.z-ARENA.r-2];else{const h=myHouse();const i=h?names.indexOf(h):-1;const d=i>=0?houseDoor(i):null;p=d?[d.x,0,d.z]:[0,0,66]}
   game.p.set(p[0],0,p[2]);game.vx=game.vz=game.vy=0;game.camP=null;hpUI();toast('❤️ رجعت بكامل صحتك',1600);if(NET.ok)pubPos()},2600)}
+// ===== حُماة الحكايا: اللي يعتدي على جندي يسقط =====
+const isMil=u=>{const i=USERS[u];return !!(i&&i[1]&&/جندي|قائد|قنّاص|مدفعية|فرسان|رماة|حُماة/.test(i[1]))};
+const MIL_NPC=['commander','sniper','gunner','cavalry','archers','general'];
+const SK={on:false,t0:0,sq:[],name:''};
+function soldierStrike(victim){if(SK.on)return;SK.on=true;SK.t0=performance.now();SK.name=victim;if(game.fly)setFly(false,true);COP.on=false;if(COP.g)COP.g.g.visible=false;
+ if(!SK.sq.length)for(let k=0;k<3;k++){const c=makeChar(0x7a1f1f);setWeapon(c,k===1?'sword':'spear',k!==1);const h=new THREE.Mesh(new THREE.ConeGeometry(.42,.5,10),M(0xc9ccd1,{metalness:.7}));h.position.y=2.15;c.body.add(h);SK.sq.push(c)}
+ const P=game.p;SK.sq.forEach((c,k)=>{const a=k/3*Math.PI*2+.4;c.home=[P.x+Math.cos(a)*7,P.z+Math.sin(a)*7];c.g.position.set(c.home[0],groundY(c.home[0],c.home[1]),c.home[1]);c.g.visible=true});
+ toast('⚔️ اعتديت على '+victim+'… وحُماة الحكايا ما يرحمون!',2400)}
+function updateStrike(dt){if(!SK.on)return;const k=(performance.now()-SK.t0)/1000;const P=game.p;
+ SK.sq.forEach((c,i)=>{const a=i/3*Math.PI*2+.4;const r=Math.max(1.3,7-k*7);const x=P.x+Math.cos(a)*r,z=P.z+Math.sin(a)*r;c.g.position.set(x,P.y,z);c.g.rotation.y=Math.atan2(P.x-x,P.z-z);c.arms[1].rotation.x=k>.8&&k<1.6?-2.4+((k-.8)%.4)/.4*2.6:-.3});
+ if(k>1.1&&!SK.down){SK.down=true;game.hp=0;hpUI();const f=$('gHurt');f.style.opacity=.85;$('gFade').style.opacity=.55;
+  if(NET.ok)NET.c.publish(NET.T+'chat',JSON.stringify({id:NET.id,u:game.user.u,sys:1,txt:'⚔️ حُماة الحكايا أسقطوا '+game.user.disp+' بعد ما اعتدى على '+SK.name}))}
+ if(SK.down)hero.g.rotation.x=Math.min(Math.PI/2,(k-1.1)*4)*-1;
+ if(k>3.2){SK.on=false;SK.down=false;hero.g.rotation.x=0;$('gHurt').style.opacity=0;$('gFade').style.opacity=0;SK.sq.forEach(c=>c.g.visible=false);
+  const loss=Math.min(HOMEF.coins,20);HOMEF.coins-=loss;homeSave();game.hp=100;hpUI();game.p.set(0,0,66);game.vx=game.vz=game.vy=0;game.camP=null;
+  toast('💀 سقطت على يد حُماة الحكايا! خسرت '+AR(loss)+' دينار… ورجعت عند البوابة',3800);if(NET.ok)pubPos()}}
 // الهجوم
 const ATK={t:-9,warn:0};
 // سجل مبيعات دكان السلاح لأصحابه
@@ -1906,11 +1922,12 @@ function recordSale(a){const L=NET.ledger.arms||{total:0,sales:[]};L.total=(L.to
 function isVIP(u){const i=USERS[u];return !!(i&&i[1]&&!/جندي|زائر|سكّان|جار/.test(i[1]))}
 function guardBlock(name){const P=game.p;game.vx=-game.vx*.5-Math.sin(hero.g.rotation.y)*8;game.vz=-game.vz*.5-Math.cos(hero.g.rotation.y)*8;game.vy=Math.max(game.vy,3);
  ATK.warn++;if(ATK.warn===1){toast('🛡️ '+name+' شخصية اعتبارية محمية… الحرس منعوك! هذا إنذار أول ⚠️',3200)}else{toast('🛡️ حاولت تعتدي على '+name+' مرة ثانية!',2000);crime(name)}}
-function attack(){if(!HOMEF.equip||HOMEF.equip==='shield'){toast('ما معك سلاح… روح دكان السلاح ⚔️',2000);return}if(Date.now()<COP.jailUntil){toast('أنت في السجن 🔒',1500);return}
+function attack(){if(SK.on)return;if(!HOMEF.equip||HOMEF.equip==='shield'){toast('ما معك سلاح… روح دكان السلاح ⚔️',2000);return}if(Date.now()<COP.jailUntil){toast('أنت في السجن 🔒',1500);return}
  if(performance.now()-ATK.t<700)return;ATK.t=performance.now();const P=game.p;
  let tgt=null,td=2.8;for(const [id,p] of NET.peers){const d=Math.hypot(p.pos.x-P.x,p.pos.z-P.z);if(d<td&&Math.abs(p.pos.y-P.y)<2){td=d;tgt={peer:id,name:p.d}}}
  if(!tgt)for(const n of NPCS){const d=Math.hypot(n.pos[0]-P.x,n.pos[2]-P.z);if(d<td&&Math.abs((n.pos[1]||0)-P.y)<2.5){td=d;tgt={npc:n,name:n.name}}}
  if(!tgt)return;const tp=tgt.peer&&NET.peers.get(tgt.peer);const legal=tp&&inArena(P.x,P.z)&&inArena(tp.pos.x,tp.pos.z);
+ if(!legal&&!isMil(game.user.u)&&((tp&&isMil(tp.u))||(tgt.npc&&MIL_NPC.includes(tgt.npc.id)))){if(tp&&NET.ok)NET.c.publish(NET.T+'hit',JSON.stringify({id:NET.id,to:tgt.peer,u:game.user.u,dmg:DMG[HOMEF.equip]||15,ar:0}));soldierStrike(tgt.name);return}
  if(tgt.npc||(!legal&&tp&&isVIP(tp.u))){guardBlock(tgt.name);return}
  if(tgt.peer&&NET.ok)NET.c.publish(NET.T+'hit',JSON.stringify({id:NET.id,to:tgt.peer,u:game.user.u,dmg:DMG[HOMEF.equip]||15,ar:legal?1:0}));if(!legal)crime(tgt.name)}
 function onHit(m){if(m.to!==NET.id||!game.on||game.hp<=0)return;const legal=m.ar&&inArena(game.p.x,game.p.z);if(!legal&&isVIP(game.user.u)){toast('🛡️ الحرس حموك من اعتداء… أنت شخصية اعتبارية 👑',2400);return}const inf=peerInfo(String(m.u).slice(0,30).toLowerCase());const p=NET.peers.get(m.id);
@@ -1984,7 +2001,7 @@ function drawMap(){const c=$('gMapC'),g=c.getContext('2d');const S=720/(MAPV.x1-
  g.font="bold 22px 'Amiri',serif";g.fillStyle='#fff';g.strokeStyle='#000';g.lineWidth=4;g.strokeText('أنت',ux,uz-22);g.fillText('أنت',ux,uz-22)}
 function openMap(){if(!game.on)return;if(document.pointerLockElement)document.exitPointerLock();$('gMapUI').style.display='flex';drawMap();
  const L=$('gMapL');L.innerHTML='';for(const d of DESTS){const p=destPos(d);if(!p)continue;const b=document.createElement('button');b.textContent=d.e+' '+d.n;b.onclick=()=>travel(p,d.n);L.appendChild(b)}}
-function travel(p,name){if(Date.now()<COP.jailUntil){toast('🔒 أنت في السجن… ما تقدر تتنقّل',2000);return}if(COP.on){toast('🚨 الشرطة وراك! ما تقدر تهرب',2000);return}
+function travel(p,name){if(SK.on)return;if(Date.now()<COP.jailUntil){toast('🔒 أنت في السجن… ما تقدر تتنقّل',2000);return}if(COP.on){toast('🚨 الشرطة وراك! ما تقدر تهرب',2000);return}
  $('gMapUI').style.display='none';const f=$('gFade');f.style.opacity=1;
  setTimeout(()=>{game.p.set(p[0],p[1]||0,p[2]);const fl=floorAt(p[0],p[2],(p[1]||0)+.5);game.p.y=Math.max(fl,p[1]||0);game.vx=game.vz=game.vy=0;setFly(false,true);game.onG=true;
   game.yaw=Math.atan2(p[0],p[2])+(Math.hypot(p[0],p[2])<1?0:0);game.camP=null;f.style.opacity=0;toast('📍 وصلت: '+name,1800);if(NET.ok)pubPos()},260)}
@@ -1999,7 +2016,7 @@ function camOffset(){const cp=Math.cos(game.pitch);return new THREE.Vector3(Math
 function updateGame(t){const dt=Math.min(.05,(t-(game.last||t))/1000);game.last=t;updatePeers(dt);if(!game.on||inside)return;controls.enabled=false;if(scene.fog&&scene.fog.far>430){scene.fog.near=Math.min(scene.fog.near,140);scene.fog.far=430}
  const K=game.keys,k=c=>!game.chatOpen&&K[c];
  let fi=-game.jy+(k('KeyW')||k('ArrowUp')?1:0)-(k('KeyS')||k('ArrowDown')?1:0),si=game.jx+(k('KeyD')||k('ArrowRight')?1:0)-(k('KeyA')||k('ArrowLeft')?1:0);
- const il=Math.hypot(fi,si);if(il>1){fi/=il;si/=il}
+ if(SK.on){fi=0;si=0}const il=Math.hypot(fi,si);if(il>1){fi/=il;si/=il}
  const sy=Math.sin(game.yaw),cy=Math.cos(game.yaw);const wx=-sy*fi+cy*si,wz=-cy*fi-sy*si;
  const shift=k('ShiftLeft')||k('ShiftRight');
  const run=k('ControlLeft')||k('ControlRight')||k('KeyR')||(!game.fly&&shift)||game.runBtn;
