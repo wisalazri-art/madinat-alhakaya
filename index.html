@@ -112,8 +112,9 @@ if(!window.THREE){$('loading').textContent='تعذّر تحميل المحرّك
 else{
 const host=$('scene');
 const TOUCH=matchMedia('(pointer: coarse)').matches;
-const renderer=new THREE.WebGLRenderer({antialias:(()=>{try{return localStorage.getItem('hakaya-q')!=='low'}catch(e){return true}})(),powerPreference:'high-performance'});
-const QLV=(()=>{try{return localStorage.getItem('hakaya-q')||'high'}catch(e){return'high'}})();const QSET={high:{max:2,min:1,sh:2},mid:{max:1.5,min:.8,sh:6},low:{max:1,min:.6,sh:20}};
+const QLV=(()=>{let q='';try{q=localStorage.getItem('hakaya-q2')||''}catch(e){}return ['high','mid','low'].includes(q)?q:(TOUCH?'mid':'high')})();
+const renderer=new THREE.WebGLRenderer({antialias:QLV==='high',powerPreference:'high-performance'});
+const QSET={high:{max:TOUCH?1.75:2,min:1,sh:TOUCH?6:3},mid:{max:1.25,min:.75,sh:12},low:{max:.9,min:.55,sh:30}};
 const PERF={max:Math.min(devicePixelRatio,QSET[QLV].max),min:QSET[QLV].min,sh:QSET[QLV].sh,q:QLV,pr:0,acc:0,n:0,t0:0,fr:0,low:false};PERF.pr=PERF.max;
 renderer.setPixelRatio(PERF.pr);
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=TOUCH?THREE.PCFShadowMap:THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
@@ -121,7 +122,7 @@ renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmic
 // ستايل كرتوني: ظلال على ٣ درجات + ألوان أزهى + حدود سوداء في وضع اللعب
 const GRAD=(()=>{const d=new Uint8Array([110,110,110,255,185,185,185,255,255,255,255,255]);const t=new THREE.DataTexture(d,3,1,THREE.RGBAFormat);t.minFilter=t.magFilter=THREE.NearestFilter;t.generateMipmaps=false;t.needsUpdate=true;return t})();
 // ستايل «الفيديو»: إضاءة ذهبية ناعمة بدون حدود كرتونية
-function TM(p){p=Object.assign({roughness:.85,metalness:0},p||{});delete p.gradientMap;p.metalness=Math.min(+p.metalness||0,.3);const m=new THREE.MeshStandardMaterial(p);
+function TM(p){p=Object.assign({roughness:.85,metalness:0},p||{});delete p.gradientMap;p.metalness=Math.min(+p.metalness||0,.3);let m;if(QLV!=='high'){delete p.roughness;delete p.metalness;delete p.envMapIntensity;delete p.flatShading;m=new THREE.MeshLambertMaterial(p)}else m=new THREE.MeshStandardMaterial(p);
  if(m.transparent||m.side===THREE.BackSide)m.userData.outlineParameters={visible:false};else m.userData.outlineParameters={thickness:.0035,color:[.08,.05,.03],alpha:1};return m}
 let OUT=null;
 host.appendChild(renderer.domElement);{const v=document.createElement('div');v.id='vig';host.after(v)}
@@ -139,7 +140,7 @@ controls.maxPolarAngle=Math.PI/2.15;controls.minDistance=18;controls.maxDistance
 
 const hemi=new THREE.HemisphereLight(0xb8cde6,0x8a7454,.95);scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffd29a,1.35);sun.position.set(-150,62,58);sun.castShadow=true;
-sun.shadow.mapSize.set(QLV==="low"?1024:2048,QLV==="low"?1024:2048);Object.assign(sun.shadow.camera,{left:-110,right:110,top:110,bottom:-110,near:10,far:400});sun.shadow.bias=-.0005;
+sun.shadow.mapSize.set(QLV==="high"?2048:1024,QLV==="high"?2048:1024);Object.assign(sun.shadow.camera,{left:-110,right:110,top:110,bottom:-110,near:10,far:400});sun.shadow.bias=-.0005;
 scene.add(sun);
 const M=(c,o={})=>new TM(Object.assign({color:c,roughness:.85,metalness:0},o));
 const mat={ground:M(0xb9a77e),pave:M(0xd9c6a2),street:M(0xc7ae84),wall:M(0xc89f6c),tower:M(0xbd9361),house:M(0xf1e7d6),house2:M(0xe8d9c0),roof:M(0xb5603a),door:M(0x5a3a22),plaque:M(0x7a5634),gold:M(0xC9A45C,{emissive:0x5a3e10,emissiveIntensity:.6,metalness:.4,roughness:.4}),water:M(0x2f6f99,{roughness:.25,metalness:.2}),leaf:M(0x3f6b3c),trunk:M(0x6b4a2e),dome:M(0xd8b26a,{metalness:.35,roughness:.45}),red:M(0xa8432e),win:M(0x2a1c10)};
@@ -2430,7 +2431,7 @@ NPCS.push(
 npcSpawn('crier',0x8e1b1b,[0,0,30]);npcSpawn('quests',0x1f3a6b,[0,0,30]);npcSpawn('mkt',0x6b4a2e,[-37,0,10]);npcSpawn('tribes',0x2a2228,[-85,0,25]);npcSpawn('party',0x4a1440,[-85,0,25]);npcSpawn('stable',0x5a3a22,[-18,0,75]);npcSpawn('sgen',0x14284a,[0,0,70],'spear');
 // أزرار الواجهة: المهمات، البريد، الركوب
 {const bar=$('gTop');const mk=(id,t,f)=>{const b=document.createElement('button');b.id=id;b.textContent=t;b.onclick=f;b.style.cssText='font-size:14px;padding:6px 10px;border-radius:10px;border:1px solid #C9A45C;background:rgba(14,26,43,.85);color:#F3EAD8;margin-inline:2px';bar.appendChild(b);return b};
- mk('gQB','📋',()=>questMenu());{const L={high:'✨ عالية',mid:'⚖️ متوسطة',low:'🔋 موفّرة'},O=['high','mid','low'];const qb=mk('gQual','⚙️',()=>{const nx=O[(O.indexOf(PERF.q)+1)%3];PERF.q=nx;const c=QSET[nx];PERF.max=Math.min(devicePixelRatio,c.max);PERF.min=c.min;PERF.sh=c.sh;PERF.pr=PERF.max;renderer.setPixelRatio(PERF.pr);renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.needsUpdate=true;try{localStorage.setItem('hakaya-q',nx)}catch(e){}toast('⚙️ الجودة: '+L[nx]+(nx==='high'?' · أوضح صورة':nx==='low'?' · أسرع على الجوالات الضعيفة':''),2200)});qb.title='الجودة'}const mb=mk('gMailB','🕊️',()=>travel([-83.8,0,44.5],'ديوان البريد 🕊️'));mb.style.display='none';
+ mk('gQB','📋',()=>questMenu());{const L={high:'✨ عالية',mid:'⚖️ متوسطة',low:'🔋 خفيفة'},O=['high','mid','low'];const qb=mk('gQual','⚙️',()=>{const B=popOpen('⚙️ جودة الصورة');B.innerHTML='<p style="font-size:14px">إذا اللعبة ثقيلة اختار «خفيفة» 🔋 · الصفحة بتتحدّث وترجع لك على طول</p>';O.forEach(k=>B.appendChild(popBtn(L[k]+(k===QLV?' ✅ الحالية':'')+(k==='high'?' · أوضح صورة (للكمبيوتر والجوالات القوية)':k==='mid'?' · متوازنة (الأنسب للجوال)':' · أسرع شي للجوالات الضعيفة'),()=>{try{localStorage.setItem('hakaya-q2',k)}catch(e){}if(k===QLV){popClose();return}HOMEF&&homeSave();location.reload()})));B.appendChild(popClose2())});qb.title='الجودة'}const mb=mk('gMailB','🕊️',()=>travel([-83.8,0,44.5],'ديوان البريد 🕊️'));mb.style.display='none';
  const rb=document.createElement('button');rb.className='gb';rb.id='bRide';rb.textContent='🐎';rb.style.opacity=.6;rb.onclick=()=>rideToggle();$('gBtns').appendChild(rb)}
 const DESTS=[
  {n:'بيتي',e:'🏠',home:1},{n:'قصر الملك',e:'👑',p:[0,0,-76.5]},{n:'ولي العهد',e:'🤴',p:[10,0,-69.5]},{n:'الجامع الكبير',e:'🕌',p:[0,0,9.2]},{n:'السوق',e:'🛒',p:[-30,0,0]},
